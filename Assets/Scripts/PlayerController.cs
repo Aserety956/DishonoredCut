@@ -4,6 +4,8 @@ using Unity.Cinemachine;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
 
 public class PlayerController : MonoBehaviour
 {
@@ -14,13 +16,24 @@ public class PlayerController : MonoBehaviour
     public float gravity;
     private bool _isCrouching;
     private float _cameraYVelocity;
-    private Vector3 _cameraInitialLocalPos;
+    private float _vignetteIntensity;
+
+    [SerializeField] private VolumeProfile _volumeProfile;
+    [SerializeField] private float vignetteSmoothTime = 0.12f;
+    
+    [SerializeField] private Transform headTarget;
     [SerializeField] private float crouchSmoothTime = 0.12f;
-    [SerializeField] private float crouchCameraOffset = -0.5f;
+    [SerializeField] private float crouchHeadOffset = -0.5f;
+    
     
     [SerializeField] private CharacterController _characterController;
     [SerializeField] private CinemachineCamera _cinCam;
-
+    
+    private Vector3 _cameraInitialLocalPos;
+    
+    private Vector3 _headInitialLocalPos;
+    private float _headYVelocity;
+    
     private Vector2 _move;
     private Vector3 _velocity;
 
@@ -28,7 +41,9 @@ public class PlayerController : MonoBehaviour
     {
         currentSpeed = walkSpeed;
         _velocity = Vector3.zero;
+        
         _cameraInitialLocalPos = _cinCam.transform.localPosition;
+        _headInitialLocalPos = headTarget.localPosition;
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -42,30 +57,37 @@ public class PlayerController : MonoBehaviour
         
         _characterController.Move((move + _velocity) * Time.deltaTime);
         
-        
-        float targetHeight = _isCrouching ? 1f : 2f;
-        
-        _characterController.height = Mathf.MoveTowards(
-            _characterController.height,
-            targetHeight,
-            2f * Time.deltaTime
-        );
-        
-        
-        float targetOffset = _isCrouching ? crouchCameraOffset : 0f;
+    }
 
+    public void FixedUpdate()
+    {
+        
         Vector3 camLocalPos = _cinCam.transform.localPosition;
         
-            camLocalPos.y = Mathf.SmoothDamp(
-            camLocalPos.y,
-            _cameraInitialLocalPos.y + targetOffset,
-            ref _cameraYVelocity,
+
+        _cinCam.transform.localPosition = camLocalPos;
+        
+        float targetOffset = _isCrouching ? crouchHeadOffset : 0f;
+
+        Vector3 localPos = headTarget.localPosition;
+        localPos.y = Mathf.SmoothDamp(
+            localPos.y,
+            _headInitialLocalPos.y + targetOffset,
+            ref _headYVelocity,
             crouchSmoothTime
         );
 
-        _cinCam.transform.localPosition = camLocalPos;
+        headTarget.localPosition = localPos;
+        
+        _volumeProfile.TryGet(out Vignette vignette);
+        vignette.intensity.value = Mathf.SmoothDamp(
+            vignette.intensity.value,
+            _isCrouching ? 0.25f : 0f,
+            ref _vignetteIntensity,
+            vignetteSmoothTime
+        );
     }
-    
+
     public void OnMove(InputValue val)
     { 
         _move = val.Get<Vector2>();
