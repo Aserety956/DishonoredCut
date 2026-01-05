@@ -57,9 +57,16 @@ public class PlayerController : MonoBehaviour
         
         _characterController.Move((move + _velocity) * Time.deltaTime);
         
+        _volumeProfile.TryGet(out Vignette vignette);
+        vignette.intensity.value = Mathf.SmoothDamp(
+            vignette.intensity.value,
+            _isCrouching ? 0.25f : 0f,
+            ref _vignetteIntensity,
+            vignetteSmoothTime);
+
     }
 
-    public void FixedUpdate()
+    public void LateUpdate()
     {
         
         Vector3 camLocalPos = _cinCam.transform.localPosition;
@@ -79,13 +86,6 @@ public class PlayerController : MonoBehaviour
 
         headTarget.localPosition = localPos;
         
-        _volumeProfile.TryGet(out Vignette vignette);
-        vignette.intensity.value = Mathf.SmoothDamp(
-            vignette.intensity.value,
-            _isCrouching ? 0.25f : 0f,
-            ref _vignetteIntensity,
-            vignetteSmoothTime
-        );
     }
 
     public void OnMove(InputValue val)
