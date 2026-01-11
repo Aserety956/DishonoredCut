@@ -3,20 +3,22 @@ using UnityEngine.InputSystem;
 
 public class Emit : MonoBehaviour
 {
-    public float walkNoiseRadius = 4f;
-    public float runNoiseRadius = 8f;
-    public float crouchRadius = 2f;
+    public float walkNoiseRadius = 8f;
+    public float runNoiseRadius = 12f;
+    public float crouchNoiseMultiplier = 0.3f;
     
     public float noiseInterval = 0.4f;
     
     private float noiseTimer;
 
     private CharacterController controller;
+    private PlayerController playerController;
     
     
     void Start()
     {
         controller = GetComponent<CharacterController>();
+        playerController = GetComponent<PlayerController>();
     }
     
     void Update()
@@ -37,31 +39,21 @@ public class Emit : MonoBehaviour
         if (noiseTimer < noiseInterval)
             return;
         
-        if (IsRunning())
+        float noiseRadius = IsRunning(speed) ? runNoiseRadius : walkNoiseRadius;
+        
+        if (playerController.isCrouching)
         {
-            EmitNoise(runNoiseRadius);
-        }
-        else
-        {
-            EmitNoise(walkNoiseRadius);
+            noiseRadius *= crouchNoiseMultiplier;
         }
 
-        if (IsCrouching())
-        {
-            EmitNoise(crouchRadius);
-        }
+        EmitNoise(noiseRadius);
 
         noiseTimer = 0f;
     }
     
-    bool IsRunning()
+    bool IsRunning(float speed)
     {
-        return Keyboard.current.leftShiftKey.isPressed;
-    }
-    
-    bool IsCrouching()
-    {
-        return Keyboard.current.cKey.isPressed;
+        return speed > 5.1f;
     }
     
     void EmitNoise(float radius)
@@ -84,7 +76,8 @@ public class Emit : MonoBehaviour
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(transform.position, walkNoiseRadius);
 
-        Gizmos.color = Color.magenta;
+        Gizmos.color = Color.pink;
         Gizmos.DrawWireSphere(transform.position, runNoiseRadius);
+        
     }
 }

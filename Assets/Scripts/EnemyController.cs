@@ -7,10 +7,11 @@ using UnityEngine.AI;
 public class EnemyController : MonoBehaviour
 {
     
-    [Header("Hearing")]
-    public float hearingRadius = 10f;     
-    public float investigateTime = 3f;
-    private Vector3 lastheardPosition;
+    [Header("Investigation")]
+    [SerializeField] private float investigateWaitTime = 3f;
+    [SerializeField] private float lookAroundSpeed = 120f;
+    private float investigateTimer;
+    private bool isLookingAround;
     
     [Header("FOV")]
     public float viewRadius = 8f;      
@@ -28,8 +29,6 @@ public class EnemyController : MonoBehaviour
     
     [Header("Chase")]
     public float chaseSpeed = 4f;
-    public float detectionRadius = 8f;
-    public float loseDistance = 12f;
     
     private int currentPointIndex = 0;
     private NavMeshAgent agent;
@@ -38,6 +37,7 @@ public class EnemyController : MonoBehaviour
     enum EnemyState
     {
         Patrol,
+        Investigate,
         Chase
     }
     
@@ -66,6 +66,10 @@ public class EnemyController : MonoBehaviour
                CheckPlayerDetection();
                break;
            
+           case EnemyState.Investigate:
+               Investigate();
+               break;
+           
            case EnemyState.Chase:
                UpdateChase();
                break;
@@ -91,6 +95,41 @@ public class EnemyController : MonoBehaviour
         }
     }
     
+    void Investigate()
+    {
+        if (CanSeePlayer())
+        {
+            currentState = EnemyState.Chase;
+            return;
+        }
+
+        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+        {
+            agent.isStopped = true;
+
+            LookAround();
+
+            investigateTimer += Time.deltaTime;
+
+            if (investigateTimer >= investigateWaitTime)
+            {
+                
+                agent.isStopped = false;
+                investigateTimer = 0f;
+                isLookingAround = false;
+
+                currentState = EnemyState.Patrol;
+                GoToNextPoint();
+            }
+        }
+    }
+    void LookAround()
+    {
+        isLookingAround = true;
+        
+        transform.Rotate(Vector3.up, lookAroundSpeed * Time.deltaTime);
+    }
+    
     void UpdatePatrol()
     {
         if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
@@ -105,34 +144,17 @@ public class EnemyController : MonoBehaviour
         }
     }
     
-    private float investigateTimer;
     void UpdateChase()
     {
         agent.speed = chaseSpeed;
         agent.SetDestination(player.position);
-
-        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-
-        if (distanceToPlayer > loseDistance)
+        
+        if (!CanSeePlayer())
         {
             currentState = EnemyState.Patrol;
             GoToNextPoint();
         }
         
-        if (!CanSeePlayer())
-        {
-            if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
-            {
-                investigateTimer += Time.deltaTime;
-
-                if (investigateTimer >= investigateTime)
-                {
-                    currentState = EnemyState.Patrol;
-                    investigateTimer = 0f;
-                    GoToNextPoint();
-                }
-            }
-        }
     }
 
     bool CanSeePlayer()
@@ -163,16 +185,20 @@ public class EnemyController : MonoBehaviour
     public void HearNoise(Vector3 noisePosition, float noiseRadius)
     {
         
-        float distance = Vector3.Distance(transform.position, noisePosition);
-        
-        if (distance > noiseRadius || distance > hearingRadius)
+        if (currentState == EnemyState.Chase)
             return;
+        
         
         lastHeardPosition = noisePosition;
         
-        currentState = EnemyState.Chase;
-
-        agent.SetDestination(noisePosition);
+        investigateTimer = 0f;
+        isLookingAround = false;
+        agent.isStopped = false;
+        
+        agent.SetDestination(lastHeardPosition);
+        
+        currentState = EnemyState.Investigate;
+        
     }
     
     void OnDrawGizmos()
@@ -225,10 +251,15 @@ public class EnemyController : MonoBehaviour
 
         if (player != null)
         {
-            Gizmos.color = CanSeePlayer() ? Color.orange : Color.red;
+            Gizmos.color = CanSeePlayer() ? Color.green : Color.red;
             Gizmos.DrawLine(transform.position, player.position);
         }
         
+        if (currentState == EnemyState.Investigate)
+        {
+            Gizmos.color = Color.orange;
+            Gizmos.DrawSphere(lastHeardPosition, 0.2f);
+        }
         
     }
     

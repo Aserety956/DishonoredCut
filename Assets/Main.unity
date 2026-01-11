@@ -2246,6 +2246,7 @@ GameObject:
   - component: {fileID: 796197176}
   - component: {fileID: 796197178}
   - component: {fileID: 796197177}
+  - component: {fileID: 796197179}
   m_Layer: 0
   m_Name: Staircase_side.001_Stair_side_0
   m_TagString: Untagged
@@ -2324,6 +2325,28 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 796197175}
+  m_Mesh: {fileID: 4300000, guid: d8378a085cbc023478c1320c8727fb6d, type: 2}
+--- !u!64 &796197179
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 796197175}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: d8378a085cbc023478c1320c8727fb6d, type: 2}
 --- !u!1 &809373206
 GameObject:
@@ -2582,6 +2605,7 @@ MonoBehaviour:
   walkSpeed: 5
   sprintSpeed: 10
   gravity: -5
+  isCrouching: 0
   _volumeProfile: {fileID: 11400000, guid: 0997bccd4c907eb459285ee7c801eae5, type: 2}
   vignetteSmoothTime: 0.12
   headTarget: {fileID: 1649558554}
@@ -2603,7 +2627,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Emit
   walkNoiseRadius: 4
   runNoiseRadius: 8
-  crouchRadius: 2
+  crouchNoiseMultiplier: 0.5
   noiseInterval: 0.4
 --- !u!1 &873261637
 GameObject:
@@ -4274,6 +4298,7 @@ GameObject:
   - component: {fileID: 1356293947}
   - component: {fileID: 1356293949}
   - component: {fileID: 1356293948}
+  - component: {fileID: 1356293950}
   m_Layer: 0
   m_Name: Staircase_side_Stair_side_0
   m_TagString: Untagged
@@ -4353,6 +4378,28 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1356293946}
   m_Mesh: {fileID: 4300000, guid: bb77764c99594214abeb1083af603d14, type: 2}
+--- !u!64 &1356293950
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1356293946}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: bb77764c99594214abeb1083af603d14, type: 2}
 --- !u!1 &1377236191
 GameObject:
   m_ObjectHideFlags: 0
@@ -4365,6 +4412,7 @@ GameObject:
   - component: {fileID: 1377236194}
   - component: {fileID: 1377236193}
   - component: {fileID: 1377236192}
+  - component: {fileID: 1377236196}
   m_Layer: 3
   m_Name: Center
   m_TagString: Untagged
@@ -4460,6 +4508,27 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 23.621, z: 0}
+--- !u!65 &1377236196
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1377236191}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.0000001, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1399469275
 GameObject:
   m_ObjectHideFlags: 0
@@ -4653,8 +4722,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2ed9eb27ef4250498df3ddcebabd2de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
-  hearingRadius: 10
-  investigateTime: 3
+  investigateWaitTime: 3
+  lookAroundSpeed: 120
   viewRadius: 8
   viewAngle: 90
   targetMask:
@@ -4672,8 +4741,6 @@ MonoBehaviour:
   patrolSpeed: 2
   waitTimeAtPoint: 2
   chaseSpeed: 4
-  detectionRadius: 4
-  loseDistance: 8
 --- !u!136 &1527429971
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -7296,6 +7363,7 @@ GameObject:
   - component: {fileID: 4363470434479759728}
   - component: {fileID: 1960904938396810094}
   - component: {fileID: 3243716197184642836}
+  - component: {fileID: 5323918959683245190}
   m_Layer: 0
   m_Name: Staircase_side.001_Stair_side_0
   m_TagString: Untagged
@@ -7303,6 +7371,28 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!64 &5323918959683245190
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5323918959683245189}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: d8378a085cbc023478c1320c8727fb6d, type: 2}
 --- !u!1 &5414477848944586920
 GameObject:
   m_ObjectHideFlags: 0
@@ -7445,6 +7535,7 @@ GameObject:
   - component: {fileID: 3767241111748882218}
   - component: {fileID: 7625056475916088168}
   - component: {fileID: 4007587217799663334}
+  - component: {fileID: 7625056475916088169}
   m_Layer: 0
   m_Name: Staircase_side_Stair_side_0
   m_TagString: Untagged
@@ -7745,6 +7836,28 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6394944057699791131}
+  m_Mesh: {fileID: 4300000, guid: bb77764c99594214abeb1083af603d14, type: 2}
+--- !u!64 &7625056475916088169
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6394944057699791131}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: bb77764c99594214abeb1083af603d14, type: 2}
 --- !u!33 &7913360276540687435
 MeshFilter:

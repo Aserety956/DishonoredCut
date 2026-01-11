@@ -14,7 +14,7 @@ public class PlayerController : MonoBehaviour
     public float walkSpeed;
     public float sprintSpeed;
     public float gravity;
-    private bool _isCrouching;
+    public bool isCrouching;
     private float _cameraYVelocity;
     private float _vignetteIntensity;
 
@@ -60,7 +60,7 @@ public class PlayerController : MonoBehaviour
         _volumeProfile.TryGet(out Vignette vignette);
         vignette.intensity.value = Mathf.SmoothDamp(
             vignette.intensity.value,
-            _isCrouching ? 0.25f : 0f,
+            isCrouching ? 0.25f : 0f,
             ref _vignetteIntensity,
             vignetteSmoothTime);
 
@@ -74,7 +74,7 @@ public class PlayerController : MonoBehaviour
 
         _cinCam.transform.localPosition = camLocalPos;
         
-        float targetOffset = _isCrouching ? crouchHeadOffset : 0f;
+        float targetOffset = isCrouching ? crouchHeadOffset : 0f;
 
         Vector3 localPos = headTarget.localPosition;
         localPos.y = Mathf.SmoothDamp(
@@ -117,11 +117,11 @@ public class PlayerController : MonoBehaviour
     {
         if (val.Get<float>() > 0.5f)
         {
-            _isCrouching = true;
+            isCrouching = true;
         }
         else
         {
-            _isCrouching = false;
+            isCrouching = false;
         }
     }
 
