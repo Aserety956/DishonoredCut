@@ -6,12 +6,25 @@ using UnityEngine.AI;
 
 public class EnemyController : MonoBehaviour
 {
+    [Header("Suspicion")]
+    [SerializeField] private float suspicionIncreaseSpeed = 0.6f;
+    [SerializeField] private float suspicionDecreaseSpeed = 0.3f;
+
+    [SerializeField] private float suspicionToInvestigate = 0.3f;
+    [SerializeField] private float suspicionToChase = 1f;
+
+    public float suspicion;
+    private bool heardNoise;
+    
     
     [Header("Investigation")]
     [SerializeField] private float investigateWaitTime = 3f;
     [SerializeField] private float lookAroundSpeed = 120f;
     private float investigateTimer;
     private bool isLookingAround;
+    private Vector3 lastSeenPosition;
+    private float lostSightTimer;
+    [SerializeField] private float lostSightDelay = 1.5f;
     
     [Header("FOV")]
     public float viewRadius = 8f;      
@@ -75,6 +88,40 @@ public class EnemyController : MonoBehaviour
                break;
         }
         
+        UpdateSuspicion(CanSeePlayer(), heardNoise);
+        EvaluateSuspicion();
+        heardNoise = false;
+    }
+    
+    void UpdateSuspicion(bool canSeePlayer, bool hearsNoise)
+    {
+        if (canSeePlayer)
+        {
+            suspicion += suspicionIncreaseSpeed * Time.deltaTime;
+        }
+        else if (hearsNoise)
+        {
+            suspicion += (suspicionIncreaseSpeed * 0.5f) * Time.deltaTime;
+        }
+        else
+        {
+            suspicion -= suspicionDecreaseSpeed * Time.deltaTime;
+        }
+
+        suspicion = Mathf.Clamp01(suspicion);
+    }
+    
+    void EvaluateSuspicion()
+    {
+        if (suspicion >= suspicionToChase)
+        {
+            currentState = EnemyState.Chase;
+        }
+        
+        if (suspicion >= suspicionToInvestigate)
+        {
+            currentState = EnemyState.Investigate;
+        }
     }
     
     void GoToNextPoint()
@@ -128,6 +175,13 @@ public class EnemyController : MonoBehaviour
         isLookingAround = true;
         
         transform.Rotate(Vector3.up, lookAroundSpeed * Time.deltaTime);
+
+        if (CanSeePlayer())
+        {
+            agent.isStopped = false;
+            isLookingAround = false;
+            currentState = EnemyState.Chase;
+        }
     }
     
     void UpdatePatrol()
@@ -147,15 +201,30 @@ public class EnemyController : MonoBehaviour
     void UpdateChase()
     {
         agent.speed = chaseSpeed;
-        agent.SetDestination(player.position);
-        
-        if (!CanSeePlayer())
+        if (CanSeePlayer())
         {
-            currentState = EnemyState.Patrol;
-            GoToNextPoint();
+            lastSeenPosition = player.position;
+            lostSightTimer = 0f;
+
+            agent.SetDestination(player.position);
         }
-        
+        else
+        {
+            lostSightTimer += Time.deltaTime;
+
+            if (lostSightTimer >= lostSightDelay)
+            {
+                currentState = EnemyState.Investigate;
+
+                agent.isStopped = false;
+                investigateTimer = 0f;
+                isLookingAround = false;
+
+                agent.SetDestination(lastSeenPosition);
+            }
+        }
     }
+    
 
     bool CanSeePlayer()
     {
@@ -190,6 +259,7 @@ public class EnemyController : MonoBehaviour
         
         
         lastHeardPosition = noisePosition;
+        heardNoise = true;
         
         investigateTimer = 0f;
         isLookingAround = false;
@@ -197,7 +267,6 @@ public class EnemyController : MonoBehaviour
         
         agent.SetDestination(lastHeardPosition);
         
-        currentState = EnemyState.Investigate;
         
     }
     
