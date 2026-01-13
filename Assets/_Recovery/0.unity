@@ -3859,7 +3859,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serializedBakingSet: {fileID: 0}
-  sceneGUID: 5cf73cc1a042f50418aad1e6565eb596
+  sceneGUID: 4b3836a38ca8fc448b14a04ef89c08b4
   obsoleteAsset: {fileID: 0}
   obsoleteCellSharedDataAsset: {fileID: 0}
   obsoleteCellSupportDataAsset: {fileID: 0}
@@ -4872,15 +4872,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2ed9eb27ef4250498df3ddcebabd2de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
-  suspicionIncreaseSpeed: 0.5
-  suspicionDecreaseSpeed: 0.1
-  suspicionToInvestigate: 0.5
+  suspicionIncreaseSpeed: 0.6
+  suspicionDecreaseSpeed: 0.3
+  suspicionToInvestigate: 0.3
   suspicionToChase: 1
   suspicion: 0
-  investigateDuration: 3
+  investigateDuration: 5
+  investigateWaitTime: 3
   lookAroundSpeed: 120
-  investigateTimer: 0
-  isInvestigating: 0
   lostSightDelay: 1.5
   viewRadius: 8
   viewAngle: 90

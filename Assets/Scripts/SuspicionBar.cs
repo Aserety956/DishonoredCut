@@ -26,5 +26,21 @@ public class SuspicionBar : MonoBehaviour
             fillImage.gameObject.SetActive(true);
             backgroundImage.gameObject.SetActive(true);
         }
+
+        if (fillImage.fillAmount <= 0.5f)
+        {
+            fillImage.color = Color.white;
+        }
+        if (fillImage.fillAmount >= 0.5f)
+        {
+            fillImage.color = Color.yellow;
+        }
+        // todo: анимация ААА задетектили
+        if (fillImage.fillAmount >= 1f)
+        {
+            fillImage.color = Color.red;
+            fillImage.gameObject.SetActive(false);
+            backgroundImage.gameObject.SetActive(false);
+        }
     }
 }
