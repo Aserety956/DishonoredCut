@@ -10,20 +10,24 @@ using UnityEngine.Rendering.Universal;
 public class PlayerController : MonoBehaviour
 {
 
+    [Header("Movement")]
     public float currentSpeed;
     public float walkSpeed;
     public float sprintSpeed;
     public float gravity;
     public bool isCrouching;
-    private float _cameraYVelocity;
-    private float _vignetteIntensity;
-
-    [SerializeField] private VolumeProfile _volumeProfile;
-    [SerializeField] private float vignetteSmoothTime = 0.12f;
     
+    [Header("Crouch")]
+    private float _cameraYVelocity;
+    public float crouchSmoothTime = 0.12f;
+    public float crouchHeadOffset = -0.5f;
     [SerializeField] private Transform headTarget;
-    [SerializeField] private float crouchSmoothTime = 0.12f;
-    [SerializeField] private float crouchHeadOffset = -0.5f;
+    
+    [Header("Vignette")]
+    [SerializeField] private VolumeProfile _volumeProfile;
+    public float vignetteSmoothTime = 0.12f;
+    private float _vignetteIntensity;
+    
     
     
     [SerializeField] private CharacterController _characterController;
@@ -41,8 +45,6 @@ public class PlayerController : MonoBehaviour
     {
         currentSpeed = walkSpeed;
         _velocity = Vector3.zero;
-        
-        _cameraInitialLocalPos = _cinCam.transform.localPosition;
         _headInitialLocalPos = headTarget.localPosition;
 
         Cursor.lockState = CursorLockMode.Locked;

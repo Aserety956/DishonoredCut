@@ -10,9 +10,23 @@ public class SuspicionBar : MonoBehaviour
     
 
 
+    private Camera cam;
+
+    void Awake()
+    {
+        cam = Camera.main;
+    }
+
+    void LateUpdate()
+    {
+
+        // Поворачиваем UI лицом к камере
+        transform.rotation = Quaternion.LookRotation
+            (transform.position - cam.transform.position);
+    }
+    
     void Update()
     {
-        
         fillImage.fillAmount = enemy.suspicion;
         
         if (fillImage.fillAmount <= 0f)
@@ -43,4 +57,6 @@ public class SuspicionBar : MonoBehaviour
             backgroundImage.gameObject.SetActive(false);
         }
     }
+    
+    
 }

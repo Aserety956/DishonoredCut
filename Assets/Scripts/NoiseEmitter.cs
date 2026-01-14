@@ -7,7 +7,7 @@ public class Emit : MonoBehaviour
     public float runNoiseRadius = 12f;
     public float crouchNoiseMultiplier = 0.3f;
     
-    public float noiseInterval = 0.4f;
+    public float noiseInterval = 0.3f;
     
     private float noiseTimer;
 
