@@ -3,16 +3,16 @@ using UnityEngine;
 
 public class LightDetector : MonoBehaviour
 {
-    private List<LightSensor> activeLights = new();
+    private List<LightSensor> activeLights = new ();
     public float currentLightLevel;
 
     void Update()
     {
         currentLightLevel = 0f;
 
-        foreach (var light in activeLights)
+        for (int i = 0; i < activeLights.Count; i++)
         {
-            currentLightLevel += light.GetLightValue(transform.position);
+            currentLightLevel += activeLights[i].GetLightValue(transform.position);
         }
 
         currentLightLevel = Mathf.Clamp01(currentLightLevel);

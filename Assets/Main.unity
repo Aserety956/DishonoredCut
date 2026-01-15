@@ -4665,7 +4665,7 @@ Transform:
   m_GameObject: {fileID: 1377236191}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.20467198, z: -0, w: 0.97883064}
-  m_LocalPosition: {x: 6.05, y: 1.5, z: 1.9}
+  m_LocalPosition: {x: 9.73, y: 1.5, z: 0.91}
   m_LocalScale: {x: 1, y: 3, z: 3.2991}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4902,12 +4902,12 @@ MonoBehaviour:
   obstacleMask:
     serializedVersion: 2
     m_Bits: 8
+  player: {fileID: 870277575}
   patrolPoints:
   - {fileID: 274343968}
   - {fileID: 791093895}
   - {fileID: 1604905215}
   - {fileID: 305365657}
-  player: {fileID: 870277575}
   patrolSpeed: 2
   waitTimeAtPoint: 2
   chaseSpeed: 4
@@ -6615,7 +6615,7 @@ Transform:
   m_GameObject: {fileID: 4471002101778157549}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 19.66, z: 0}
+  m_LocalPosition: {x: 0, y: 20.07, z: 0}
   m_LocalScale: {x: 5, y: 5, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -7003,7 +7003,7 @@ MonoBehaviour:
   lightPower: 1
   obstacleMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
 --- !u!4 &3767241111748882218
 Transform:
   m_ObjectHideFlags: 0
@@ -7196,8 +7196,8 @@ Light:
   serializedVersion: 12
   m_Type: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 200
-  m_Range: 150
+  m_Intensity: 500
+  m_Range: 13
   m_SpotAngle: 97.65822
   m_InnerSpotAngle: 0
   m_CookieSize2D: {x: 10, y: 10}
@@ -7239,7 +7239,7 @@ Light:
   m_LightShadowCasterMode: 2
   m_AreaSize: {x: 0.5, y: 0.5}
   m_BounceIntensity: 1
-  m_ColorTemperature: 3175
+  m_ColorTemperature: 2993
   m_UseColorTemperature: 1
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
@@ -7347,7 +7347,7 @@ Transform:
   m_GameObject: {fileID: 1262772221561963754}
   serializedVersion: 2
   m_LocalRotation: {x: 0.72799236, y: -0, z: -0, w: 0.6855853}
-  m_LocalPosition: {x: 12.04, y: 11.43, z: -1.74}
+  m_LocalPosition: {x: 12.04, y: 11, z: -1.74}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7589,12 +7589,12 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Radius: 8
+  m_Center: {x: 0, y: -2, z: 10}
 --- !u!4 &7420691643238814180
 Transform:
   m_ObjectHideFlags: 0

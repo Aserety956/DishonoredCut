@@ -1,43 +1,45 @@
+using System;
 using UnityEngine;
 
 public class LightSensor : MonoBehaviour
 {
     public float lightPower = 1f;
-        public LayerMask obstacleMask;
+    public LayerMask obstacleMask;
     
-        private Light spotLight;
+    private Light spotLight;
             //think!
-        void Awake()
-        {
-            spotLight = GetComponent<Light>();
+    void Awake()
+    { spotLight = GetComponent<Light>();
+    }
+    
+    public float GetLightValue(Vector3 targetPosition)
+    {
+        Vector3 dirToTarget = targetPosition - transform.position; //вектор направления (конец - начало)
+        float distance3D = dirToTarget.magnitude; // длина вектора √(x^2 + y^2 + z^2)= √c = ... sqrMagnitude 
+        
+        if (distance3D > spotLight.range) return 0f;
+    
+        float angle = Vector3.Angle(transform.forward, dirToTarget.normalized); //деление на длину
+        if (angle > spotLight.spotAngle / 2f)
+                return 0f;
+    
+        Vector3 dirToTargetXZ = dirToTarget;
+        dirToTargetXZ.y = 0f;
+        
+        float distanceXZ = dirToTargetXZ.magnitude; //2Dvector
+        
+        Debug.DrawRay(transform.position, dirToTarget, Color.yellow);
+        
+        if (Physics.Raycast(
+                transform.position, dirToTarget.normalized, distance3D, obstacleMask))
+        { 
+                return 0f;
         }
     
-        public float GetLightValue(Vector3 targetPosition)
-        {
-            Vector3 dir = targetPosition - transform.position;
-            float distance = dir.magnitude;
-            
-            if (distance > spotLight.range)
-                return 0f;
+        // Ослабление по дистанции
+        float distanceFactor = 1f - (distanceXZ / spotLight.range);
     
-            float angle = Vector3.Angle(transform.forward, dir);
+        return Mathf.Clamp01(distanceFactor * lightPower);
+    }
     
-            if (angle > spotLight.spotAngle / 2f)
-                return 0f;
-    
-            // Проверка на препятствия
-            if (Physics.Raycast(
-                transform.position,
-                dir.normalized,
-                distance,
-                obstacleMask))
-            {
-                return 0f;
-            }
-    
-            // Ослабление по дистанции
-            float distanceFactor = 1f - (distance / spotLight.range);
-    
-            return distanceFactor * lightPower;
-        }
 }

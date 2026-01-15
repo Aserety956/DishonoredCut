@@ -33,8 +33,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private CharacterController _characterController;
     [SerializeField] private CinemachineCamera _cinCam;
     
-    private Vector3 _cameraInitialLocalPos;
-    
     private Vector3 _headInitialLocalPos;
     private float _headYVelocity;
     
@@ -70,11 +68,6 @@ public class PlayerController : MonoBehaviour
 
     public void LateUpdate()
     {
-        
-        Vector3 camLocalPos = _cinCam.transform.localPosition;
-        
-
-        _cinCam.transform.localPosition = camLocalPos;
         
         float targetOffset = isCrouching ? crouchHeadOffset : 0f;
 

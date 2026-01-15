@@ -33,10 +33,10 @@ public class EnemyController : MonoBehaviour
     public LayerMask targetMask;       
     public LayerMask obstacleMask;    
     
-    public Transform[] patrolPoints;
     public Transform player;
     
     [Header("Patrol")]
+    public Transform[] patrolPoints;
     public float patrolSpeed = 3f;
     public float waitTimeAtPoint = 2f;
     
@@ -243,6 +243,9 @@ public class EnemyController : MonoBehaviour
         if (angleToPlayer > viewAngle / 2)
             return false;
 
+        Debug.DrawRay
+            (transform.position + Vector3.up, directionToPlayer * distanceToPlayer, Color.red);
+        
         if (Physics.Raycast(
             transform.position + Vector3.up,
             directionToPlayer,
