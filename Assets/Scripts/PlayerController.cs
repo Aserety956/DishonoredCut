@@ -17,6 +17,11 @@ public class PlayerController : MonoBehaviour
     public float gravity;
     public bool isCrouching;
     
+    
+    [Header("Interact")]
+    public float interactDistance = 3f;
+    public LayerMask interactMask;
+    
     [Header("Crouch")]
     private float _cameraYVelocity;
     public float crouchSmoothTime = 0.12f;
@@ -63,7 +68,6 @@ public class PlayerController : MonoBehaviour
             isCrouching ? 0.25f : 0f,
             ref _vignetteIntensity,
             vignetteSmoothTime);
-
     }
 
     public void LateUpdate()
@@ -134,5 +138,30 @@ public class PlayerController : MonoBehaviour
         return right.normalized;
     }
     
+    public void OnInteract(InputValue val)
+    {
+        if (val.Get<float>() > 0.5f)
+        {
+            Debug.Log("Interact"+ val.Get<float>());
+            TryInteract();
+        }
+    }
+    private void TryInteract()
+    {
+        Ray ray = new Ray(_cinCam.transform.position, _cinCam.transform.forward);
+
+        // 2) Raycast
+        if (Physics.Raycast(ray, out RaycastHit hit, interactDistance, interactMask, QueryTriggerInteraction.Ignore))
+        {
+            // 3) Ищем DoorAnimator на объекте или выше по иерархии
+            DoorsAnim door = hit.collider.GetComponentInParent<DoorsAnim>();
+            if (door != null)
+            {
+                door.Toggle();
+            }
+        }
+        
+        Debug.DrawRay(ray.origin, ray.direction * interactDistance, Color.yellow, 0.2f);
+    }
     
 }
