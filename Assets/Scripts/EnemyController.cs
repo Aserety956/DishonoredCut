@@ -28,12 +28,23 @@ public class EnemyController : MonoBehaviour
     private Vector3 lastSeenPosition;
     
     [Header("FOV")]
-    public float viewRadius = 8f;      
-    public float viewAngle = 90f;      
-    public LayerMask targetMask;       
-    public LayerMask obstacleMask;    
+    public float viewRadiusDark = 8f;
+    public float viewRadiusLight = 12f;
+
+    public float viewAngleDark = 90f;
+    public float viewAngleLight = 120f;
     
+    public LayerMask targetMask;       
+    public LayerMask obstacleMask; 
+    
+    [Header("LightMapping")]
+    public float lightMin = 0.15f; 
+    public float lightMax = 0.75f; 
+    public float lightGamma = 0.7f; 
+    
+    [Header("PlayerLinks")]
     public Transform player;
+    public LightDetector playerLight;
     
     [Header("Patrol")]
     public Transform[] patrolPoints;
@@ -233,6 +244,9 @@ public class EnemyController : MonoBehaviour
 
     bool CanSeePlayer()
     {
+        float  viewRadius, viewAngle;
+        GetVisionFromLight(out viewRadius, out viewAngle);
+        
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
         if (distanceToPlayer > viewRadius)
             return false;
@@ -240,6 +254,7 @@ public class EnemyController : MonoBehaviour
         Vector3 directionToPlayer = (player.position - transform.position).normalized;
         float angleToPlayer = Vector3.Angle(transform.forward, directionToPlayer);
 
+        
         if (angleToPlayer > viewAngle / 2)
             return false;
 
@@ -258,6 +273,20 @@ public class EnemyController : MonoBehaviour
         return true;
     }
     
+    private void GetVisionFromLight(out float viewRadius, out float viewAngle)
+    {
+        float lightLevel = playerLight.currentLightLevel;;
+
+        // делаем 0..1 внутри диапазона [lightMin..lightMax]
+        float t = Mathf.InverseLerp(lightMin, lightMax, lightLevel); // часть пройденного пути
+        t = Mathf.Clamp01(t);
+
+        // делаем "кривую" (опционально, но полезно)
+        t = Mathf.Pow(t, lightGamma);
+
+        viewRadius = Mathf.Lerp(viewRadiusDark, viewRadiusLight, t);
+        viewAngle = Mathf.Lerp(viewAngleDark, viewAngleLight, t);
+    }
     
     public void HearNoise(Vector3 noisePosition, float noiseRadius)
     {
@@ -315,6 +344,8 @@ public class EnemyController : MonoBehaviour
     
     void OnDrawGizmosSelected()
     {
+        float  viewRadius, viewAngle;
+        GetVisionFromLight(out viewRadius, out viewAngle);
         
         Vector3 leftBoundary = DirFromAngle(-viewAngle / 2);
         Vector3 rightBoundary = DirFromAngle(viewAngle / 2);

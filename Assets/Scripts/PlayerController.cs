@@ -22,6 +22,10 @@ public class PlayerController : MonoBehaviour
     public float interactDistance = 3f;
     public LayerMask interactMask;
     
+    [Header("Attack")]
+    //[SerializeField] private float attackRange = 2.2f;
+    [SerializeField] private float doorDamage = 25f;
+    
     [Header("Crouch")]
     private float _cameraYVelocity;
     public float crouchSmoothTime = 0.12f;
@@ -52,6 +56,12 @@ public class PlayerController : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        
+        float Fr = 1, To = 10, I=2;
+        float t = Mathf.InverseLerp(Fr, To, I);
+
+        Debug.Log(Mathf.InverseLerp(Fr, To, I)); // 1/9 = 0.11 (часть пути) t = (2 - 1) / (10 - 1) = 1/9 (c-a)/(b-a)
+        Debug.Log(Mathf.Lerp(Fr, To, t)); // a + (b - a) * t или же 1+(9*1.9) = 2 (значение пути)
     }
     
     public void Update()
@@ -146,6 +156,34 @@ public class PlayerController : MonoBehaviour
             TryInteract();
         }
     }
+
+    public void OnAttack(InputValue val)
+    {
+        if (val.Get<float>() > 0.5f)
+        {
+            TryAttack();
+        }
+    }
+
+    
+    private void TryAttack()
+    {
+        Ray ray = new Ray(_cinCam.transform.position, _cinCam.transform.forward);
+
+        if (Physics.Raycast(ray, out RaycastHit hit, interactDistance, interactMask, QueryTriggerInteraction.Ignore))
+        {
+            var door = hit.collider.GetComponentInParent<BreakableDoor>();
+            if (door != null)
+            {
+                Vector3 hitDir = _cinCam.transform.forward;
+                door.ApplyDamage(doorDamage, hit.point, hitDir);
+            }
+            
+        }
+        Debug.DrawRay(ray.origin, ray.direction * interactDistance, Color.yellow, 0.2f);
+    }
+    
+    
     private void TryInteract()
     {
         Ray ray = new Ray(_cinCam.transform.position, _cinCam.transform.forward);
