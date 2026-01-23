@@ -15,7 +15,8 @@ public class BlinkAbility : MonoBehaviour
     [Header("References")]
     [SerializeField] private Camera playerCamera;
     [SerializeField] private CharacterController controller;
-    [SerializeField] private Transform marker;
+    //[SerializeField] private Transform marker;
+    [SerializeField] private GameObject markerPrefab;
 
     [Header("Distance")]
     [SerializeField] private float minDistance = 1.5f;
@@ -41,7 +42,7 @@ public class BlinkAbility : MonoBehaviour
     [SerializeField] private float standUpOffset = 0.05f;
 
     [Header("Marker")]
-    [SerializeField] private bool showMarker = true;
+    //[SerializeField] private bool showMarker;
     [SerializeField] private float markerOffsetY = 0.02f;
     [SerializeField] private float markerScaleValid = 0.25f;
     [SerializeField] private float markerScaleInvalid = 0.15f;
@@ -71,7 +72,7 @@ public class BlinkAbility : MonoBehaviour
 
         aimDistance = Mathf.Clamp(aimDistance, minDistance, maxDistance);
 
-        if (marker != null) marker.gameObject.SetActive(false);
+        if (markerPrefab != null) markerPrefab.gameObject.SetActive(false);
     }
 
     private void Update()
@@ -83,7 +84,8 @@ public class BlinkAbility : MonoBehaviour
         // 1) Вход/выход из прицеливания (ПКМ удержание)
         if (aimWithRightMouse)
         {
-            if (mouse.rightButton.wasPressedThisFrame) isAiming = true;
+            if (mouse.rightButton.wasPressedThisFrame) 
+                isAiming = true;
 
             // ВАЖНО: на отпускании сначала каст, потом выключаем прицел
             if (mouse.rightButton.wasReleasedThisFrame)
@@ -93,7 +95,7 @@ public class BlinkAbility : MonoBehaviour
 
                 isAiming = false;
                 hasValidPoint = false;
-                if (marker != null) marker.gameObject.SetActive(false);
+                markerPrefab.gameObject.SetActive(false);
                 return;
             }
         }
@@ -106,8 +108,7 @@ public class BlinkAbility : MonoBehaviour
 
         // 3) Считаем точку
         UpdateTargetPoint();
-
-        // 4) Маркер
+        
         UpdateMarker();
     }
 
@@ -164,7 +165,6 @@ public class BlinkAbility : MonoBehaviour
 
     private bool CanStandAt(Vector3 position)
     {
-        if (controller == null) return true;
 
         float radius = controller.radius;
         float height = controller.height;
@@ -183,14 +183,20 @@ public class BlinkAbility : MonoBehaviour
 
     private void UpdateMarker()
     {
-        if (!showMarker || marker == null)
-            return;
+        /*if (!showMarker || marker == null)
+            return;*/
+        if (isAiming)
+        {
+            markerPrefab.gameObject.SetActive(true);
+            markerPrefab.gameObject.transform.position = targetPoint + Vector3.up * markerOffsetY;
 
-        marker.gameObject.SetActive(true);
-        marker.position = targetPoint + Vector3.up * markerOffsetY;
-
-        float s = hasValidPoint ? markerScaleValid : markerScaleInvalid;
-        marker.localScale = new Vector3(s, s, s);
+            float s = hasValidPoint ? markerScaleValid : markerScaleInvalid;
+            markerPrefab.gameObject.transform.localScale = new Vector3(s, s, s);
+        }
+        else
+        {
+            markerPrefab.gameObject.SetActive(false);
+        }
     }
 
     private void TeleportTo(Vector3 position)
@@ -201,12 +207,13 @@ public class BlinkAbility : MonoBehaviour
             return;
         }
 
-        bool wasEnabled = controller.enabled;
+        //bool wasEnabled = controller.enabled;
+        
         controller.enabled = false;
-
+            
         transform.position = position;
 
-        controller.enabled = wasEnabled;
+        controller.enabled = true;
     }
 }
 

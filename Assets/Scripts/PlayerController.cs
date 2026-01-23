@@ -66,6 +66,9 @@ public class PlayerController : MonoBehaviour
     
     public void Update()
     {
+        if (_characterController.isGrounded && _velocity.y < 0f)
+            _velocity.y = -2f;
+        
         _velocity.y += gravity * Time.deltaTime;
         
         Vector3 move = ((GetForward() * _move.y + GetRight() * _move.x) * currentSpeed);
