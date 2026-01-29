@@ -183,7 +183,7 @@ public class EnemyController : MonoBehaviour
         if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
         {
             
-            agent.isStopped = true;
+            //agent.isStopped = true;
 
             LookAround();
 
@@ -223,7 +223,8 @@ public class EnemyController : MonoBehaviour
     
     void UpdateChase()
     {
-        
+        isInvestigating = false;
+        investigateTimer = 0f;
         //lostSightTimer = 0f; todo:доделать
         if (CanSeePlayer())
         { 

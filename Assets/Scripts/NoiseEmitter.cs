@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class Emit : MonoBehaviour
+public class NoiseEmmiter : MonoBehaviour
 {
     public float walkNoiseRadius = 8f;
     public float runNoiseRadius = 12f;
