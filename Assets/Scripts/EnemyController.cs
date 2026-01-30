@@ -4,7 +4,8 @@ using UnityEngine.AI;
 
 public class EnemyController : MonoBehaviour
 {
-    [Header("Suspicion")] public float suspicionIncreaseSpeed = 0.5f;
+    [Header("Suspicion")] 
+    public float suspicionIncreaseSpeed = 0.5f;
     public float suspicionDecreaseSpeed = 0.03f;
 
     public float suspicionToInvestigate = 0.5f;
@@ -15,8 +16,8 @@ public class EnemyController : MonoBehaviour
     private bool heardNoise;
 
 
-    [Header("Investigation")] [SerializeField]
-    float investigateDuration = 3f;
+    [Header("Investigation")]
+    [SerializeField] float investigateDuration = 3f;
 
     [SerializeField] private float lookAroundSpeed = 120f;
     public float investigateTimer;
@@ -25,7 +26,8 @@ public class EnemyController : MonoBehaviour
     private Vector3 lastHeardPosition;
     private Vector3 lastSeenPosition;
 
-    [Header("FOV")] public float viewRadiusDark = 8f;
+    [Header("FOV")] 
+    public float viewRadiusDark = 8f;
     public float viewRadiusLight = 12f;
 
     public float viewAngleDark = 90f;
@@ -34,14 +36,17 @@ public class EnemyController : MonoBehaviour
     public LayerMask targetMask;
     public LayerMask obstacleMask;
 
-    [Header("LightMapping")] public float lightMin = 0.15f;
+    [Header("LightMapping")] 
+    public float lightMin = 0.15f;
     public float lightMax = 0.75f;
     public float lightGamma = 0.7f;
 
-    [Header("PlayerLinks")] public Transform player;
+    [Header("PlayerLinks")] 
+    public Transform player;
     public LightDetector playerLight;
 
-    [Header("Health")] public float maxHp = 100f;
+    [Header("Health")] 
+    public float maxHp = 100f;
     public float hp;
     public bool isDead;
     [SerializeField] private Animator animator;
@@ -50,12 +55,14 @@ public class EnemyController : MonoBehaviour
     private static readonly int HitTrig = Animator.StringToHash("Hit");
     private static readonly int DieTrig = Animator.StringToHash("Die");
 
-    [Header("Patrol")] public Transform[] patrolPoints;
+    [Header("Patrol")] 
+    public Transform[] patrolPoints;
     public float patrolSpeed = 3f;
     public float waitTimeAtPoint = 2f;
 
 
-    [Header("Chase")] public float chaseSpeed = 4f;
+    [Header("Chase")] 
+    public float chaseSpeed = 4f;
 
     private bool isChasing;
 

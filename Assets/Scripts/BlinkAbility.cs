@@ -130,17 +130,14 @@ public class BlinkAbility : MonoBehaviour
         hasValidPoint = false;
 
         Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
-
-        // 1) Точка в воздухе на выбранной дальности
+        
         Vector3 candidate = ray.origin + ray.direction * aimDistance;
-
-        // 2) Если есть препятствие ДО aimDistance — обрезаем до hit.point
+        
         if (Physics.Raycast(ray, out RaycastHit hit, aimDistance, obstacleMask, QueryTriggerInteraction.Ignore))
         {
             candidate = hit.point - ray.direction * backoffFromHit;
         }
-
-        // 3) Чуть вверх, чтобы не пересекать пол
+        
         candidate += Vector3.up * standUpOffset;
 
         // 4) Проверка "влезает ли капсула"

@@ -17,7 +17,6 @@ public class PlayerController : MonoBehaviour
     public float gravity;
     public bool isCrouching;
     
-    
     [Header("Interact")]
     public float interactDistance = 3f;
     public LayerMask interactMask;
@@ -28,20 +27,24 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float meleeDamage = 25f;
     [SerializeField] private float behindAngle = 140f;     // 140-160"со спины" todo:почекать
     [SerializeField] private LayerMask meleeMask;          // enemy and breakable stuff
-
     [SerializeField] private float attackCooldown = 0.35f;
     private float _nextAttackTime;
     
-    [Header("Crouch")]
-    private float _cameraYVelocity;
-    public float crouchSmoothTime = 0.12f;
-    public float crouchHeadOffset = -0.5f;
-    [SerializeField] private Transform headTarget;
+    [Header("Animation")] // attack animation
+    [SerializeField] private Animator animator;
+    private static readonly int AttackTrig = Animator.StringToHash("Attack");
+    
     
     [Header("Vignette")]
     [SerializeField] private VolumeProfile _volumeProfile;
     public float vignetteSmoothTime = 0.12f;
     private float _vignetteIntensity;
+    
+    [Header("CrouchLogic")]
+    private float _cameraYVelocity;
+    public float crouchSmoothTime = 0.12f;
+    public float crouchHeadOffset = -0.5f;
+    [SerializeField] private Transform headTarget;
     
     
     
@@ -176,6 +179,8 @@ public class PlayerController : MonoBehaviour
     
     private void TryAttack()
     {
+        animator.SetTrigger(AttackTrig);
+        s
         if (Time.time < _nextAttackTime)
             return;
 
@@ -184,9 +189,9 @@ public class PlayerController : MonoBehaviour
         Ray ray = new Ray(_cinCam.transform.position, _cinCam.transform.forward);
 
         // 1) Сначала пробуем ударить врага/цель SphereCast'ом (стабильнее чем Raycast)
-        if (Physics.SphereCast(ray, meleeRadius, out RaycastHit hit, meleeRange, meleeMask, QueryTriggerInteraction.Ignore))
+        if (Physics.SphereCast
+                (ray, meleeRadius, out RaycastHit hit, meleeRange, meleeMask, QueryTriggerInteraction.Ignore))
         {
-            // --- ВРАГ ---
             EnemyController enemy = hit.collider.GetComponentInParent<EnemyController>();
             if (enemy != null && !enemy.isDead)
             {
@@ -221,12 +226,10 @@ public class PlayerController : MonoBehaviour
 
     private bool IsBehindEnemy(Transform enemyRoot)
     {
-        // Направление, куда смотрит враг (только по XZ)
         Vector3 enemyForward = enemyRoot.forward;
         enemyForward.y = 0f;
         enemyForward.Normalize();
-
-        // Направление от врага к игроку (XZ)
+        
         Vector3 enemyToPlayer = transform.position - enemyRoot.position;
         enemyToPlayer.y = 0f;
 
