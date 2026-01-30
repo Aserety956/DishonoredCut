@@ -22,9 +22,15 @@ public class PlayerController : MonoBehaviour
     public float interactDistance = 3f;
     public LayerMask interactMask;
     
-    [Header("Attack")]
-    //[SerializeField] private float attackRange = 2.2f;
-    [SerializeField] private float doorDamage = 25f;
+    [Header("Melee")]
+    [SerializeField] private float meleeRange = 2.0f;
+    [SerializeField] private float meleeRadius = 0.25f;
+    [SerializeField] private float meleeDamage = 25f;
+    [SerializeField] private float behindAngle = 140f;     // 140-160"со спины" todo:почекать
+    [SerializeField] private LayerMask meleeMask;          // enemy and breakable stuff
+
+    [SerializeField] private float attackCooldown = 0.35f;
+    private float _nextAttackTime;
     
     [Header("Crouch")]
     private float _cameraYVelocity;
@@ -163,35 +169,82 @@ public class PlayerController : MonoBehaviour
     public void OnAttack(InputValue val)
     {
         if (val.Get<float>() > 0.5f)
-        {
             TryAttack();
-        }
+        
     }
 
     
     private void TryAttack()
     {
+        if (Time.time < _nextAttackTime)
+            return;
+
+        _nextAttackTime = Time.time + attackCooldown;
+
         Ray ray = new Ray(_cinCam.transform.position, _cinCam.transform.forward);
 
-        if (Physics.Raycast(ray, out RaycastHit hit, interactDistance, interactMask, QueryTriggerInteraction.Ignore))
+        // 1) Сначала пробуем ударить врага/цель SphereCast'ом (стабильнее чем Raycast)
+        if (Physics.SphereCast(ray, meleeRadius, out RaycastHit hit, meleeRange, meleeMask, QueryTriggerInteraction.Ignore))
         {
-            var door = hit.collider.GetComponentInParent<BreakableDoor>();
+            // --- ВРАГ ---
+            EnemyController enemy = hit.collider.GetComponentInParent<EnemyController>();
+            if (enemy != null && !enemy.isDead)
+            {
+                if (IsBehindEnemy(enemy.transform))
+                {
+                    // Backstab todo: анимацию с ragdoll
+                    enemy.Die();
+                }
+                else
+                {
+                    
+                    enemy.TakeDamage(meleeDamage, hit.point, ray.direction);
+                }
+
+                Debug.DrawRay(ray.origin, ray.direction * meleeRange, Color.red, 0.2f);
+                return;
+            }
+
+            
+            BreakableDoor door = hit.collider.GetComponentInParent<BreakableDoor>();
             if (door != null)
             {
-                Vector3 hitDir = _cinCam.transform.forward;
-                door.ApplyDamage(doorDamage, hit.point, hitDir);
+                door.ApplyDamage(meleeDamage, hit.point, ray.direction);
+                Debug.DrawRay(ray.origin, ray.direction * meleeRange, Color.yellow, 0.2f);
+                return;
             }
-            
         }
-        Debug.DrawRay(ray.origin, ray.direction * interactDistance, Color.yellow, 0.2f);
+
+        
+        Debug.DrawRay(ray.origin, ray.direction * meleeRange, Color.gray, 0.2f);
     }
-    
-    
+
+    private bool IsBehindEnemy(Transform enemyRoot)
+    {
+        // Направление, куда смотрит враг (только по XZ)
+        Vector3 enemyForward = enemyRoot.forward;
+        enemyForward.y = 0f;
+        enemyForward.Normalize();
+
+        // Направление от врага к игроку (XZ)
+        Vector3 enemyToPlayer = transform.position - enemyRoot.position;
+        enemyToPlayer.y = 0f;
+
+        if (enemyToPlayer.sqrMagnitude < 0.0001f)
+            return false;
+
+        enemyToPlayer.Normalize();
+
+        // Если игрок сзади, угол близок к 180
+        float angle = Vector3.Angle(enemyForward, enemyToPlayer);
+        return angle > behindAngle;
+    }
+
     private void TryInteract()
     {
         Ray ray = new Ray(_cinCam.transform.position, _cinCam.transform.forward);
 
-        // 2) Raycast
+        
         if (Physics.Raycast(ray, out RaycastHit hit, interactDistance, interactMask, QueryTriggerInteraction.Ignore))
         {
             // 3) Ищем DoorAnimator на объекте или выше по иерархии

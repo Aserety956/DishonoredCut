@@ -2968,7 +2968,14 @@ MonoBehaviour:
   interactMask:
     serializedVersion: 2
     m_Bits: 128
-  doorDamage: 25
+  meleeRange: 2
+  meleeRadius: 0.25
+  meleeDamage: 25
+  behindAngle: 140
+  meleeMask:
+    serializedVersion: 2
+    m_Bits: 192
+  attackCooldown: 0.35
   crouchSmoothTime: 0.15
   crouchHeadOffset: -0.5
   headTarget: {fileID: 1649558554}
@@ -5305,6 +5312,10 @@ MonoBehaviour:
   lightGamma: 0.7
   player: {fileID: 870277575}
   playerLight: {fileID: 870277580}
+  maxHp: 100
+  hp: 0
+  isDead: 0
+  animator: {fileID: 0}
   patrolPoints:
   - {fileID: 274343968}
   - {fileID: 791093895}
@@ -37128,6 +37139,10 @@ MonoBehaviour:
   lightGamma: 0.7
   player: {fileID: 870277575}
   playerLight: {fileID: 870277580}
+  maxHp: 100
+  hp: 0
+  isDead: 0
+  animator: {fileID: 0}
   patrolPoints:
   - {fileID: 274343968}
   - {fileID: 791093895}
@@ -45062,6 +45077,10 @@ MonoBehaviour:
   lightGamma: 0.7
   player: {fileID: 870277575}
   playerLight: {fileID: 870277580}
+  maxHp: 100
+  hp: 0
+  isDead: 0
+  animator: {fileID: 0}
   patrolPoints:
   - {fileID: 274343968}
   - {fileID: 791093895}
