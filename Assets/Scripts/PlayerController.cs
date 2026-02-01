@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Text.RegularExpressions;
 using Unity.Cinemachine;
 using Unity.Mathematics;
@@ -27,8 +28,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float meleeDamage = 25f;
     [SerializeField] private float behindAngle = 140f;     // 140-160"со спины" todo:почекать
     [SerializeField] private LayerMask meleeMask;          // enemy and breakable stuff
-    [SerializeField] private float attackCooldown = 0.35f;
     private float _nextAttackTime;
+    [SerializeField] private float attackHitDelay;   // когда реально "попадает"
+    [SerializeField] private float attackTotalTime;  // длительность анимации
+    private bool _isAttacking;
+    private Coroutine _attackRoutine;
     
     [Header("Animation")] // attack animation
     [SerializeField] private Animator animator;
@@ -179,51 +183,58 @@ public class PlayerController : MonoBehaviour
     
     private void TryAttack()
     {
-        animator.SetTrigger(AttackTrig);
-        s
-        if (Time.time < _nextAttackTime)
+
+        if (_isAttacking)
             return;
+        
+        animator.SetTrigger(AttackTrig);
+        
+        _attackRoutine = StartCoroutine(AttackRoutine());
+    }
+    
+    private IEnumerator AttackRoutine()
+    {
+        _isAttacking = true;
 
-        _nextAttackTime = Time.time + attackCooldown;
+        // 1) ждём до "кадра попадания"
+        yield return new WaitForSeconds(attackHitDelay);
 
+        // 2) наносим урон именно здесь
+        DoMeleeHit();
+
+        // 3) ждём до конца удара (чтобы нельзя было спамить)
+        float remaining = Mathf.Max(0f, attackTotalTime - attackHitDelay);
+        yield return new WaitForSeconds(remaining);
+
+        _isAttacking = false;
+        _attackRoutine = null;
+    }
+    
+    private void DoMeleeHit()
+    {
         Ray ray = new Ray(_cinCam.transform.position, _cinCam.transform.forward);
 
-        // 1) Сначала пробуем ударить врага/цель SphereCast'ом (стабильнее чем Raycast)
-        if (Physics.SphereCast
-                (ray, meleeRadius, out RaycastHit hit, meleeRange, meleeMask, QueryTriggerInteraction.Ignore))
+        if (Physics.SphereCast(ray, meleeRadius, out RaycastHit hit, meleeRange, meleeMask, QueryTriggerInteraction.Ignore))
         {
             EnemyController enemy = hit.collider.GetComponentInParent<EnemyController>();
-            if (enemy != null && !enemy.isDead)
+            if (enemy != null /* && !enemy.isDead */)
             {
                 if (IsBehindEnemy(enemy.transform))
-                {
-                    // Backstab todo: анимацию с ragdoll
                     enemy.Die();
-                }
                 else
-                {
-                    
                     enemy.TakeDamage(meleeDamage, hit.point, ray.direction);
-                }
 
-                Debug.DrawRay(ray.origin, ray.direction * meleeRange, Color.red, 0.2f);
                 return;
             }
 
-            
             BreakableDoor door = hit.collider.GetComponentInParent<BreakableDoor>();
             if (door != null)
             {
                 door.ApplyDamage(meleeDamage, hit.point, ray.direction);
-                Debug.DrawRay(ray.origin, ray.direction * meleeRange, Color.yellow, 0.2f);
                 return;
             }
         }
-
-        
-        Debug.DrawRay(ray.origin, ray.direction * meleeRange, Color.gray, 0.2f);
     }
-
     private bool IsBehindEnemy(Transform enemyRoot)
     {
         Vector3 enemyForward = enemyRoot.forward;
