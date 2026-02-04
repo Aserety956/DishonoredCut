@@ -22,12 +22,12 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private float lookAroundSpeed = 120f;
     public float investigateTimer;
     public bool isInvestigating;
-    private Vector3 lastHeardPosition;
-    private Vector3 lastSeenPosition;
+    private Vector3 _lastHeardPosition;
+    private Vector3 _lastSeenPosition;
     
-    private bool waitingAtInvestigatePoint;
-    private float investigatePointTimer;
-    private Vector3 investigateCenter;
+    private bool _isWaitingAtInvestigatePoint;
+    private float _investigatePointTimer;
+    private Vector3 _investigateCenter;
     [SerializeField] private float investigateRadius = 4f; // радиус поиска вокруг центра расследования
     [SerializeField] private float investigatePointWaitTime = 0.8f; // сколько стоять/оглядываться на точке
     [SerializeField] private float navSampleMaxDistance = 2f; // насколько далеко искать NavMesh точку от кандидата
@@ -141,8 +141,8 @@ public class EnemyController : MonoBehaviour
             case EnemyState.Patrol:
                 isChasing = false;
                 isInvestigating = false;
-                waitingAtInvestigatePoint = false;
-                investigatePointTimer = 0f;
+                _isWaitingAtInvestigatePoint = false;
+                _investigatePointTimer = 0f;
                 investigateTimer = 0f;
 
                 agent.speed = patrolSpeed;
@@ -160,18 +160,18 @@ public class EnemyController : MonoBehaviour
                 agent.isStopped = false;
 
                 investigateTimer = 0f;
-                waitingAtInvestigatePoint = false;
-                investigatePointTimer = 0f;
+                _isWaitingAtInvestigatePoint = false;
+                _investigatePointTimer = 0f;
 
                 // Сначала попробуем пойти к центру, чтобы выглядело естественно
-                agent.SetDestination(investigateCenter);
+                agent.SetDestination(_investigateCenter);
                 break;
 
             case EnemyState.Chase:
                 isChasing = true;
                 isInvestigating = false;
-                waitingAtInvestigatePoint = false;
-                investigatePointTimer = 0f;
+                _isWaitingAtInvestigatePoint = false;
+                _investigatePointTimer = 0f;
                 investigateTimer = 0f;
 
                 agent.speed = chaseSpeed;
@@ -185,12 +185,12 @@ public class EnemyController : MonoBehaviour
         if (canSeePlayer)
         {
             suspicion += 1f;
-            lastSeenPosition = player.position;
+            _lastSeenPosition = player.position;
         }
         else if (hearsNoise)
         {
             suspicion += 0.1f;
-            lastHeardPosition = player.position;
+            _lastHeardPosition = player.position;
         }
         else
         {
@@ -258,8 +258,8 @@ public class EnemyController : MonoBehaviour
         {
             isInvestigating = false;
             investigateTimer = 0f;
-            waitingAtInvestigatePoint = false;
-            investigatePointTimer = 0f;
+            _isWaitingAtInvestigatePoint = false;
+            _investigatePointTimer = 0f;
 
             currentState = EnemyState.Patrol;
             return;
@@ -268,19 +268,19 @@ public class EnemyController : MonoBehaviour
         // Если дошли до текущей точки расследования
         if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 0.1f)
         {
-            if (!waitingAtInvestigatePoint)
+            if (!_isWaitingAtInvestigatePoint)
             {
-                waitingAtInvestigatePoint = true;
-                investigatePointTimer = 0f;
+                _isWaitingAtInvestigatePoint = true;
+                _investigatePointTimer = 0f;
             }
 
             LookAround();
-            investigatePointTimer += Time.deltaTime;
+            _investigatePointTimer += Time.deltaTime;
 
-            if (investigatePointTimer >= investigatePointWaitTime)
+            if (_investigatePointTimer >= investigatePointWaitTime)
             {
-                waitingAtInvestigatePoint = false;
-                investigatePointTimer = 0f;
+                _isWaitingAtInvestigatePoint = false;
+                _investigatePointTimer = 0f;
 
                 PickNewInvestigateDestination();
             }
@@ -293,7 +293,7 @@ public class EnemyController : MonoBehaviour
         for (int i = 0; i < 8; i++)
         {
             Vector2 rnd = Random.insideUnitCircle * investigateRadius;
-            Vector3 candidate = investigateCenter + new Vector3(rnd.x, 0f, rnd.y);
+            Vector3 candidate = _investigateCenter + new Vector3(rnd.x, 0f, rnd.y);
 
             if (NavMesh.SamplePosition(candidate, out NavMeshHit hit, navSampleMaxDistance, NavMesh.AllAreas))
             {
@@ -302,7 +302,7 @@ public class EnemyController : MonoBehaviour
             }
         }
         
-        agent.SetDestination(investigateCenter);
+        agent.SetDestination(_investigateCenter);
     }
 
     void LookAround()
@@ -334,7 +334,7 @@ public class EnemyController : MonoBehaviour
         if (CanSeePlayer())
         {
             agent.speed = chaseSpeed;
-            lastSeenPosition = player.position;
+            _lastSeenPosition = player.position;
             agent.SetDestination(player.position);
         }
         else
@@ -342,7 +342,7 @@ public class EnemyController : MonoBehaviour
         {
 
             currentState = EnemyState.Investigate;
-            agent.SetDestination(lastSeenPosition);
+            agent.SetDestination(_lastSeenPosition);
 
         }
     }
@@ -401,16 +401,15 @@ public class EnemyController : MonoBehaviour
         if (currentState == EnemyState.Chase)
             return;
 
-        lastHeardPosition = noisePosition;
-        investigateCenter = noisePosition;
+        _lastHeardPosition = noisePosition;
+        _investigateCenter = noisePosition;
         heardNoise = true;
-
-        // Если мы уже расследуем — просто "перенацелимся" и продлим расследование
+        
         if (currentState == EnemyState.Investigate)
         {
             investigateTimer = 0f;
-            waitingAtInvestigatePoint = false;
-            investigatePointTimer = 0f;
+            _isWaitingAtInvestigatePoint = false;
+            _investigatePointTimer = 0f;
             agent.isStopped = false;
             PickNewInvestigateDestination();
             return;
@@ -418,30 +417,12 @@ public class EnemyController : MonoBehaviour
 
         // Иначе переходим в Investigate — OnEnterState задаст новую точку
         investigateTimer = 0f;
-        waitingAtInvestigatePoint = false;
-        investigatePointTimer = 0f;
+        _isWaitingAtInvestigatePoint = false;
+        _investigatePointTimer = 0f;
         agent.isStopped = false;
 
         currentState = EnemyState.Investigate;
     }
-    /*public void HearNoise(Vector3 noisePosition, float noiseRadius)
-    {
-
-        if (currentState == EnemyState.Chase)
-            return;
-
-
-        lastHeardPosition = noisePosition;
-        heardNoise = true;
-
-        investigateTimer = 0f;
-        agent.isStopped = false;
-
-        if (currentState == EnemyState.Investigate)
-        {
-            agent.SetDestination(lastHeardPosition);
-        }
-    }*/
 
     public void TakeDamage(float amount, Vector3 hitPoint, Vector3 hitDir)
     {
@@ -533,13 +514,13 @@ public class EnemyController : MonoBehaviour
             if (currentState == EnemyState.Investigate)
             {
                 Gizmos.color = Color.orange;
-                Gizmos.DrawSphere(lastSeenPosition, 0.2f);
+                Gizmos.DrawSphere(_lastSeenPosition, 0.2f);
             }
 
             if (currentState == EnemyState.Investigate)
             {
                 Gizmos.color = Color.cyan;
-                Gizmos.DrawSphere(lastHeardPosition, 0.2f);
+                Gizmos.DrawSphere(_lastHeardPosition, 0.2f);
             }
         }
     

@@ -7,10 +7,12 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
-
+// private (_doSomething) // public (DoSomething) // static s_(Public, _private)
+// interface (IDoSomething)
     [Header("Movement")]
     public float currentSpeed;
     public float walkSpeed;
@@ -40,7 +42,7 @@ public class PlayerController : MonoBehaviour
     
     
     [Header("Vignette")]
-    [SerializeField] private VolumeProfile _volumeProfile;
+    [SerializeField] private VolumeProfile volumeProfile;
     public float vignetteSmoothTime = 0.12f;
     private float _vignetteIntensity;
     
@@ -50,10 +52,22 @@ public class PlayerController : MonoBehaviour
     public float crouchHeadOffset = -0.5f;
     [SerializeField] private Transform headTarget;
     
+    [Header("UI")]
+    [SerializeField] private Image fillImageMana;
+    [SerializeField] private Image fillImageHealth;
+    [SerializeField] private Image backgroundImage;
+
+    [Header("Stats")] 
+    public static float HP;
+    public static float MP;
+    public static float currentHP;
+    public static float currentMP;
+    public static float baseHP;
+    public static float baseMP;
     
     
-    [SerializeField] private CharacterController _characterController;
-    [SerializeField] private CinemachineCamera _cinCam;
+    [SerializeField] private CharacterController characterController;
+    [SerializeField] private CinemachineCamera cinCam;
     
     private Vector3 _headInitialLocalPos;
     private float _headYVelocity;
@@ -63,6 +77,11 @@ public class PlayerController : MonoBehaviour
 
     public void Start()
     {
+        baseHP = 100f;
+        baseMP = 100f;
+        currentHP = baseHP;
+        currentMP = baseMP;
+        
         currentSpeed = walkSpeed;
         _velocity = Vector3.zero;
         _headInitialLocalPos = headTarget.localPosition;
@@ -79,21 +98,25 @@ public class PlayerController : MonoBehaviour
     
     public void Update()
     {
-        if (_characterController.isGrounded && _velocity.y < 0f)
+        
+        if (characterController.isGrounded && _velocity.y < 0f)
             _velocity.y = -2f;
         
         _velocity.y += gravity * Time.deltaTime;
         
         Vector3 move = ((GetForward() * _move.y + GetRight() * _move.x) * currentSpeed);
         
-        _characterController.Move((move + _velocity) * Time.deltaTime);
+        characterController.Move((move + _velocity) * Time.deltaTime);
         
-        _volumeProfile.TryGet(out Vignette vignette);
+        volumeProfile.TryGet(out Vignette vignette);
         vignette.intensity.value = Mathf.SmoothDamp(
             vignette.intensity.value,
             isCrouching ? 0.25f : 0f,
             ref _vignetteIntensity,
             vignetteSmoothTime);
+        
+        
+        HealthUpdate();
     }
 
     public void LateUpdate()
@@ -132,7 +155,7 @@ public class PlayerController : MonoBehaviour
     
     public void OnJump(InputValue val)
     {
-        if (val.Get<float>() > 0.5f && _characterController.isGrounded)
+        if (val.Get<float>() > 0.5f && characterController.isGrounded)
         {
             _velocity.y = 3f; 
         }
@@ -152,14 +175,14 @@ public class PlayerController : MonoBehaviour
 
     private Vector3 GetForward()
     {
-        Vector3 forward = _cinCam.transform.forward;
+        Vector3 forward = cinCam.transform.forward;
         forward.y = 0;
         return forward.normalized;
     }
     
     private Vector3 GetRight()
     {
-        Vector3 right = _cinCam.transform.right;
+        Vector3 right = cinCam.transform.right;
         right.y = 0;
         return right.normalized;
     }
@@ -180,6 +203,13 @@ public class PlayerController : MonoBehaviour
         
     }
 
+    public void HealthUpdate()
+    {
+        Mathf.Clamp(currentMP,0,baseMP);
+        Mathf.Clamp(currentHP,0,baseHP);
+        fillImageHealth.fillAmount = baseHP/currentHP;
+        fillImageMana.fillAmount = baseMP/currentMP;
+    }
     
     private void TryAttack()
     {
@@ -212,7 +242,7 @@ public class PlayerController : MonoBehaviour
     
     private void DoMeleeHit()
     {
-        Ray ray = new Ray(_cinCam.transform.position, _cinCam.transform.forward);
+        Ray ray = new Ray(cinCam.transform.position, cinCam.transform.forward);
 
         if (Physics.SphereCast(ray, meleeRadius, out RaycastHit hit, meleeRange, meleeMask, QueryTriggerInteraction.Ignore))
         {
@@ -256,7 +286,7 @@ public class PlayerController : MonoBehaviour
 
     private void TryInteract()
     {
-        Ray ray = new Ray(_cinCam.transform.position, _cinCam.transform.forward);
+        Ray ray = new Ray(cinCam.transform.position, cinCam.transform.forward);
 
         
         if (Physics.Raycast(ray, out RaycastHit hit, interactDistance, interactMask, QueryTriggerInteraction.Ignore))
