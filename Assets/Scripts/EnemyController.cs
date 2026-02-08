@@ -45,7 +45,7 @@ public class EnemyController : MonoBehaviour
 
     [Header("LightMapping")] 
     public float lightMin = 0.15f;
-    public float lightMax = 0.75f;
+    public float lightMax = 0.95f;
     public float lightGamma = 0.7f;
 
     [Header("PlayerLinks")] 
@@ -389,7 +389,7 @@ public class EnemyController : MonoBehaviour
         t = Mathf.Clamp01(t);
 
         // делаем "кривую" (опционально, но полезно)
-        t = Mathf.Pow(t, lightGamma);
+        //t = Mathf.Pow(t, lightGamma);
 
         viewRadius = Mathf.Lerp(viewRadiusDark, viewRadiusLight, t);
         viewAngle = Mathf.Lerp(viewAngleDark, viewAngleLight, t);

@@ -11,7 +11,7 @@ using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
-// private (_doSomething) // public (DoSomething) // static s_(Public, _private)
+// private (_doSomething) // public (DoSomething) // static s(_Public, _private)
 // interface (IDoSomething)
     [Header("Movement")]
     public float currentSpeed;
@@ -19,10 +19,12 @@ public class PlayerController : MonoBehaviour
     public float sprintSpeed;
     public float gravity;
     public bool isCrouching;
+    public bool isSwordEquipped;
     
     [Header("Interact")]
     public float interactDistance = 3f;
     public LayerMask interactMask;
+    public float throwForce; // на будущее: сила зависит от навыка
     
     [Header("Melee")]
     [SerializeField] private float meleeRange = 2.0f;
@@ -36,7 +38,7 @@ public class PlayerController : MonoBehaviour
     private bool _isAttacking;
     private Coroutine _attackRoutine;
     
-    [Header("Animation")] // attack animation
+    [Header("Animation")] 
     [SerializeField] private Animator animator;
     private static readonly int AttackTrig = Animator.StringToHash("Attack");
     
@@ -47,10 +49,11 @@ public class PlayerController : MonoBehaviour
     private float _vignetteIntensity;
     
     [Header("CrouchLogic")]
+    [SerializeField] private Transform headTarget;
     private float _cameraYVelocity;
     public float crouchSmoothTime = 0.12f;
     public float crouchHeadOffset = -0.5f;
-    [SerializeField] private Transform headTarget;
+    
     
     [Header("UI")]
     [SerializeField] private Image fillImageMana;
@@ -68,13 +71,21 @@ public class PlayerController : MonoBehaviour
     
     [SerializeField] private CharacterController characterController;
     [SerializeField] private CinemachineCamera cinCam;
+    private BottleItem _heldItem;
+    [SerializeField] private Transform handsPos;
+    [SerializeField] private Transform itemPos;
+    
+    [Header("Debug")]
+    [SerializeField] private GameObject itemPrefab;
+    private Vector3 offsetToSpawn;
+    
     
     private Vector3 _headInitialLocalPos;
     private float _headYVelocity;
     
     private Vector2 _move;
     private Vector3 _velocity;
-
+    
     public void Start()
     {
         baseHP = 100f;
@@ -89,6 +100,9 @@ public class PlayerController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         
+        HealthUpdate();
+        ManaUpdate();
+        
         float Fr = 1, To = 10, I=2;
         float t = Mathf.InverseLerp(Fr, To, I);
 
@@ -98,7 +112,20 @@ public class PlayerController : MonoBehaviour
     
     public void Update()
     {
+
+        UpdateMove();
+
+    }
+
+    public void LateUpdate()
+    {
         
+        UpdateCam();
+        
+    }
+    
+    public void UpdateMove()
+    {
         if (characterController.isGrounded && _velocity.y < 0f)
             _velocity.y = -2f;
         
@@ -108,18 +135,9 @@ public class PlayerController : MonoBehaviour
         
         characterController.Move((move + _velocity) * Time.deltaTime);
         
-        volumeProfile.TryGet(out Vignette vignette);
-        vignette.intensity.value = Mathf.SmoothDamp(
-            vignette.intensity.value,
-            isCrouching ? 0.25f : 0f,
-            ref _vignetteIntensity,
-            vignetteSmoothTime);
-        
-        
-        HealthUpdate();
     }
 
-    public void LateUpdate()
+    public void UpdateCam()
     {
         
         float targetOffset = isCrouching ? crouchHeadOffset : 0f;
@@ -134,6 +152,12 @@ public class PlayerController : MonoBehaviour
 
         headTarget.localPosition = localPos;
         
+        volumeProfile.TryGet(out Vignette vignette);
+        vignette.intensity.value = Mathf.SmoothDamp(
+            vignette.intensity.value,
+            isCrouching ? 0.25f : 0f,
+            ref _vignetteIntensity,
+            vignetteSmoothTime);
     }
 
     public void OnMove(InputValue val)
@@ -173,6 +197,15 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void OnDebug(InputValue val)
+    {
+        if (val.Get<float>() > 0.5f)
+        {
+            offsetToSpawn = new Vector3(5, 5, 5);
+            Instantiate(itemPrefab, transform.position + offsetToSpawn, transform.rotation);
+        }
+    }
+
     private Vector3 GetForward()
     {
         Vector3 forward = cinCam.transform.forward;
@@ -193,21 +226,34 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("Interact"+ val.Get<float>());
             TryInteract();
+            
         }
     }
 
     public void OnAttack(InputValue val)
     {
-        if (val.Get<float>() > 0.5f)
+        if (val.Get<float>() > 0.5f && _heldItem == null)
+        {
             TryAttack();
-        
+        }
+        else if (val.Get<float>() > 0.5f && _heldItem != null)
+        {
+            Vector3 velocityChange = cinCam.transform.forward * throwForce;
+            _heldItem.ThrowFrom(itemPos.position,itemPos.rotation,velocityChange);
+            handsPos.localPosition += Vector3.up;
+        }
+
     }
 
     public void HealthUpdate()
     {
-        Mathf.Clamp(currentMP,0,baseMP);
         Mathf.Clamp(currentHP,0,baseHP);
         fillImageHealth.fillAmount = baseHP/currentHP;
+    }
+
+    public void ManaUpdate()
+    {
+        Mathf.Clamp(currentMP,0,baseMP);
         fillImageMana.fillAmount = baseMP/currentMP;
     }
     
@@ -228,8 +274,7 @@ public class PlayerController : MonoBehaviour
 
         // 1) ждём до "кадра попадания"
         yield return new WaitForSeconds(attackHitDelay);
-
-        // 2) наносим урон именно здесь
+        
         DoMeleeHit();
 
         // 3) ждём до конца удара (чтобы нельзя было спамить)
@@ -286,20 +331,39 @@ public class PlayerController : MonoBehaviour
 
     private void TryInteract()
     {
+        
+        if (_heldItem != null)
+        {
+            _heldItem.ReleaseDrop(itemPos.position, itemPos.rotation);
+            handsPos.localPosition += Vector3.up;
+            _heldItem = null;
+        }
+        
+        
         Ray ray = new Ray(cinCam.transform.position, cinCam.transform.forward);
 
         
         if (Physics.Raycast(ray, out RaycastHit hit, interactDistance, interactMask, QueryTriggerInteraction.Ignore))
         {
-            // 3) Ищем DoorAnimator на объекте или выше по иерархии
             DoorsAnim door = hit.collider.GetComponentInParent<DoorsAnim>();
             if (door != null)
             {
                 door.Toggle();
             }
+            
+            
+            BottleItem item = hit.collider.GetComponentInParent<BottleItem>(); 
+            if (item != null)
+            {
+                handsPos.localPosition -= Vector3.up;
+                _heldItem = item;
+                _heldItem.PickupTo(itemPos, Vector3.zero, Vector3.zero);
+                return;
+            }
         }
-        
         Debug.DrawRay(ray.origin, ray.direction * interactDistance, Color.yellow, 0.2f);
+            
+        
     }
     
 }
