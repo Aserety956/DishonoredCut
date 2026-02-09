@@ -201,7 +201,7 @@ public class PlayerController : MonoBehaviour
     {
         if (val.Get<float>() > 0.5f)
         {
-            offsetToSpawn = new Vector3(5, 5, 5);
+            offsetToSpawn = new Vector3(1, 1, 1);
             Instantiate(itemPrefab, transform.position + offsetToSpawn, transform.rotation);
         }
     }

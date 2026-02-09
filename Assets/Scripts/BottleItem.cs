@@ -8,14 +8,18 @@ public  class BottleItem : MonoBehaviour
 
     [Header("Break visuals")]
     public GameObject fracturedPrefab;
-    public float fracturedLifetime = 8f;
+    public float fracturedLifetime = 5f;
     public float fracturedExplosion = 2.5f;
     public float fracturedUp = 0.6f;
+    
+    [Header("Audio")]
+    [SerializeField] private AudioClip breakClip;
+    [SerializeField, Range(0f, 1f)] private float breakVolume = 1f;
 
     private Rigidbody _rb;
     private Collider _col;
 
-    public bool isHeld;
+    private bool _isHeld;
 
     // КЛЮЧ: пока armed=false — бутылка НИКОГДА не шумит и не ломается
     private bool _armed;
@@ -32,7 +36,7 @@ public  class BottleItem : MonoBehaviour
 
     public void PickupTo(Transform holdPoint, Vector3 localPos, Vector3 localEuler)
     {
-        isHeld = true;
+        _isHeld = true;
 
         _rb.linearVelocity = Vector3.zero;
         _rb.angularVelocity = Vector3.zero;
@@ -82,7 +86,7 @@ public  class BottleItem : MonoBehaviour
 
     void DetachToWorld(Vector3 pos, Quaternion rot)
     {
-        isHeld = false;
+        _isHeld = false;
 
         transform.SetParent(null, worldPositionStays: true);
         transform.position = pos;
@@ -95,26 +99,26 @@ public  class BottleItem : MonoBehaviour
 
     void OnCollisionEnter(Collision c)
     {
-        if (isHeld) return;
+        if (_isHeld) return;
 
         // КЛЮЧ: не armed => вообще ничего не делаем
         if (!_armed) return;
 
-        //if (Time.time < _nextImpactTime) return;
+        if (breakClip != null)
+            AudioSource.PlayClipAtPoint(breakClip, transform.position, breakVolume);
 
-        //float speed = c.relativeVelocity.magnitude;
-        //if (speed < minImpactSpeed) return;
+        if (breakNoiseRadius > 0f)
+        {
+            NoiseEmmiter.EmitNoiseAt(transform.position, breakNoiseRadius);
+        }
 
-        //_nextImpactTime = Time.time + impactCooldown;
-        
-            if (breakNoiseRadius > 0f)
-                NoiseEmmiter.EmitNoiseAt(transform.position, breakNoiseRadius);
-
-            Break(c);
+        Break(c);
     }
 
     void Break(Collision c)
     {
+        
+        
         if (fracturedPrefab != null)
         {
             

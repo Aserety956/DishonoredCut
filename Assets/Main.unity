@@ -1938,9 +1938,9 @@ MonoBehaviour:
   animator: {fileID: 5593568711066801566}
   volumeProfile: {fileID: 11400000, guid: 0997bccd4c907eb459285ee7c801eae5, type: 2}
   vignetteSmoothTime: 0.12
+  headTarget: {fileID: 1649558554}
   crouchSmoothTime: 0.15
   crouchHeadOffset: -0.5
-  headTarget: {fileID: 1649558554}
   fillImageMana: {fileID: 1706621453}
   fillImageHealth: {fileID: 305924951}
   backgroundImage: {fileID: 0}
@@ -2464,10 +2464,11 @@ MonoBehaviour:
   breakNoiseRadius: 12
   fracturedPrefab: {fileID: 174654926840969008, guid: 509eae7c521f0e64da25a57aadbf3896,
     type: 3}
-  fracturedLifetime: 8
+  fracturedLifetime: 5
   fracturedExplosion: 2.5
   fracturedUp: 0.6
-  isHeld: 0
+  breakClip: {fileID: 8300000, guid: b9730208f1c037442be6b014472edd9d, type: 3}
+  breakVolume: 1
 --- !u!65 &1038861592
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2525,7 +2526,7 @@ Transform:
   m_GameObject: {fileID: 1038861590}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.113, y: -1.91, z: 3.9}
+  m_LocalPosition: {x: -22.275, y: 0.103, z: -23.746}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -43634,6 +43635,7 @@ GameObject:
   - component: {fileID: 8667184541282347786}
   - component: {fileID: 8667184541282347785}
   - component: {fileID: 8667184541282347787}
+  - component: {fileID: 8667184541282347788}
   m_Layer: 7
   m_Name: Jager
   m_TagString: Untagged
@@ -43704,10 +43706,108 @@ MonoBehaviour:
   breakNoiseRadius: 12
   fracturedPrefab: {fileID: 174654926840969008, guid: 509eae7c521f0e64da25a57aadbf3896,
     type: 3}
-  fracturedLifetime: 8
+  fracturedLifetime: 5
   fracturedExplosion: 2.5
   fracturedUp: 0.6
-  isHeld: 0
+  breakClip: {fileID: 8300000, guid: b9730208f1c037442be6b014472edd9d, type: 3}
+  breakVolume: 1
+--- !u!82 &8667184541282347788
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8667184541282347784}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 8300000, guid: e56e6f35d2f455442949923177762f49, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!4 &8671415838945926811
 Transform:
   m_ObjectHideFlags: 0
