@@ -24,6 +24,7 @@ public class PlayerController : MonoBehaviour
     [Header("Interact")]
     public float interactDistance = 3f;
     public LayerMask interactMask;
+    public LayerMask itemMask;
     public float throwForce; // на будущее: сила зависит от навыка
     
     [Header("Melee")]
@@ -343,7 +344,7 @@ public class PlayerController : MonoBehaviour
         Ray ray = new Ray(cinCam.transform.position, cinCam.transform.forward);
 
         
-        if (Physics.Raycast(ray, out RaycastHit hit, interactDistance, interactMask, QueryTriggerInteraction.Ignore))
+        if (Physics.Raycast(ray, out RaycastHit hit, interactDistance, interactMask | itemMask, QueryTriggerInteraction.Ignore))
         {
             DoorsAnim door = hit.collider.GetComponentInParent<DoorsAnim>();
             if (door != null)

@@ -7,10 +7,13 @@ public class SuspicionBar : MonoBehaviour
     [SerializeField] private Image fillImage;
     [SerializeField] private Image backgroundImage;
     [SerializeField] private EnemyController enemy;
+    [SerializeField] private Animator barAnim;
     
 
 
     private Camera cam;
+    
+    private static readonly int Suspicion = Animator.StringToHash("Suspicion");
 
     void Awake()
     {
@@ -27,35 +30,31 @@ public class SuspicionBar : MonoBehaviour
     
     void Update()
     {
-        fillImage.fillAmount = enemy.suspicion;
+        float suspicion01 = enemy.suspicion;
         
-        if (fillImage.fillAmount <= 0f)
+        barAnim.SetFloat(Suspicion, suspicion01, 0, Time.deltaTime);
+        
+        float susp = enemy.suspicion;
+        
+        fillImage.fillAmount = susp;
+        
+        
+        switch (susp)
         {
-            fillImage.gameObject.SetActive(false);
-            backgroundImage.gameObject.SetActive(false);
-            
+            case <= 0f:
+                fillImage.gameObject.SetActive(false);
+                backgroundImage.gameObject.SetActive(false);
+                barAnim.enabled = false;
+                break;
+            case > 0f:
+                fillImage.gameObject.SetActive(true);
+                backgroundImage.gameObject.SetActive(true);
+                barAnim.enabled = true;
+                break;
         }
-        else
-        {
-            fillImage.gameObject.SetActive(true);
-            backgroundImage.gameObject.SetActive(true);
-        }
-
-        if (fillImage.fillAmount <= 0.5f)
-        {
-            fillImage.color = Color.white;
-        }
-        if (fillImage.fillAmount >= 0.5f)
-        {
-            fillImage.color = Color.yellow;
-        }
+        
         // todo: анимация ААА задетектили
-        if (fillImage.fillAmount >= 1f)
-        {
-            fillImage.color = Color.red;
-            fillImage.gameObject.SetActive(false);
-            backgroundImage.gameObject.SetActive(false);
-        }
+        
     }
     
     

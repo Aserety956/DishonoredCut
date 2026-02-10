@@ -42,7 +42,6 @@ public class BlinkAbility : MonoBehaviour
     [SerializeField] private float standUpOffset = 0.05f;
 
     [Header("Marker")]
-    //[SerializeField] private bool showMarker;
     [SerializeField] private float markerOffsetY = 0.02f;
     [SerializeField] private float markerScaleValid = 0.25f;
     [SerializeField] private float markerScaleInvalid = 0.15f;
@@ -133,7 +132,7 @@ public class BlinkAbility : MonoBehaviour
         
         Vector3 candidate = ray.origin + ray.direction * aimDistance;
         
-        if (Physics.Raycast(ray, out RaycastHit hit, aimDistance, obstacleMask, QueryTriggerInteraction.Ignore))
+        if (Physics.Raycast(ray, out RaycastHit hit, aimDistance,obstacleMask,QueryTriggerInteraction.Ignore))
         {
             candidate = hit.point - ray.direction * backoffFromHit;
         }

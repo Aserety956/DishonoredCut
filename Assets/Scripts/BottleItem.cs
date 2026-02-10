@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public  class BottleItem : MonoBehaviour
 {
@@ -13,23 +14,28 @@ public  class BottleItem : MonoBehaviour
     public float fracturedUp = 0.6f;
     
     [Header("Audio")]
-    [SerializeField] private AudioClip breakClip;
+    [SerializeField] private AudioClip[] breakClip;
     [SerializeField, Range(0f, 1f)] private float breakVolume = 1f;
 
     private Rigidbody _rb;
     private Collider _col;
+    [SerializeField] private CharacterController playerController;
 
     private bool _isHeld;
 
     // КЛЮЧ: пока armed=false — бутылка НИКОГДА не шумит и не ломается
     private bool _armed;
-
-    //private float _nextImpactTime;
+    
+    private bool _broken;
+    
 
     void Awake()
     {
         _rb = GetComponent<Rigidbody>();
         _col = GetComponent<Collider>();
+        
+        if (playerController != null)
+            Physics.IgnoreCollision(_col, playerController);
     }
 
     // ---------- API для игрока ----------
@@ -103,9 +109,16 @@ public  class BottleItem : MonoBehaviour
 
         // КЛЮЧ: не armed => вообще ничего не делаем
         if (!_armed) return;
+        
+        if (_broken) return;
+        _broken = true;
+        
+        if (_col != null) _col.enabled = false;
+        
+        int index = Random.Range(0, breakClip.Length);
 
         if (breakClip != null)
-            AudioSource.PlayClipAtPoint(breakClip, transform.position, breakVolume);
+            AudioSource.PlayClipAtPoint(breakClip[index], transform.position, breakVolume);
 
         if (breakNoiseRadius > 0f)
         {
@@ -145,7 +158,7 @@ public  class BottleItem : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, breakNoiseRadius);
