@@ -1,10 +1,10 @@
 using UnityEngine;
 
-public class BreakableDoor : MonoBehaviour
+public class BreakableDoor : MonoBehaviour, IDamageable
 {
     [Header("Health")]
     [SerializeField] private float maxHp = 50f;
-    private float hp;
+    public float hp;
 
     [Header("Broken Prefab")]
     [SerializeField] private GameObject brokenDoorPrefab;
@@ -17,18 +17,25 @@ public class BreakableDoor : MonoBehaviour
 
     [Header("Optional")]
     [SerializeField] private bool destroyIntactObject = true;
+    
+    [Header("Animation")]
+    private Animator animator;
+    private bool isOpen;
 
     private bool isBroken;
 
     private void Awake()
     {
         hp = maxHp;
+        animator = GetComponent<Animator>();
     }
-
+    public void Toggle()
+    {
+        isOpen = !isOpen;
+        animator.SetBool("IsOpen", isOpen);
+    }
     
-    // Нанести урон двери. hitPoint/hitDir нужны, чтобы красиво толкнуть куски.
-    
-    public void ApplyDamage(float damage, Vector3 hitPoint, Vector3 hitDir)
+    public void TakeDamage(float damage, Vector3 hitPoint, Vector3 hitDir)
     {
         Debug.Log($"Break() called. brokenDoorPrefab={(brokenDoorPrefab ? brokenDoorPrefab.name : "NULL")}");
         if (isBroken) return;

@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public  class BottleItem : MonoBehaviour
+public class BottleItem : MonoBehaviour, IDamageable
 {
     [Header("Noise")]
     public float breakNoiseRadius  = 8f;
@@ -33,7 +33,6 @@ public  class BottleItem : MonoBehaviour
     {
         _rb = GetComponent<Rigidbody>();
         _col = GetComponent<Collider>();
-        
         if (playerController != null)
             Physics.IgnoreCollision(_col, playerController);
     }
@@ -106,50 +105,49 @@ public  class BottleItem : MonoBehaviour
     void OnCollisionEnter(Collision c)
     {
         if (_isHeld) return;
+        if (!_armed) return;     
+        BreakFromCollision(c);
+    }
+    
+    private void BreakFromCollision(Collision c)
+    {
+        Vector3 hitPoint = (c.contactCount > 0) ? c.GetContact(0).point : transform.position;
+        Vector3 hitDir   = (c.contactCount > 0) ? -c.GetContact(0).normal : Vector3.up;
 
-        // КЛЮЧ: не armed => вообще ничего не делаем
-        if (!_armed) return;
-        
-        if (_broken) return;
-        _broken = true;
-        
-        if (_col != null) _col.enabled = false;
-        
-        int index = Random.Range(0, breakClip.Length);
-
-        if (breakClip != null)
-            AudioSource.PlayClipAtPoint(breakClip[index], transform.position, breakVolume);
-
-        if (breakNoiseRadius > 0f)
-        {
-            NoiseEmmiter.EmitNoiseAt(transform.position, breakNoiseRadius);
-        }
-
-        Break(c);
+        BreakInternal(hitPoint, hitDir);
     }
 
-    void Break(Collision c)
+    public void TakeDamage(float amount, Vector3 hitPoint, Vector3 hitDir)
     {
+        BreakInternal(hitPoint, hitDir);
+    }
+    
+    private void BreakInternal(Vector3 hitPoint, Vector3 hitDir)
+    {
+        if (_broken) return;
+        _broken = true;
+
+        if (_col != null) _col.enabled = false;
         
+        if (breakClip != null && breakClip.Length > 0)
+        {
+            int index = Random.Range(0, breakClip.Length);
+            AudioSource.PlayClipAtPoint(breakClip[index], transform.position, breakVolume);
+        }
+        
+        if (breakNoiseRadius > 0f)
+            NoiseEmmiter.EmitNoiseAt(transform.position, breakNoiseRadius);
         
         if (fracturedPrefab != null)
         {
-            
-            Vector3 spawnPos = c.contactCount > 0 ? c.GetContact(0).point : transform.position;
             Quaternion spawnRot = transform.rotation;
-            
-            var go = Instantiate(fracturedPrefab, spawnPos, spawnRot);
+            var go = Instantiate(fracturedPrefab, hitPoint, spawnRot);
 
             var rbs = go.GetComponentsInChildren<Rigidbody>();
-
-            Vector3 dir = Vector3.up;
-            if (c.contactCount > 0)
-                dir = -c.GetContact(0).normal;
+            Vector3 dir = (hitDir.sqrMagnitude > 0.0001f) ? hitDir.normalized : Vector3.up;
 
             for (int i = 0; i < rbs.Length; i++)
-            {
                 rbs[i].AddForce((dir + Vector3.up * fracturedUp) * fracturedExplosion, ForceMode.VelocityChange);
-            }
 
             if (fracturedLifetime > 0f)
                 Destroy(go, fracturedLifetime);
@@ -157,7 +155,7 @@ public  class BottleItem : MonoBehaviour
 
         Destroy(gameObject);
     }
-
+    
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;

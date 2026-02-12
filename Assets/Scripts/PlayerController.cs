@@ -33,11 +33,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float meleeDamage = 25f;
     [SerializeField] private float behindAngle = 140f;     // 140-160"со спины" todo:почекать
     [SerializeField] private LayerMask meleeMask;          // enemy and breakable stuff
-    private float _nextAttackTime;
-    [SerializeField] private float attackHitDelay;   // когда реально "попадает"
-    [SerializeField] private float attackTotalTime;  // длительность анимации
-    private bool _isAttacking;
-    private Coroutine _attackRoutine;
+    private float _attackStartTime;
+    private float _attackHitTime;
+    private float _attackEndTime;
+    private bool _attackHitDone;
+    [SerializeField] private float attackHitDelay;
+    [SerializeField] private float attackTotalTime;
+    public bool _isAttacking;
     
     [Header("Animation")] 
     [SerializeField] private Animator animator;
@@ -116,8 +118,9 @@ public class PlayerController : MonoBehaviour
 
         UpdateMove();
 
+        UpdateAttack();
     }
-
+    
     public void LateUpdate()
     {
         
@@ -233,11 +236,12 @@ public class PlayerController : MonoBehaviour
 
     public void OnAttack(InputValue val)
     {
-        if (val.Get<float>() > 0.5f && _heldItem == null)
-        {
+        if (!val.isPressed) return;
+        
+        if (_heldItem == null)
             TryAttack();
-        }
-        else if (val.Get<float>() > 0.5f && _heldItem != null)
+            
+        else
         {
             Vector3 velocityChange = cinCam.transform.forward * throwForce;
             _heldItem.ThrowFrom(itemPos.position,itemPos.rotation,velocityChange);
@@ -248,69 +252,79 @@ public class PlayerController : MonoBehaviour
 
     public void HealthUpdate()
     {
-        Mathf.Clamp(currentHP,0,baseHP);
-        fillImageHealth.fillAmount = baseHP/currentHP;
+        currentHP = Mathf.Clamp(currentHP,0,baseHP);
+        fillImageHealth.fillAmount = currentHP/baseHP;
     }
 
     public void ManaUpdate()
     {
-        Mathf.Clamp(currentMP,0,baseMP);
-        fillImageMana.fillAmount = baseMP/currentMP;
+        currentMP = Mathf.Clamp(currentMP,0,baseMP);
+        fillImageMana.fillAmount = currentMP/baseMP;
     }
     
     private void TryAttack()
     {
-
-        if (_isAttacking)
+        if (_isAttacking) 
             return;
-        
+
+        _isAttacking = true;
+        _attackHitDone = false;
+
+        float now = Time.time;
+        _attackStartTime = now;
+        _attackHitTime   = now + attackHitDelay;
+        _attackEndTime   = now + attackTotalTime;
+
         animator.SetTrigger(AttackTrig);
-        
-        _attackRoutine = StartCoroutine(AttackRoutine());
     }
     
-    private IEnumerator AttackRoutine()
+    private void UpdateAttack()
     {
-        _isAttacking = true;
+        if (!_isAttacking) return;
 
-        // 1) ждём до "кадра попадания"
-        yield return new WaitForSeconds(attackHitDelay);
+        float now = Time.time;
+
+        // момент попадания
+        if (!_attackHitDone && now >= _attackHitTime)
+        {
+            _attackHitDone = true;
+            DoMeleeHit();
+        }
         
-        DoMeleeHit();
+        if (now >= _attackEndTime)
+        {
+            //float now = Time.time;
 
-        // 3) ждём до конца удара (чтобы нельзя было спамить)
-        float remaining = Mathf.Max(0f, attackTotalTime - attackHitDelay);
-        yield return new WaitForSeconds(remaining);
-
-        _isAttacking = false;
-        _attackRoutine = null;
+            _isAttacking = false;
+        }
     }
     
     private void DoMeleeHit()
     {
         Ray ray = new Ray(cinCam.transform.position, cinCam.transform.forward);
 
-        if (Physics.SphereCast(ray, meleeRadius, out RaycastHit hit, meleeRange, meleeMask, QueryTriggerInteraction.Ignore))
+        if (!Physics.SphereCast(ray, meleeRadius, out RaycastHit hit, meleeRange, meleeMask, QueryTriggerInteraction.Ignore))
+            return;
+        
+        var enemy = hit.collider.GetComponentInParent<EnemyController>();
+        if (enemy != null)
         {
-            EnemyController enemy = hit.collider.GetComponentInParent<EnemyController>();
-            if (enemy != null /* && !enemy.isDead */)
-            {
-                if (IsBehindEnemy(enemy.transform))
-                    enemy.Die();
-                else
-                    enemy.TakeDamage(meleeDamage, hit.point, ray.direction);
+            if (IsBehindEnemy(enemy.transform))
+                enemy.Die();
+            else
+                enemy.TakeDamage(meleeDamage, hit.point, ray.direction);
 
-                return;
-            }
-
-            BreakableDoor door = hit.collider.GetComponentInParent<BreakableDoor>();
-            if (door != null)
-            {
-                door.ApplyDamage(meleeDamage, hit.point, ray.direction);
-                return;
-            }
+            return;
+        }
+        
+        var damageable = hit.collider.GetComponentInParent<IDamageable>();
+        if (damageable != null)
+        {
+            damageable.TakeDamage(meleeDamage, hit.point, ray.direction);
+            return;
         }
     }
+    
     private bool IsBehindEnemy(Transform enemyRoot)
     {
         Vector3 enemyForward = enemyRoot.forward;
@@ -344,9 +358,9 @@ public class PlayerController : MonoBehaviour
         Ray ray = new Ray(cinCam.transform.position, cinCam.transform.forward);
 
         
-        if (Physics.Raycast(ray, out RaycastHit hit, interactDistance, interactMask | itemMask, QueryTriggerInteraction.Ignore))
+        if (Physics.Raycast(ray, out RaycastHit hit, interactDistance, interactMask, QueryTriggerInteraction.Ignore))
         {
-            DoorsAnim door = hit.collider.GetComponentInParent<DoorsAnim>();
+            BreakableDoor door = hit.collider.GetComponentInParent<BreakableDoor>();
             if (door != null)
             {
                 door.Toggle();

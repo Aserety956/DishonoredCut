@@ -31,6 +31,8 @@ public class PlayerAnimController : MonoBehaviour
         else
             speed01 = 0.5f + Mathf.InverseLerp(walkSpeed, runSpeed, speed) * 0.5f;
         
+        speed01 = (speed01 < 0.01f) ? 0f : speed01;
+        
         animator.SetFloat(Speed01, speed01, dampTime, Time.deltaTime);
 
         // 4) Grounded (полезно для прыжка/падения, даже если пока нет)
