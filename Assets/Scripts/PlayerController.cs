@@ -76,6 +76,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private CinemachineCamera cinCam;
     private BottleItem _heldItem;
     [SerializeField] private Transform handsPos;
+    private Vector3 _handsInitialLocalPos;
+    [SerializeField] private Vector3 handsHoldOffset = new Vector3(0f, -1f, 0f); 
     [SerializeField] private Transform itemPos;
     
     [Header("Debug")]
@@ -99,6 +101,7 @@ public class PlayerController : MonoBehaviour
         currentSpeed = walkSpeed;
         _velocity = Vector3.zero;
         _headInitialLocalPos = headTarget.localPosition;
+        _handsInitialLocalPos = handsPos.localPosition;
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -106,11 +109,6 @@ public class PlayerController : MonoBehaviour
         HealthUpdate();
         ManaUpdate();
         
-        float Fr = 1, To = 10, I=2;
-        float t = Mathf.InverseLerp(Fr, To, I);
-
-        Debug.Log(Mathf.InverseLerp(Fr, To, I)); // 1/9 = 0.11 (часть пути) t = (2 - 1) / (10 - 1) = 1/9 (c-a)/(b-a)
-        Debug.Log(Mathf.Lerp(Fr, To, t)); // a + (b - a) * t или же 1+(9*1.9) = 2 (значение пути)
     }
     
     public void Update()
@@ -119,6 +117,7 @@ public class PlayerController : MonoBehaviour
         UpdateMove();
 
         UpdateAttack();
+        
     }
     
     public void LateUpdate()
@@ -126,6 +125,13 @@ public class PlayerController : MonoBehaviour
         
         UpdateCam();
         
+    }
+    
+    private void UpdateHandsPose()
+    {
+        handsPos.localPosition = (_heldItem != null)
+            ? _handsInitialLocalPos + handsHoldOffset
+            : _handsInitialLocalPos;
     }
     
     public void UpdateMove()
@@ -228,7 +234,7 @@ public class PlayerController : MonoBehaviour
     {
         if (val.Get<float>() > 0.5f)
         {
-            Debug.Log("Interact"+ val.Get<float>());
+            //Debug.Log("Interact"+ val.Get<float>());
             TryInteract();
             
         }
@@ -245,7 +251,8 @@ public class PlayerController : MonoBehaviour
         {
             Vector3 velocityChange = cinCam.transform.forward * throwForce;
             _heldItem.ThrowFrom(itemPos.position,itemPos.rotation,velocityChange);
-            handsPos.localPosition += Vector3.up;
+            _heldItem = null;
+            UpdateHandsPose();
         }
 
     }
@@ -350,8 +357,8 @@ public class PlayerController : MonoBehaviour
         if (_heldItem != null)
         {
             _heldItem.ReleaseDrop(itemPos.position, itemPos.rotation);
-            handsPos.localPosition += Vector3.up;
             _heldItem = null;
+            UpdateHandsPose();
         }
         
         

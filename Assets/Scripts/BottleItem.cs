@@ -17,24 +17,28 @@ public class BottleItem : MonoBehaviour, IDamageable
     [SerializeField] private AudioClip[] breakClip;
     [SerializeField, Range(0f, 1f)] private float breakVolume = 1f;
 
-    private Rigidbody _rb;
-    private Collider _col;
+    public Rigidbody _rb;
+    public Collider _col;
     [SerializeField] private CharacterController playerController;
 
-    private bool _isHeld;
+    public bool _isHeld;
 
     // КЛЮЧ: пока armed=false — бутылка НИКОГДА не шумит и не ломается
-    private bool _armed;
+    public bool _armed;
     
-    private bool _broken;
+    public bool _broken;
     
-
+    public bool _hitEnemy;
+    
     void Awake()
     {
         _rb = GetComponent<Rigidbody>();
         _col = GetComponent<Collider>();
         if (playerController != null)
             Physics.IgnoreCollision(_col, playerController);
+        
+        //_rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        //_rb.interpolation = RigidbodyInterpolation.Interpolate;
     }
 
     // ---------- API для игрока ----------
@@ -79,15 +83,7 @@ public class BottleItem : MonoBehaviour, IDamageable
 
         _armed = true;
     }
-
-    /// <summary>
-    /// Если игрок ударил бутылку (мечом/кулаком) — активируем.
-    /// Зови это из своей системы атаки при попадании по бутылке.
-    /// </summary>
-    public void ArmByHit()
-    {
-        _armed = true;
-    }
+    
 
     void DetachToWorld(Vector3 pos, Quaternion rot)
     {
@@ -105,7 +101,8 @@ public class BottleItem : MonoBehaviour, IDamageable
     void OnCollisionEnter(Collision c)
     {
         if (_isHeld) return;
-        if (!_armed) return;     
+        if (!_armed) return; 
+        
         BreakFromCollision(c);
     }
     
@@ -122,7 +119,7 @@ public class BottleItem : MonoBehaviour, IDamageable
         BreakInternal(hitPoint, hitDir);
     }
     
-    private void BreakInternal(Vector3 hitPoint, Vector3 hitDir)
+    public void BreakInternal(Vector3 hitPoint, Vector3 hitDir)
     {
         if (_broken) return;
         _broken = true;
@@ -155,6 +152,28 @@ public class BottleItem : MonoBehaviour, IDamageable
 
         Destroy(gameObject);
     }
+    
+    /*private void OnTriggerEnter(Collider other)
+    {
+        Debug.Log($"[HEAD HITBOX] Trigger enter by {other.name} (layer {other.gameObject})");
+        if (_isHeld) return;
+        if (!_armed) return;
+        if (_broken) return;
+        if (_hitEnemy) return;
+        
+        var hitbox = other.GetComponent<EnemyHitbox>();
+        if (hitbox == null || hitbox.enemy == null) return;
+
+        _hitEnemy = true;
+
+        Vector3 hitPoint = other.ClosestPoint(transform.position);
+        Vector3 hitDir = (_rb.linearVelocity.sqrMagnitude > 0.0001f) ? _rb.linearVelocity.normalized : transform.forward;
+
+        hitbox.enemy.OnBottleHit(hitbox.zone, hitPoint, hitDir);
+
+        // обычно бутылка разбивается при попадании
+        BreakInternal(hitPoint, hitDir);
+    }*/
     
     private void OnDrawGizmosSelected()
     {

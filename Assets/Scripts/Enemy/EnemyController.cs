@@ -32,6 +32,21 @@ public class EnemyController : MonoBehaviour, IDamageable
     [SerializeField] private float investigatePointWaitTime = 0.8f; // сколько стоять/оглядываться на точке
     [SerializeField] private float navSampleMaxDistance = 2f; // насколько далеко искать NavMesh точку от кандидата
 
+    
+    [Header("Ragdoll")]
+    public bool _knocked;
+    [SerializeField] private EnemyRagdoll ragdoll;
+    
+    
+    [Header("Animations")]
+    [SerializeField] private NavMeshAgent agent;
+    [SerializeField] private Animator animator;
+
+    [Tooltip("Сколько секунд сглаживать изменение Speed параметра.")]
+    [SerializeField] private float dampTime = 0.1f;
+
+    private static readonly int Speed = Animator.StringToHash("Speed");
+     
 
     [Header("FOV")] 
     public float viewRadiusDark = 8f;
@@ -40,7 +55,7 @@ public class EnemyController : MonoBehaviour, IDamageable
     public float viewAngleDark = 90f;
     public float viewAngleLight = 120f;
 
-    public LayerMask targetMask;
+    //public LayerMask targetMask;
     public LayerMask obstacleMask;
 
     [Header("LightMapping")] 
@@ -56,8 +71,6 @@ public class EnemyController : MonoBehaviour, IDamageable
     public float maxHp = 100f;
     public float hp;
     public bool isDead;
-    [SerializeField] private Animator animator;
-    //todo: ragdoll
 
     private static readonly int HitTrig = Animator.StringToHash("Hit");
     private static readonly int DieTrig = Animator.StringToHash("Die");
@@ -74,10 +87,9 @@ public class EnemyController : MonoBehaviour, IDamageable
     private bool isChasing;
 
     private int currentPointIndex = 0;
-    private NavMeshAgent agent;
     private float waitTimer;
 
-    enum EnemyState
+    private enum EnemyState
     {
         Patrol,
         Investigate,
@@ -86,8 +98,7 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     private EnemyState currentState = EnemyState.Patrol;
     private EnemyState previousState = EnemyState.Patrol;
-
-
+    
     private void Start()
     {
 
@@ -108,6 +119,7 @@ public class EnemyController : MonoBehaviour, IDamageable
 
         UpdateSuspicion(canSeePlayer, heardNoise);
         EvaluateSuspicion();
+        AnimUpdate();
 
         // Если состояние поменялось — делаем действия входа (например, задать destination)
         if (currentState != previousState)
@@ -179,7 +191,15 @@ public class EnemyController : MonoBehaviour, IDamageable
                 break;
         }
     }
-    
+
+    void AnimUpdate()
+    {
+        float speed01 = 0f;
+        if (agent.speed > 0.001f)
+            speed01 = agent.velocity.magnitude / agent.speed;
+
+        animator.SetFloat(Speed, speed01, dampTime, Time.deltaTime);
+    }
     void UpdateSuspicion(bool canSeePlayer, bool hearsNoise)
     {
         if (canSeePlayer)
@@ -394,6 +414,7 @@ public class EnemyController : MonoBehaviour, IDamageable
         viewRadius = Mathf.Lerp(viewRadiusDark, viewRadiusLight, t);
         viewAngle = Mathf.Lerp(viewAngleDark, viewAngleLight, t);
     }
+    
     public void HearNoise(Vector3 noisePosition, float noiseRadius)
     {
         if (isDead) return;
@@ -423,6 +444,30 @@ public class EnemyController : MonoBehaviour, IDamageable
 
         currentState = EnemyState.Investigate;
     }
+    
+    public void OnBottleHit(HitZone zone, Vector3 hitPoint, Vector3 hitDir)
+    {
+        Debug.Log("OnBottleHit");
+        if (isDead) return;
+
+        if (zone == HitZone.Head)
+        {
+            Knockout(hitPoint, hitDir);
+            return;
+        }
+
+        // Body/Legs — позже решишь (урон/стан/агр)
+    }
+//todo: переместить логику нокдауна в другой скрипт
+    public void Knockout(Vector3 hitPoint, Vector3 hitDir) 
+    {
+        if (ragdoll == null) ragdoll = GetComponent<EnemyRagdoll>();
+        if (ragdoll != null)
+            ragdoll.EnableRagdoll(hitPoint, hitDir);
+        
+        // опционально: через N секунд “поднять” (если нужно)
+        // StartCoroutine(RecoverAfter(5f));
+    }
 
     public void TakeDamage(float amount, Vector3 hitPoint, Vector3 hitDir)
     {
@@ -430,8 +475,8 @@ public class EnemyController : MonoBehaviour, IDamageable
 
         hp -= amount;
 
-        if (animator != null)
-            animator.SetTrigger(HitTrig);
+       // if (animator != null)
+            //animator.SetTrigger(HitTrig);
 
         if (hp <= 0f)
             Die();
@@ -457,6 +502,7 @@ public class EnemyController : MonoBehaviour, IDamageable
         //todo: ragdoll падение (после анимации?)
         Destroy(gameObject);
     }
+    
 
     void OnDrawGizmos()
         {
