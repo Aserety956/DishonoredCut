@@ -15,6 +15,25 @@ public class SuspicionBar : MonoBehaviour
     
     private static readonly int Suspicion = Animator.StringToHash("Suspicion");
 
+    
+    private void OnEnable()
+    {
+        if (enemy != null)
+        {
+            enemy.OnEnemyDead += DisableBar;
+            enemy.OnEnemyKnocked += DisableBar;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (enemy != null)
+        {
+            enemy.OnEnemyDead -= DisableBar;
+            enemy.OnEnemyKnocked -= DisableBar;
+        }
+    }
+    
     void Awake()
     {
         cam = Camera.main;
@@ -57,5 +76,9 @@ public class SuspicionBar : MonoBehaviour
         
     }
     
+    private void DisableBar()
+    {
+        gameObject.SetActive(false);
+    }
     
 }

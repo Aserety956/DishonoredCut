@@ -211,7 +211,8 @@ public class PlayerController : MonoBehaviour
     {
         if (val.Get<float>() > 0.5f)
         {
-            offsetToSpawn = new Vector3(1, 1, 1);
+            offsetToSpawn = cinCam.transform.forward * 2;
+            offsetToSpawn.y = 1;
             Instantiate(itemPrefab, transform.position + offsetToSpawn, transform.rotation);
         }
     }
@@ -316,7 +317,7 @@ public class PlayerController : MonoBehaviour
         var enemy = hit.collider.GetComponentInParent<EnemyController>();
         if (enemy != null)
         {
-            if (IsBehindEnemy(enemy.transform))
+            if (IsBehindEnemy(enemy.transform) && !enemy._knocked)
                 enemy.Die();
             else
                 enemy.TakeDamage(meleeDamage, hit.point, ray.direction);

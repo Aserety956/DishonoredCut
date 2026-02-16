@@ -8,7 +8,7 @@ public class EnemyHitbox : MonoBehaviour
 {
     public HitZone zone;
     public EnemyController enemy;
-    public BottleItem bottle;
+    private BottleItem _bottle;
 
     public void Awake()
     {
@@ -19,27 +19,30 @@ public class EnemyHitbox : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
 
-        if (other.gameObject.CompareTag("Bottle"))
-        {
-            if (bottle._isHeld) return;
-            //if (!bottle._armed) return;
-            if (bottle._broken) return;
-            if (bottle._hitEnemy) return;
-            //Debug.Log($"[HEAD HITBOX] Trigger enter by {other.name} (layer {other.gameObject})");
+        if (!other.CompareTag("Bottle"))
+            return;
 
-            var hitbox = other.GetComponent<BottleItem>();
-            if (hitbox == null) return;
-            Debug.Log($"[HEAD HITBOX] Trigger enter by {other.name} (layer {other.gameObject})");
+        var hitBottle = other.GetComponent<BottleItem>();
+        if (hitBottle == null) 
+            return;
 
-            bottle._hitEnemy = true;
+        if (hitBottle._isHeld) return;
+        //if (!bottle._armed) return;
+        if (hitBottle._broken) return;
+        if (hitBottle._hitEnemy) return;
 
-            Vector3 hitPoint = other.ClosestPoint(transform.position);
-            Vector3 hitDir = (bottle._rb.linearVelocity.sqrMagnitude > 0.0001f) ? bottle._rb.linearVelocity.normalized : transform.forward;
+        var hitbox = other.GetComponent<BottleItem>();
+        if (hitbox == null) return;
+        Debug.Log($"[HEAD HITBOX] Trigger enter by {other.name} (layer {other.gameObject})");
 
-            enemy.OnBottleHit(zone, hitPoint, hitDir);
+        hitBottle._hitEnemy = true;
 
-            // обычно бутылка разбивается при попадании
-            bottle.BreakInternal(hitPoint, hitDir);
-        }
+        Vector3 hitPoint = other.ClosestPoint(transform.position);
+        Vector3 hitDir = (hitBottle._rb.linearVelocity.sqrMagnitude > 0.0001f) ? hitBottle._rb.linearVelocity.normalized : transform.forward;
+
+        enemy.OnBottleHit(zone, hitPoint, hitDir);
+
+        // обычно бутылка разбивается при попадании
+        hitBottle.BreakInternal(hitPoint, hitDir);
     }
 }

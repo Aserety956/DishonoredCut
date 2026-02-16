@@ -14,6 +14,9 @@ public class EnemyRagdoll : MonoBehaviour
     [Header("Ragdoll parts (bones)")]
     [SerializeField] private Rigidbody[] bodies;
     [SerializeField] private Collider[] colliders;
+    
+    [Header("CollidersIgnore")]
+    [SerializeField] private Collider playerCollider;
 
     private bool _isRagdoll;
 
@@ -41,18 +44,17 @@ public class EnemyRagdoll : MonoBehaviour
         var rb = FindClosestBody(hitPoint);
         if (rb != null)
             rb.AddForceAtPosition(hitDir.normalized * impulse, hitPoint, ForceMode.Impulse);
+        
     }
 
     private void SetRagdoll(bool enabled)
     {
         _isRagdoll = enabled;
-
-        // Выключаем управление
+        
         if (agent != null) agent.enabled = !enabled;
         if (aiScript != null) aiScript.enabled = !enabled;
         if (animator != null) animator.enabled = !enabled;
-
-        // Root капсула обычно мешает ragdoll — выключаем
+        
         if (rootCollider != null) rootCollider.enabled = !enabled;
 
         // Включаем физику на костях
@@ -64,10 +66,11 @@ public class EnemyRagdoll : MonoBehaviour
             // Не трогаем rigidbody на root, если он есть (часто его нет)
             if (rb.gameObject == gameObject) continue;
 
-            /*rb.isKinematic = !enabled;
-            rb.detectCollisions = enabled;
-            rb.linearVelocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;*/
+            
+            rb.isKinematic = !enabled;
+            //rb.detectCollisions = enabled;
+            //rb.linearVelocity = Vector3.zero;
+            //rb.angularVelocity = Vector3.zero;
         }
 
         // Коллайдеры костей: включены только в ragdoll
@@ -81,6 +84,8 @@ public class EnemyRagdoll : MonoBehaviour
 
             col.enabled = enabled;
         }
+
+        IgnorePlayerCollisions(enabled);
     }
 
     private Rigidbody FindClosestBody(Vector3 p)
@@ -98,5 +103,22 @@ public class EnemyRagdoll : MonoBehaviour
             if (d < bestD) { bestD = d; best = rb; }
         }
         return best;
+    }
+    
+    private void IgnorePlayerCollisions(bool ignore)
+    {
+        if (playerCollider == null) return;
+
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            var col = colliders[i];
+            if (col == null) continue;
+
+            // rootCollider выключается при ragdoll, но можно и его учесть
+            // Главное — не игнорировать триггеры, если они тебе нужны
+            //if (col.isTrigger) continue;
+
+            Physics.IgnoreCollision(playerCollider, col, ignore);
+        }
     }
 }

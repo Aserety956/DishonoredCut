@@ -37,8 +37,7 @@ public class BottleItem : MonoBehaviour, IDamageable
         if (playerController != null)
             Physics.IgnoreCollision(_col, playerController);
         
-        //_rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
-        //_rb.interpolation = RigidbodyInterpolation.Interpolate;
+        
     }
 
     // ---------- API для игрока ----------

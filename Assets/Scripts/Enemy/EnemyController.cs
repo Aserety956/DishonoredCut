@@ -8,12 +8,14 @@ public class EnemyController : MonoBehaviour, IDamageable
     [Header("Suspicion")] 
     public float suspicionIncreaseSpeed = 0.5f;
     public float suspicionDecreaseSpeed = 0.03f;
-
     public float suspicionToInvestigate = 0.5f;
     public float suspicionToChase = 1f;
-
     public float suspicion;
-
+    [SerializeField] private float suspicionGainNear;   // в сек при близкой дистанции
+    [SerializeField] private float suspicionGainFar;  // в сек при дальней
+    [SerializeField] private float suspicionNearDist;   // ближняя дистанция (м)
+    [SerializeField] private float suspicionFarDist;    // дальняя дистанция (м)
+    //[SerializeField] private AnimationCurve distanceToGain;
     private bool heardNoise;
 
 
@@ -24,7 +26,6 @@ public class EnemyController : MonoBehaviour, IDamageable
     public bool isInvestigating;
     private Vector3 _lastHeardPosition;
     private Vector3 _lastSeenPosition;
-    
     private bool _isWaitingAtInvestigatePoint;
     private float _investigatePointTimer;
     private Vector3 _investigateCenter;
@@ -37,43 +38,43 @@ public class EnemyController : MonoBehaviour, IDamageable
     public bool _knocked;
     [SerializeField] private EnemyRagdoll ragdoll;
     
+    public event Action OnEnemyDead;
+    public event Action OnEnemyKnocked;
     
     [Header("Animations")]
     [SerializeField] private NavMeshAgent agent;
     [SerializeField] private Animator animator;
-
     [Tooltip("Сколько секунд сглаживать изменение Speed параметра.")]
     [SerializeField] private float dampTime = 0.1f;
-
     private static readonly int Speed = Animator.StringToHash("Speed");
      
 
     [Header("FOV")] 
     public float viewRadiusDark = 8f;
     public float viewRadiusLight = 12f;
-
     public float viewAngleDark = 90f;
     public float viewAngleLight = 120f;
-
-    //public LayerMask targetMask;
     public LayerMask obstacleMask;
 
     [Header("LightMapping")] 
     public float lightMin = 0.15f;
-    public float lightMax = 0.95f;
-    public float lightGamma = 0.7f;
+    public float lightMax = 0.8f;
+    //public float lightGamma = 0.7f;
 
     [Header("PlayerLinks")] 
     public Transform player;
     public LightDetector playerLight;
 
     [Header("Health")] 
-    public float maxHp = 100f;
+    public float maxHp = 500f;
     public float hp;
     public bool isDead;
 
-    private static readonly int HitTrig = Animator.StringToHash("Hit");
+    //private static readonly int HitTrig = Animator.StringToHash("Hit");
     private static readonly int DieTrig = Animator.StringToHash("Die");
+
+    [Header("Check")] 
+    public float checkSpeed = 1.5f;
 
     [Header("Patrol")] 
     public Transform[] patrolPoints;
@@ -83,7 +84,6 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     [Header("Chase")] 
     public float chaseSpeed = 4f;
-
     private bool isChasing;
 
     private int currentPointIndex = 0;
@@ -92,8 +92,9 @@ public class EnemyController : MonoBehaviour, IDamageable
     private enum EnemyState
     {
         Patrol,
+        Check,
         Investigate,
-        Chase
+        Chase,
     }
 
     private EnemyState currentState = EnemyState.Patrol;
@@ -103,7 +104,9 @@ public class EnemyController : MonoBehaviour, IDamageable
     {
 
         hp = maxHp;
+        
         agent = GetComponent<NavMeshAgent>();
+        
         agent.speed = patrolSpeed;
 
         if (patrolPoints.Length > 0)
@@ -204,12 +207,17 @@ public class EnemyController : MonoBehaviour, IDamageable
     {
         if (canSeePlayer)
         {
-            suspicion += 1f;
+            float dist = Vector3.Distance(transform.position, player.position);
+
+            float gainPerSec = GetVisionSuspicionGainPerSecond(dist);
+            suspicion += gainPerSec * Time.deltaTime;
+
             _lastSeenPosition = player.position;
+            _investigateCenter = _lastSeenPosition; 
         }
-        else if (hearsNoise)
+        else if (hearsNoise && suspicion <= 0.49f)
         {
-            suspicion += 0.1f;
+            suspicion = 0.5f;
             _lastHeardPosition = player.position;
         }
         else
@@ -218,15 +226,8 @@ public class EnemyController : MonoBehaviour, IDamageable
         }
 
 
-        if (isInvestigating)
-        {
-            suspicion = Mathf.Max(suspicion, 0.5f);
-        }
-
-        if (isChasing)
-        {
-            suspicion = Mathf.Max(suspicion, 0.5f);
-        }
+        if (isInvestigating) suspicion = Mathf.Max(suspicion, suspicionToInvestigate);
+        if (isChasing)       suspicion = Mathf.Max(suspicion, suspicionToInvestigate);
 
         suspicion = Mathf.Clamp01(suspicion);
     }
@@ -465,6 +466,9 @@ public class EnemyController : MonoBehaviour, IDamageable
         if (ragdoll != null)
             ragdoll.EnableRagdoll(hitPoint, hitDir);
         
+        _knocked = true;
+        OnEnemyKnocked?.Invoke();
+        
         // опционально: через N секунд “поднять” (если нужно)
         // StartCoroutine(RecoverAfter(5f));
     }
@@ -486,23 +490,36 @@ public class EnemyController : MonoBehaviour, IDamageable
     {
         if (isDead) return;
         isDead = true;
-        
+
+        OnEnemyDead?.Invoke();
+
         if (agent != null)
         {
             agent.isStopped = true;
             agent.enabled = false;
         }
-        
+
         var col = GetComponent<Collider>();
         if (col != null) col.enabled = false;
 
         if (animator != null)
             animator.SetTrigger(DieTrig);
 
-        //todo: ragdoll падение (после анимации?)
         Destroy(gameObject);
     }
     
+    private float GetVisionSuspicionGainPerSecond(float distance)
+    {
+        // 0 у far, 1 у near
+        float t = Mathf.InverseLerp(suspicionFarDist, suspicionNearDist, distance);
+        t = Mathf.Clamp01(t);
+
+        // можно сделать кривую (Dishonored любит не линейность)
+        //if (distanceToGain != null)
+           // t = Mathf.Clamp01(distanceToGain.Evaluate(t));
+
+        return Mathf.Lerp(suspicionGainFar, suspicionGainNear, t);
+    }
 
     void OnDrawGizmos()
         {
@@ -557,13 +574,13 @@ public class EnemyController : MonoBehaviour, IDamageable
                 Gizmos.DrawLine(transform.position, player.position);
             }
 
-            if (currentState == EnemyState.Investigate)
+            if (currentState == EnemyState.Investigate && CanSeePlayer())
             {
                 Gizmos.color = Color.orange;
                 Gizmos.DrawSphere(_lastSeenPosition, 0.2f);
             }
 
-            if (currentState == EnemyState.Investigate)
+            if (currentState == EnemyState.Investigate && heardNoise)
             {
                 Gizmos.color = Color.cyan;
                 Gizmos.DrawSphere(_lastHeardPosition, 0.2f);
