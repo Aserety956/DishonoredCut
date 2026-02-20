@@ -2635,6 +2635,10 @@ MonoBehaviour:
   fracturedLifetime: 5
   fracturedExplosion: 2.5
   fracturedUp: 0.6
+  breakVfxPrefab: {fileID: 3190655023925277356, guid: 5fb20941b96a4754c9d1899c1b29a3df,
+    type: 3}
+  breakVfxLifetime: 3
+  vfxSpawnAtHitPoint: 1
   breakClip:
   - {fileID: 8300000, guid: b9730208f1c037442be6b014472edd9d, type: 3}
   - {fileID: 8300000, guid: 48dc9540f73e16a428bd277ae1ecb286, type: 3}
@@ -35257,13 +35261,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2ed9eb27ef4250498df3ddcebabd2de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
-  suspicionIncreaseSpeed: 0.5
   suspicionDecreaseSpeed: 0.1
   suspicionToInvestigate: 0.5
   suspicionToChase: 1
   suspicion: 0
-  suspicionGainNear: 0.5
-  suspicionGainFar: 0.2
+  suspicionGainNear: 0.3
+  suspicionGainFar: 0.1
   suspicionNearDist: 2.5
   suspicionFarDist: 20
   investigateDuration: 10
@@ -35292,7 +35295,7 @@ MonoBehaviour:
   maxHp: 500
   hp: 0
   isDead: 0
-  checkSpeed: 1.5
+  "suspicionTo\u0421heck": 0.25
   patrolPoints:
   - {fileID: 274343968}
   - {fileID: 791093895}
@@ -45155,6 +45158,10 @@ MonoBehaviour:
   fracturedLifetime: 5
   fracturedExplosion: 2.5
   fracturedUp: 0.6
+  breakVfxPrefab: {fileID: 3190655023925277356, guid: 5fb20941b96a4754c9d1899c1b29a3df,
+    type: 3}
+  breakVfxLifetime: 3
+  vfxSpawnAtHitPoint: 1
   breakClip:
   - {fileID: 8300000, guid: b9730208f1c037442be6b014472edd9d, type: 3}
   - {fileID: 8300000, guid: 48dc9540f73e16a428bd277ae1ecb286, type: 3}

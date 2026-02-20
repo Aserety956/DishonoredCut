@@ -6,7 +6,7 @@ using Random = UnityEngine.Random;
 public class EnemyController : MonoBehaviour, IDamageable
 {
     [Header("Suspicion")] 
-    public float suspicionIncreaseSpeed = 0.5f;
+    //public float suspicionIncreaseSpeed = 0.5f;
     public float suspicionDecreaseSpeed = 0.03f;
     public float suspicionToInvestigate = 0.5f;
     public float suspicionToChase = 1f;
@@ -74,7 +74,9 @@ public class EnemyController : MonoBehaviour, IDamageable
     private static readonly int DieTrig = Animator.StringToHash("Die");
 
     [Header("Check")] 
-    public float checkSpeed = 1.5f;
+    [SerializeField] private float suspicionToСheck = 0.25f;
+    private bool _isGoingToCheck;
+    private bool IsChecking;
 
     [Header("Patrol")] 
     public Transform[] patrolPoints;
@@ -138,6 +140,10 @@ public class EnemyController : MonoBehaviour, IDamageable
             case EnemyState.Patrol:
                 UpdatePatrol();
                 break;
+            
+            case EnemyState.Check:
+                UpdateCheck();
+                break;
 
             case EnemyState.Investigate:
                 Investigate();
@@ -155,7 +161,9 @@ public class EnemyController : MonoBehaviour, IDamageable
         {
             case EnemyState.Patrol:
                 isChasing = false;
-                isInvestigating = false;
+                isInvestigating = false; 
+                IsChecking = false;
+                
                 _isWaitingAtInvestigatePoint = false;
                 _investigatePointTimer = 0f;
                 investigateTimer = 0f;
@@ -166,10 +174,25 @@ public class EnemyController : MonoBehaviour, IDamageable
                 if (patrolPoints != null && patrolPoints.Length > 0)
                     agent.SetDestination(patrolPoints[currentPointIndex].position);
                 break;
+            
+            case EnemyState.Check:
+                isChasing = false;
+                isInvestigating = false;
+                
+                _isWaitingAtInvestigatePoint = false;
+                _investigatePointTimer = 0f;
+                investigateTimer = 0f;
+
+                agent.speed = patrolSpeed;
+                agent.isStopped = false;
+                
+                agent.SetDestination(_lastSeenPosition);
+                break;
 
             case EnemyState.Investigate:
                 isChasing = false;
                 isInvestigating = true;
+                IsChecking = false;
 
                 agent.speed = patrolSpeed;
                 agent.isStopped = false;
@@ -185,6 +208,8 @@ public class EnemyController : MonoBehaviour, IDamageable
             case EnemyState.Chase:
                 isChasing = true;
                 isInvestigating = false;
+                IsChecking = false;
+                
                 _isWaitingAtInvestigatePoint = false;
                 _investigatePointTimer = 0f;
                 investigateTimer = 0f;
@@ -203,6 +228,7 @@ public class EnemyController : MonoBehaviour, IDamageable
 
         animator.SetFloat(Speed, speed01, dampTime, Time.deltaTime);
     }
+    
     void UpdateSuspicion(bool canSeePlayer, bool hearsNoise)
     {
         if (canSeePlayer)
@@ -215,19 +241,33 @@ public class EnemyController : MonoBehaviour, IDamageable
             _lastSeenPosition = player.position;
             _investigateCenter = _lastSeenPosition; 
         }
+        
         else if (hearsNoise && suspicion <= 0.49f)
         {
             suspicion = 0.5f;
             _lastHeardPosition = player.position;
         }
+        
         else
         {
             suspicion -= suspicionDecreaseSpeed * Time.deltaTime;
         }
 
 
-        if (isInvestigating) suspicion = Mathf.Max(suspicion, suspicionToInvestigate);
-        if (isChasing)       suspicion = Mathf.Max(suspicion, suspicionToInvestigate);
+        if (IsChecking)
+        {
+            suspicion = Mathf.Max(suspicion, suspicionToСheck);
+        }
+        
+        if (isInvestigating)
+        {
+            suspicion = Mathf.Max(suspicion, suspicionToInvestigate);
+        }
+        
+        if (isChasing)
+        {
+            suspicion = Mathf.Max(suspicion, suspicionToInvestigate);
+        }
 
         suspicion = Mathf.Clamp01(suspicion);
     }
@@ -253,6 +293,12 @@ public class EnemyController : MonoBehaviour, IDamageable
             return;
         }
 
+        if (suspicion >= suspicionToСheck && suspicion < suspicionToInvestigate)
+        {
+            currentState = EnemyState.Check;
+            return;
+        }
+
         currentState = EnemyState.Patrol;
     }
 
@@ -271,6 +317,7 @@ public class EnemyController : MonoBehaviour, IDamageable
     {
         isInvestigating = true;
         isChasing = false;
+        IsChecking = false;
         agent.speed = patrolSpeed;
         
         investigateTimer += Time.deltaTime;
@@ -305,6 +352,23 @@ public class EnemyController : MonoBehaviour, IDamageable
 
                 PickNewInvestigateDestination();
             }
+        }
+    }
+
+    void UpdateCheck()
+    {
+        IsChecking = true;
+        isInvestigating = false;
+        isChasing = false;
+        agent.speed = patrolSpeed; // отдельную скорость?
+        
+
+        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+        {
+            IsChecking = false;
+
+            currentState = EnemyState.Patrol;
+            return;
         }
     }
     
@@ -351,6 +415,7 @@ public class EnemyController : MonoBehaviour, IDamageable
     {
         isInvestigating = false;
         investigateTimer = 0f;
+        IsChecking = false;
         //lostSightTimer = 0f; todo:доделать
         if (CanSeePlayer())
         {

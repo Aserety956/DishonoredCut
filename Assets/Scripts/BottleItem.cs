@@ -7,11 +7,16 @@ public class BottleItem : MonoBehaviour, IDamageable
     [Header("Noise")]
     public float breakNoiseRadius  = 8f;
 
-    [Header("Break visuals")]
+    [Header("Break prefab")]
     public GameObject fracturedPrefab;
     public float fracturedLifetime = 5f;
     public float fracturedExplosion = 2.5f;
     public float fracturedUp = 0.6f;
+    
+    [Header("VFX")]
+    [SerializeField] private ParticleSystem breakVfxPrefab; 
+    [SerializeField] private float breakVfxLifetime = 3f;    
+    [SerializeField] private bool vfxSpawnAtHitPoint = true; // в точке удара или в центре бутылки
     
     [Header("Audio")]
     [SerializeField] private AudioClip[] breakClip;
@@ -134,7 +139,7 @@ public class BottleItem : MonoBehaviour, IDamageable
         if (breakNoiseRadius > 0f)
             NoiseEmmiter.EmitNoiseAt(transform.position, breakNoiseRadius);
         
-        if (fracturedPrefab != null)
+        /*if (fracturedPrefab != null)
         {
             Quaternion spawnRot = transform.rotation;
             var go = Instantiate(fracturedPrefab, hitPoint, spawnRot);
@@ -147,6 +152,23 @@ public class BottleItem : MonoBehaviour, IDamageable
 
             if (fracturedLifetime > 0f)
                 Destroy(go, fracturedLifetime);
+        }*/
+        
+        if (breakVfxPrefab != null)
+        {
+            Vector3 vfxPos = vfxSpawnAtHitPoint ? hitPoint : transform.position;
+            Quaternion vfxRot = Quaternion.LookRotation(
+                (hitDir.sqrMagnitude > 0.0001f) ? hitDir.normalized : transform.forward
+            );
+
+            var vfx = Instantiate(breakVfxPrefab, vfxPos, vfxRot);
+            vfx.Play();
+
+            // Удаляем объект с частицами после проигрыша
+            if (breakVfxLifetime > 0f)
+                Destroy(vfx.gameObject, breakVfxLifetime);
+            else
+                Destroy(vfx.gameObject, vfx.main.duration + vfx.main.startLifetime.constantMax + 0.2f);
         }
 
         Destroy(gameObject);
