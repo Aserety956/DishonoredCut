@@ -88,9 +88,27 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Debug",
+                    "name": "DebugBottle",
                     "type": "Value",
                     "id": "c5823da7-b27d-4271-958a-8c6afe0b01f0",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "DebugRain",
+                    "type": "Value",
+                    "id": "436e4d60-a927-45ce-ad32-1f7c77ea612a",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "DebugSnow",
+                    "type": "Value",
+                    "id": "0b14f4b2-bc57-4d91-ba43-710586a8bf18",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -490,7 +508,29 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "Debug",
+                    "action": "DebugBottle",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7b151e10-fc4c-4271-b000-448706926eb7",
+                    "path": "<Keyboard>/b",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "DebugRain",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a6772a67-9b0d-45f9-9aca-1576b5d43f2a",
+                    "path": "<Keyboard>/n",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "DebugSnow",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

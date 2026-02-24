@@ -64,7 +64,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Image backgroundImage;
 
     [Header("Stats")] 
-    public static float HP;
+    public static float HP; // зелья, еда?
     public static float MP;
     public static float currentHP;
     public static float currentMP;
@@ -207,13 +207,21 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void OnDebug(InputValue val)
+    public void OnDebugBottle(InputValue val)
     {
         if (val.Get<float>() > 0.5f)
         {
             offsetToSpawn = cinCam.transform.forward * 2;
             offsetToSpawn.y = 1;
             Instantiate(itemPrefab, transform.position + offsetToSpawn, transform.rotation);
+        }
+    }
+
+    public void OnDebugRain(InputValue val)
+    {
+        if (val.Get<float>() > 0.5f)
+        {
+             
         }
     }
 
