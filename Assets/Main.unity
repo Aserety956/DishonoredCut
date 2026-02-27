@@ -1404,6 +1404,8 @@ RectTransform:
   m_Children:
   - {fileID: 305924950}
   - {fileID: 1706621452}
+  - {fileID: 1304850145}
+  - {fileID: 2019865098}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1469,7 +1471,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
@@ -1928,6 +1930,7 @@ GameObject:
   - component: {fileID: 870277580}
   - component: {fileID: 870277581}
   - component: {fileID: 870277582}
+  - component: {fileID: 870277583}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -2061,7 +2064,7 @@ MonoBehaviour:
       m_Calls: []
   m_ActionEvents: []
   m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: 
+  m_DefaultControlScheme: Keyboard&Mouse
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
@@ -2080,9 +2083,11 @@ MonoBehaviour:
   currentSpeed: 0
   walkSpeed: 5
   sprintSpeed: 10
+  crouchSpeed: 2.5
   gravity: -10
   isCrouching: 0
   isSwordEquipped: 0
+  jumpHeight: 5
   interactDistance: 3
   interactMask:
     serializedVersion: 2
@@ -2110,12 +2115,18 @@ MonoBehaviour:
   fillImageMana: {fileID: 1706621453}
   fillImageHealth: {fileID: 305924951}
   backgroundImage: {fileID: 0}
+  currentHP: 0
+  currentMP: 0
+  baseHP: 0
+  baseMP: 0
   characterController: {fileID: 870277576}
   cinCam: {fileID: 1344014597}
   handsPos: {fileID: 3104824589055686458}
   handsHoldOffset: {x: 0, y: -1, z: 0}
   itemPos: {fileID: 1219534269}
   itemPrefab: {fileID: 1038861590}
+  rain: {fileID: 1895014283}
+  rainAudio: {fileID: 1748134477}
 --- !u!114 &870277579
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2129,8 +2140,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Emit
   enableFootstepNoise: 1
-  walkNoiseRadius: 6
-  runNoiseRadius: 12
+  walkNoiseRadius: 3
+  runNoiseRadius: 8
   crouchNoiseMultiplier: 0.5
   noiseInterval: 0.3
 --- !u!114 &870277580
@@ -2196,6 +2207,19 @@ MonoBehaviour:
   walkSpeed: 5
   runSpeed: 10
   dampTime: 0.12
+--- !u!114 &870277583
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 870277571}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d17f923dc4b7ce48af2fab6cafbde32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::QuickbarInput
+  quickbar: {fileID: 1304850147}
 --- !u!1 &880302259
 GameObject:
   m_ObjectHideFlags: 0
@@ -8121,6 +8145,95 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1299916738}
   m_Mesh: {fileID: 4300000, guid: 775a7b980145b3845bc5652cea790d74, type: 2}
+--- !u!1 &1304850144
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1304850145}
+  - component: {fileID: 1304850146}
+  - component: {fileID: 1304850147}
+  m_Layer: 0
+  m_Name: QuickBar
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1304850145
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1304850144}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 700160118}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
+  m_AnchoredPosition: {x: -293, y: 50}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1304850146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1304850144}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.HorizontalLayoutGroup
+  m_Padding:
+    m_Left: 0
+    m_Right: 0
+    m_Top: 0
+    m_Bottom: 0
+  m_ChildAlignment: 4
+  m_Spacing: 16
+  m_ChildForceExpandWidth: 1
+  m_ChildForceExpandHeight: 1
+  m_ChildControlWidth: 0
+  m_ChildControlHeight: 0
+  m_ChildScaleWidth: 0
+  m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
+--- !u!114 &1304850147
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1304850144}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ead2f60e2ea5214c90af41573167f0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::QuickbarBarManager
+  slotPrefab: {fileID: 1977127253372946444, guid: 6846793892b13fe48a8aeba301e638dd,
+    type: 3}
+  slotParent: {fileID: 1304850145}
+  slotCount: 8
+  startingItems:
+  - {fileID: 11400000, guid: 94be1eeb9aae2da4db2851c8535236aa, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  user: {fileID: 0}
 --- !u!1 &1309171653
 GameObject:
   m_ObjectHideFlags: 0
@@ -15265,7 +15378,7 @@ ParticleSystem:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1895014281}
   serializedVersion: 8
-  lengthInSec: 5
+  lengthInSec: 1
   simulationSpeed: 1
   stopAction: 0
   cullingMode: 0
@@ -16094,7 +16207,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 200
+      scalar: 500
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -20315,7 +20428,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2019865098}
   - component: {fileID: 2019865097}
-  - component: {fileID: 2019865096}
+  - component: {fileID: 2019865099}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -20323,48 +20436,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2019865096
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2019865095}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 01614664b831546d2ae94a42149d80ac, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.UI.InputSystemUIInputModule
-  m_SendPointerHoverToParent: 1
-  m_MoveRepeatDelay: 0.5
-  m_MoveRepeatRate: 0.1
-  m_XRTrackingOrigin: {fileID: 0}
-  m_ActionsAsset: {fileID: -944628639613478452, guid: ca9f5fa95ffab41fb9a615ab714db018,
-    type: 3}
-  m_PointAction: {fileID: -1654692200621890270, guid: ca9f5fa95ffab41fb9a615ab714db018,
-    type: 3}
-  m_MoveAction: {fileID: -8784545083839296357, guid: ca9f5fa95ffab41fb9a615ab714db018,
-    type: 3}
-  m_SubmitAction: {fileID: 392368643174621059, guid: ca9f5fa95ffab41fb9a615ab714db018,
-    type: 3}
-  m_CancelAction: {fileID: 7727032971491509709, guid: ca9f5fa95ffab41fb9a615ab714db018,
-    type: 3}
-  m_LeftClickAction: {fileID: 3001919216989983466, guid: ca9f5fa95ffab41fb9a615ab714db018,
-    type: 3}
-  m_MiddleClickAction: {fileID: -2185481485913320682, guid: ca9f5fa95ffab41fb9a615ab714db018,
-    type: 3}
-  m_RightClickAction: {fileID: -4090225696740746782, guid: ca9f5fa95ffab41fb9a615ab714db018,
-    type: 3}
-  m_ScrollWheelAction: {fileID: 6240969308177333660, guid: ca9f5fa95ffab41fb9a615ab714db018,
-    type: 3}
-  m_TrackedDevicePositionAction: {fileID: 6564999863303420839, guid: ca9f5fa95ffab41fb9a615ab714db018,
-    type: 3}
-  m_TrackedDeviceOrientationAction: {fileID: 7970375526676320489, guid: ca9f5fa95ffab41fb9a615ab714db018,
-    type: 3}
-  m_DeselectOnBackgroundClick: 1
-  m_PointerBehavior: 0
-  m_CursorLockBehavior: 0
-  m_ScrollDeltaPerTick: 6
 --- !u!114 &2019865097
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20388,13 +20459,55 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2019865095}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -343, y: -320.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 700160118}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2019865099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2019865095}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01614664b831546d2ae94a42149d80ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.UI.InputSystemUIInputModule
+  m_SendPointerHoverToParent: 1
+  m_MoveRepeatDelay: 0.5
+  m_MoveRepeatRate: 0.1
+  m_XRTrackingOrigin: {fileID: 0}
+  m_ActionsAsset: {fileID: -944628639613478452, guid: 2f02fee35bb96214ebafb9b4c17545f1,
+    type: 3}
+  m_PointAction: {fileID: -1654692200621890270, guid: 2f02fee35bb96214ebafb9b4c17545f1,
+    type: 3}
+  m_MoveAction: {fileID: -8784545083839296357, guid: 2f02fee35bb96214ebafb9b4c17545f1,
+    type: 3}
+  m_SubmitAction: {fileID: 392368643174621059, guid: 2f02fee35bb96214ebafb9b4c17545f1,
+    type: 3}
+  m_CancelAction: {fileID: 7727032971491509709, guid: 2f02fee35bb96214ebafb9b4c17545f1,
+    type: 3}
+  m_LeftClickAction: {fileID: 3001919216989983466, guid: 2f02fee35bb96214ebafb9b4c17545f1,
+    type: 3}
+  m_MiddleClickAction: {fileID: -2185481485913320682, guid: 2f02fee35bb96214ebafb9b4c17545f1,
+    type: 3}
+  m_RightClickAction: {fileID: -4090225696740746782, guid: 2f02fee35bb96214ebafb9b4c17545f1,
+    type: 3}
+  m_ScrollWheelAction: {fileID: 6240969308177333660, guid: 2f02fee35bb96214ebafb9b4c17545f1,
+    type: 3}
+  m_TrackedDevicePositionAction: {fileID: 6564999863303420839, guid: 2f02fee35bb96214ebafb9b4c17545f1,
+    type: 3}
+  m_TrackedDeviceOrientationAction: {fileID: 7970375526676320489, guid: 2f02fee35bb96214ebafb9b4c17545f1,
+    type: 3}
+  m_DeselectOnBackgroundClick: 1
+  m_PointerBehavior: 0
+  m_CursorLockBehavior: 0
+  m_ScrollDeltaPerTick: 6
 --- !u!1 &2056055666
 GameObject:
   m_ObjectHideFlags: 0
@@ -49966,12 +50079,12 @@ MonoBehaviour:
   suspicionGainFar: 0.1
   suspicionNearDist: 2.5
   suspicionFarDist: 20
-  investigateDuration: 10
+  investigateDuration: 20
   lookAroundSpeed: 120
   investigateTimer: 0
   isInvestigating: 0
-  investigateRadius: 4
-  investigatePointWaitTime: 0.8
+  investigateRadius: 8
+  investigatePointWaitTime: 5
   navSampleMaxDistance: 2
   _knocked: 0
   ragdoll: {fileID: 6520914793522767423}
@@ -49993,6 +50106,7 @@ MonoBehaviour:
   hp: 0
   isDead: 0
   "suspicionTo\u0421heck": 0.25
+  IsChecking: 0
   patrolPoints:
   - {fileID: 274343968}
   - {fileID: 791093895}
@@ -50001,6 +50115,9 @@ MonoBehaviour:
   patrolSpeed: 3
   waitTimeAtPoint: 2
   chaseSpeed: 4
+  isChasing: 0
+  chaseDuration: 13
+  chaseTimer: 0
 --- !u!195 &6520914793522767422
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -62764,7 +62881,6 @@ SceneRoots:
   - {fileID: 1867443530}
   - {fileID: 1833939727}
   - {fileID: 1377236195}
-  - {fileID: 2019865098}
   - {fileID: 2190440452163710870}
   - {fileID: 700160118}
   - {fileID: 870277575}

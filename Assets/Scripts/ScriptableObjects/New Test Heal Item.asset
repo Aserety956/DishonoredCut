@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75853e74e009d3d45aa3e7e5838b50d0, type: 3}
+  m_Name: New Test Heal Item
+  m_EditorClassIdentifier: Assembly-CSharp::TestHealItem
+  displayName: Heal Potion
+  icon: {fileID: -446812601, guid: cf42787f8ddcd6c428be2e1609b147e3, type: 3}
+  healAmount: 25

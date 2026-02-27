@@ -17,9 +17,11 @@ public class PlayerController : MonoBehaviour
     public float currentSpeed;
     public float walkSpeed;
     public float sprintSpeed;
+    public float crouchSpeed;
     public float gravity;
     public bool isCrouching;
     public bool isSwordEquipped;
+    public float jumpHeight;
     
     [Header("Interact")]
     public float interactDistance = 3f;
@@ -64,14 +66,14 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Image backgroundImage;
 
     [Header("Stats")] 
-    public static float HP; // зелья, еда?
-    public static float MP;
-    public static float currentHP;
-    public static float currentMP;
-    public static float baseHP;
-    public static float baseMP;
+    //public float HP; // зелья, еда?
+    //public float MP;
+    public float currentHP;
+    public float currentMP;
+    public float baseHP;
+    public float baseMP;
     
-    
+    [Header("Cinemachine")]
     [SerializeField] private CharacterController characterController;
     [SerializeField] private CinemachineCamera cinCam;
     private BottleItem _heldItem;
@@ -83,6 +85,8 @@ public class PlayerController : MonoBehaviour
     [Header("Debug")]
     [SerializeField] private GameObject itemPrefab;
     private Vector3 offsetToSpawn;
+    [SerializeField] private ParticleSystem rain;
+    [SerializeField] private AudioSource rainAudio;
     
     
     private Vector3 _headInitialLocalPos;
@@ -191,7 +195,7 @@ public class PlayerController : MonoBehaviour
     {
         if (val.Get<float>() > 0.5f && characterController.isGrounded)
         {
-            _velocity.y = 3f; 
+            _velocity.y = jumpHeight; 
         }
     }
     
@@ -200,10 +204,12 @@ public class PlayerController : MonoBehaviour
         if (val.Get<float>() > 0.5f)
         {
             isCrouching = true;
+            currentSpeed = crouchSpeed;
         }
         else
         {
             isCrouching = false;
+            currentSpeed = walkSpeed;
         }
     }
 
@@ -221,7 +227,16 @@ public class PlayerController : MonoBehaviour
     {
         if (val.Get<float>() > 0.5f)
         {
-             
+            if (rain.isPlaying)
+            {
+                rain.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+                rainAudio.Stop();
+            }
+            else
+            {
+                rain.Play();
+                rainAudio.Play();
+            }
         }
     }
 

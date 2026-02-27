@@ -34,6 +34,7 @@ public class SuspicionBar : MonoBehaviour
         }
     }
     
+    
     void Awake()
     {
         cam = Camera.main;
@@ -80,5 +81,19 @@ public class SuspicionBar : MonoBehaviour
     {
         gameObject.SetActive(false);
     }
+
+    /*void Test(int wow, params string[] values)
+    {
+        Debug.Log(wow);
+        foreach (var val in values)
+        {
+            Debug.Log(val);
+        }
+    }
     
+    void Start()
+    {
+        Test(1,"64,325,64,1,46,234,462,24");
+    }*/
+
 }

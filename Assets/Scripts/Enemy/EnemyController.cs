@@ -76,7 +76,7 @@ public class EnemyController : MonoBehaviour, IDamageable
     [Header("Check")] 
     [SerializeField] private float suspicionToСheck = 0.25f;
     private bool _isGoingToCheck;
-    private bool IsChecking;
+    public bool IsChecking;
 
     [Header("Patrol")] 
     public Transform[] patrolPoints;
@@ -86,7 +86,9 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     [Header("Chase")] 
     public float chaseSpeed = 4f;
-    private bool isChasing;
+    public bool isChasing;
+    [SerializeField]private float chaseDuration;
+    [SerializeField]private float chaseTimer;
 
     private int currentPointIndex = 0;
     private float waitTimer;
@@ -266,7 +268,7 @@ public class EnemyController : MonoBehaviour, IDamageable
         
         if (isChasing)
         {
-            suspicion = Mathf.Max(suspicion, suspicionToInvestigate);
+            suspicion = Mathf.Max(suspicion, suspicionToChase);
         }
 
         suspicion = Mathf.Clamp01(suspicion);
@@ -336,6 +338,26 @@ public class EnemyController : MonoBehaviour, IDamageable
         // Если дошли до текущей точки расследования
         if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 0.1f)
         {
+            if (CanSeePlayer())
+            {
+                _lastSeenPosition = player.position;
+                _investigateCenter = _lastSeenPosition;
+
+                _isWaitingAtInvestigatePoint = false;
+                _investigatePointTimer = 0f;
+
+                agent.isStopped = false;
+                
+                //_isWaitingAtInvestigatePoint = false;
+                //_investigatePointTimer = 0f;
+
+                // Вариант A: просто идти к месту, где увидел (как ты просишь)
+                agent.SetDestination(_lastSeenPosition);
+                //PickNewInvestigateDestination();
+
+                return;
+            }
+
             if (!_isWaitingAtInvestigatePoint)
             {
                 _isWaitingAtInvestigatePoint = true;
@@ -375,7 +397,7 @@ public class EnemyController : MonoBehaviour, IDamageable
     private void PickNewInvestigateDestination()
     {
 
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 3; i++) // investigatePoints?
         {
             Vector2 rnd = Random.insideUnitCircle * investigateRadius;
             Vector3 candidate = _investigateCenter + new Vector3(rnd.x, 0f, rnd.y);
@@ -390,7 +412,7 @@ public class EnemyController : MonoBehaviour, IDamageable
         agent.SetDestination(_investigateCenter);
     }
 
-    void LookAround()
+    void LookAround() //todo: с анимацией
     {
 
         transform.Rotate(Vector3.up, lookAroundSpeed * Time.deltaTime);
@@ -413,18 +435,22 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     void UpdateChase()
     {
+        isChasing = true;
         isInvestigating = false;
         investigateTimer = 0f;
         IsChecking = false;
-        //lostSightTimer = 0f; todo:доделать
+        chaseTimer += Time.deltaTime;
+        
         if (CanSeePlayer())
         {
+            chaseTimer = 0f;
             agent.speed = chaseSpeed;
             _lastSeenPosition = player.position;
             agent.SetDestination(player.position);
+            
         }
-        else
-            //todo: зафиксировать?
+        
+        else if (chaseTimer >= chaseDuration) //todo: зафиксировать?
         {
 
             currentState = EnemyState.Investigate;
