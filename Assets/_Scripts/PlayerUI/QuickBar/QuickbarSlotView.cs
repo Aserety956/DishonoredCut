@@ -9,8 +9,8 @@ public class QuickbarSlotView : MonoBehaviour
     [SerializeField] private TMP_Text indexText;
 
     [Header("Visuals")]
-    [SerializeField] private Color normalColor = Color.white;
-    [SerializeField] private Color selectedColor = Color.black;
+    [SerializeField] private Color normalColor;
+    [SerializeField] private Color selectedColor;
     [SerializeField] private Color emptyColor = new Color(1,1,1,0.25f);
 
     public void SetIndex(int oneBasedIndex)
@@ -21,7 +21,7 @@ public class QuickbarSlotView : MonoBehaviour
 
     public void SetItem(QuickItem item)
     {
-        if (iconImage == null) return;
+        //if (iconImage == null) return;
 
         if (item == null)
         {

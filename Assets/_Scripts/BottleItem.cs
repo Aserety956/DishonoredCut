@@ -19,8 +19,7 @@ public class BottleItem : MonoBehaviour, IDamageable
     [SerializeField] private bool vfxSpawnAtHitPoint = true; // в точке удара или в центре бутылки
     
     [Header("Audio")]
-    [SerializeField] private AudioClip[] breakClip;
-    [SerializeField, Range(0f, 1f)] private float breakVolume = 1f;
+    [SerializeField] private SoundData crackSound;
 
     public Rigidbody _rb;
     public Collider _col;
@@ -130,11 +129,13 @@ public class BottleItem : MonoBehaviour, IDamageable
 
         if (_col != null) _col.enabled = false;
         
-        if (breakClip != null && breakClip.Length > 0)
+        AudioManager.I.Play(crackSound, transform.position);
+        
+        /*if (breakClip != null && breakClip.Length > 0)
         {
             int index = Random.Range(0, breakClip.Length);
             AudioSource.PlayClipAtPoint(breakClip[index], transform.position, breakVolume);
-        }
+        }*/
         
         if (breakNoiseRadius > 0f)
             NoiseEmmiter.EmitNoiseAt(transform.position, breakNoiseRadius);

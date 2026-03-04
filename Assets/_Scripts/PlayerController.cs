@@ -20,6 +20,7 @@ public class PlayerController : MonoBehaviour
     public float crouchSpeed;
     public float gravity;
     public bool isCrouching;
+    public bool isSprinting;
     public bool isSwordEquipped;
     public float jumpHeight;
     
@@ -59,15 +60,14 @@ public class PlayerController : MonoBehaviour
     public float crouchSmoothTime = 0.12f;
     public float crouchHeadOffset = -0.5f;
     
-    
     [Header("UI")]
     [SerializeField] private Image fillImageMana;
     [SerializeField] private Image fillImageHealth;
     [SerializeField] private Image backgroundImage;
+    [SerializeField] private RadialMenu radialMenu;
+    [SerializeField] private QuickbarManager quickbar;
 
     [Header("Stats")] 
-    //public float HP; // зелья, еда?
-    //public float MP;
     public float currentHP;
     public float currentMP;
     public float baseHP;
@@ -81,12 +81,32 @@ public class PlayerController : MonoBehaviour
     private Vector3 _handsInitialLocalPos;
     [SerializeField] private Vector3 handsHoldOffset = new Vector3(0f, -1f, 0f); 
     [SerializeField] private Transform itemPos;
+
+    [Header("Sound")]
+    [SerializeField] private SoundData footstepSound;
+    [SerializeField] private Transform feetPosition;
+    
+    [SerializeField] private float stepInterval1 = 0.28f; // 1-й шаг (A)
+    [SerializeField] private float stepInterval2 = 0.30f; // 2-й шаг (B) - чуть больше/меньше для синхры
+
+    [SerializeField] private float runStep1 = 0.20f;
+    [SerializeField] private float runStep2 = 0.22f;
+    
+    [SerializeField] private float minSpeedToStep = 0.15f; // порог движения
+    [SerializeField] private float stopResetTime = 0.08f;  // чтобы быстро сбрасывать цикл на шаг 1
+    
+    [SerializeField] private float startMoveDelay = 0.12f;
+    private float _moveTimer;
+
+    private float _stepTimer;
+    private bool _secondStep;      // false -> шаг1, true -> шаг2
+    private float _stopTimer;
     
     [Header("Debug")]
     [SerializeField] private GameObject itemPrefab;
     private Vector3 offsetToSpawn;
     [SerializeField] private ParticleSystem rain;
-    [SerializeField] private AudioSource rainAudio;
+    [SerializeField] private SoundData rainSound;
     
     
     private Vector3 _headInitialLocalPos;
@@ -112,7 +132,6 @@ public class PlayerController : MonoBehaviour
         
         HealthUpdate();
         ManaUpdate();
-        
     }
     
     public void Update()
@@ -122,6 +141,7 @@ public class PlayerController : MonoBehaviour
 
         UpdateAttack();
         
+
     }
     
     public void LateUpdate()
@@ -149,6 +169,8 @@ public class PlayerController : MonoBehaviour
         
         characterController.Move((move + _velocity) * Time.deltaTime);
         
+        TickFootstepsTwoTimers();
+        
     }
 
     public void UpdateCam()
@@ -173,21 +195,26 @@ public class PlayerController : MonoBehaviour
             ref _vignetteIntensity,
             vignetteSmoothTime);
     }
+    
+    
 
     public void OnMove(InputValue val)
     { 
-        _move = val.Get<Vector2>();
+        _move = val.Get<Vector2>(); 
     }
     
     public void OnSprint(InputValue val)
     {
         if (val.Get<float>() > 0.5f)
         {
+            isSprinting = true;
             currentSpeed = sprintSpeed;
         }
         else
         {
+            isSprinting = false;
             currentSpeed = walkSpeed;
+            
         }
     }
     
@@ -230,16 +257,42 @@ public class PlayerController : MonoBehaviour
             if (rain.isPlaying)
             {
                 rain.Stop(true, ParticleSystemStopBehavior.StopEmitting);
-                rainAudio.Stop();
+                AudioManager.I.StopAmbience();
             }
             else
             {
                 rain.Play();
-                rainAudio.Play();
+                AudioManager.I.PlayAmbience(rainSound);
             }
         }
     }
 
+    public void OnRadialMenu(InputValue val)
+    {
+        if (val.isPressed)
+        {
+            characterController.enabled = false;
+            radialMenu.Open();
+        }
+        else
+        {
+            characterController.enabled = true;
+            radialMenu.Close();
+            
+        }
+    }
+
+    public void OnSlot1(InputValue v) { if (v.isPressed) quickbar.Select(0); }
+    public void OnSlot2(InputValue v) { if (v.isPressed) quickbar.Select(1); }
+    public void OnSlot3(InputValue v) { if (v.isPressed) quickbar.Select(2); }
+    public void OnSlot4(InputValue v) { if (v.isPressed) quickbar.Select(3); }
+    public void OnSlot5(InputValue v) { if (v.isPressed) quickbar.Select(4); }
+    public void OnSlot6(InputValue v) { if (v.isPressed) quickbar.Select(5); }
+    public void OnSlot7(InputValue v) { if (v.isPressed) quickbar.Select(6); }
+    public void OnSlot8(InputValue v) { if (v.isPressed) quickbar.Select(7); }
+
+    public void OnUseQuick(InputValue v) { if (v.isPressed) quickbar.UseSelected(); }
+    
     private Vector3 GetForward()
     {
         Vector3 forward = cinCam.transform.forward;
@@ -412,4 +465,64 @@ public class PlayerController : MonoBehaviour
         
     }
     
+    private void TickFootstepsTwoTimers()
+    {
+        if (AudioManager.I == null || footstepSound == null) return;
+
+        // Только на земле
+        if (!characterController.isGrounded)
+        {
+            ResetFootstepsCycle();
+            return;
+        }
+
+        // Реальная скорость (XZ) из CharacterController
+        Vector3 v = characterController.velocity;
+        v.y = 0f;
+        float speed = v.magnitude;
+
+        // Если стоим — сбросим цикл (чтобы при старте всегда был "шаг 1")
+        if (speed < minSpeedToStep)
+        {
+            _stopTimer += Time.deltaTime;
+            if (_stopTimer >= stopResetTime)
+                ResetFootstepsCycle();
+            _moveTimer = 0f;
+            return;
+        }
+
+        _stopTimer = 0f;
+        
+        _moveTimer += Time.deltaTime;
+        
+        if (_moveTimer < startMoveDelay)
+            return;
+
+        bool run = isSprinting; // замени на свой флаг бега
+        float step1 = run ? runStep1 : stepInterval1;
+        float step2 = run ? runStep2 : stepInterval2;
+
+        //float interval = _secondStep ? stepInterval2 : stepInterval1; // / speedMul;
+        float interval = _secondStep ? step2 : step1;
+
+        _stepTimer -= Time.deltaTime;
+        if (_stepTimer <= 0f)
+        {
+            AudioManager.I.Play(footstepSound, transform.position);
+
+            // Следующий шаг: переключаем 1<->2
+            _secondStep = !_secondStep;
+
+            // Таймер на следующий интервал
+            _stepTimer += interval;
+        }
+    }
+
+    private void ResetFootstepsCycle()
+    {
+        _stepTimer = 0f;
+        _secondStep = false; // чтобы первый шаг всегда был "шаг 1"
+        _stopTimer = 0f;
+        _moveTimer = 0f;
+    }
 }
