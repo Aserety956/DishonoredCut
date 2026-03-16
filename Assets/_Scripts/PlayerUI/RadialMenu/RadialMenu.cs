@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
+using DG.Tweening;
 
 public class RadialMenu : MonoBehaviour
 {
     [Header("UI refs")]
-    [SerializeField] private GameObject root; // RadialMenuRoot
+    [SerializeField] private GameObject root; 
     [SerializeField] private RectTransform radialContainer; // центр (например 600x600)
-    [SerializeField] private GameObject slotPrefab; // RadialSlot prefab
+    [SerializeField] private GameObject slotPrefab;
     [SerializeField] private int slotCount = 8; //todo: динамическое кол во зависящее от открытых умений/предметов
     [SerializeField] private float radius = 200f; // радиус расположения слотов внутри container
 
@@ -60,11 +61,9 @@ public class RadialMenu : MonoBehaviour
     private void Update()
     {
         if (!_isOpen) return;
-
-        // Подсветка слота под курсором
+        
         UpdateHighlight();
         
-        // При клике левой — выбрать
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
             if (_highlighted >= 0)
@@ -121,11 +120,9 @@ public class RadialMenu : MonoBehaviour
         _highlighted = -1;
         
         _previousTimeScale = Time.timeScale; // юзать для UI unscaled delta time из за анимаций
-
-        // замедлить игру
+        
         Time.timeScale = slowTimeScale;
         
-        // Unlock cursor for selection:
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }

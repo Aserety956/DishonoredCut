@@ -1,4 +1,6 @@
+using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -38,13 +40,19 @@ public class AudioManager : MonoBehaviour
 
         for (int i = 0; i < sfxPoolSize; i++)
         {
-            var src = gameObject.AddComponent<AudioSource>();
+            var go = new GameObject($"SFX Source {i}");
+            go.transform.SetParent(transform);
+            go.transform.localPosition = Vector3.zero;
+
+            var src = go.AddComponent<AudioSource>();
             src.playOnAwake = false;
             src.loop = false;
             src.outputAudioMixerGroup = sfxGroup;
+
             sfxPool.Add(src);
         }
     }
+
 
     // ===== Ambience =====
 
@@ -69,12 +77,24 @@ public class AudioManager : MonoBehaviour
         ambienceSource.Play();
     }
 
-    public void StopAmbience()
+    public void StopAmbience(SoundData sound)
     {
-        ambienceSource.Stop();
-        ambienceSource.clip = null;
+        StartCoroutine(FadeOutAmbience());
     }
 
+    private IEnumerator FadeOutAmbience()
+    {
+        while (ambienceSource.volume > 0.01f)
+        {
+            ambienceSource.volume = Mathf.Lerp(ambienceSource.volume, 0f, 5f * Time.deltaTime);
+            yield return null;
+        }
+
+        ambienceSource.Stop();
+        ambienceSource.clip = null;
+        ambienceSource.volume = 1f;
+    }
+    
     // ===== SFX =====
 
     public void Play(SoundData sound, Vector3 worldPos)
@@ -93,8 +113,10 @@ public class AudioManager : MonoBehaviour
             Debug.LogWarning($"Sound '{sound.name}' is looped. Use PlayAmbience or a dedicated looping source.");
             return;
         }
-
+        
         var src = GetFreeSfxSource();
+        if (src == null)
+            return;
         src.transform.position = worldPos;
 
         src.clip = clip;
@@ -121,9 +143,11 @@ public class AudioManager : MonoBehaviour
     private AudioSource GetFreeSfxSource()
     {
         for (int i = 0; i < sfxPool.Count; i++)
+        {
             if (!sfxPool[i].isPlaying)
                 return sfxPool[i];
+        }
 
-        return sfxPool[0];
+        return null;
     }
 }

@@ -14,12 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SoundData
   clips:
   - {fileID: 8300000, guid: 40e0c63e16c09154ba0399914bf7e7bd, type: 3}
-  - {fileID: 8300000, guid: e4edaceaf4e2f4d45afeed0ab2cd1c59, type: 3}
-  - {fileID: 8300000, guid: d5173a38ec8f8584991830edf777248e, type: 3}
   volume: 1
-  randomPitch: 0
-  pitchMin: 1
-  pitchMax: 1
+  randomPitch: 1
+  pitchMin: 0.8
+  pitchMax: 1.2
   loop: 0
   spatial: 1
   spatialBlend: 1

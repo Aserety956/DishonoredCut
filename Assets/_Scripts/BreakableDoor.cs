@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class BreakableDoor : MonoBehaviour, IDamageable
+public class BreakableDoor : MonoBehaviour, IDamageable, IInteractable
 {
     [Header("Health")]
     [SerializeField] private float maxHp = 50f;
@@ -8,7 +8,6 @@ public class BreakableDoor : MonoBehaviour, IDamageable
 
     [Header("Broken Prefab")]
     [SerializeField] private GameObject brokenDoorPrefab;
-    public Transform brokenDoorTransform;
 
     [Header("Break Force")]
     [SerializeField] private float explosionForce = 6f;
@@ -21,6 +20,9 @@ public class BreakableDoor : MonoBehaviour, IDamageable
     [Header("Animation")]
     private Animator animator;
     private bool isOpen;
+    
+    [Header("Outline")]
+    [SerializeField] private Behaviour outlineBehaviour; // встроить свой outline behavior
 
     private bool isBroken;
 
@@ -28,7 +30,23 @@ public class BreakableDoor : MonoBehaviour, IDamageable
     {
         hp = maxHp;
         animator = GetComponent<Animator>();
+        SetHighlight(false);
     }
+
+    public void Interact(PlayerController player)
+    {
+        if (isBroken)
+            return;
+        
+        Toggle();
+    }
+
+    public void SetHighlight(bool enabled)
+    {
+        if (outlineBehaviour != null)
+            outlineBehaviour.enabled = enabled;
+    }
+    
     public void Toggle()
     {
         isOpen = !isOpen;
@@ -49,6 +67,7 @@ public class BreakableDoor : MonoBehaviour, IDamageable
     private void Break(Vector3 hitPoint, Vector3 hitDir)
     {
         isBroken = true;
+        SetHighlight(false);
         
         
         GameObject broken = Instantiate(
@@ -72,5 +91,13 @@ public class BreakableDoor : MonoBehaviour, IDamageable
             Destroy(gameObject);
         else
             gameObject.SetActive(false);
+    }
+    
+    public string GetInteractText()
+    {
+        if (isBroken)
+            return string.Empty;
+
+        return isOpen ? "E — Close door" : "E — Open door";
     }
 }

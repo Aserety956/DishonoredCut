@@ -1,8 +1,7 @@
 using System;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
-public class BottleItem : MonoBehaviour, IDamageable
+public class BottleItem : MonoBehaviour, IDamageable, IInteractable
 {
     [Header("Noise")]
     public float breakNoiseRadius  = 8f;
@@ -20,6 +19,15 @@ public class BottleItem : MonoBehaviour, IDamageable
     
     [Header("Audio")]
     [SerializeField] private SoundData crackSound;
+    
+    [Header("Throw Rotation")]
+    [SerializeField] private float minSpin = 10f;
+    [SerializeField] private float maxSpin = 18f;
+    [SerializeField] private float forwardSpinFactor = 0.35f;
+    [SerializeField] private float twistSpinFactor = 0.2f;
+    
+    [Header("Highlight")]
+    [SerializeField] private Behaviour outlineBehaviour;
 
     public Rigidbody _rb;
     public Collider _col;
@@ -38,14 +46,24 @@ public class BottleItem : MonoBehaviour, IDamageable
     {
         _rb = GetComponent<Rigidbody>();
         _col = GetComponent<Collider>();
+        
         if (playerController != null)
             Physics.IgnoreCollision(_col, playerController);
         
-        
+        SetHighlight(false);
     }
 
     // ---------- API для игрока ----------
+    
+    public void Interact(PlayerController player)
+    {
+        if (player == null) return;
+        if (_broken) return;
+        if (_isHeld) return;
 
+        player.PickupItem(this);
+    }
+    
     public void PickupTo(Transform holdPoint, Vector3 localPos, Vector3 localEuler)
     {
         _isHeld = true;
@@ -62,7 +80,7 @@ public class BottleItem : MonoBehaviour, IDamageable
         
         _armed = false;
     }
-
+    
     
     public void ReleaseDrop(Vector3 pos, Quaternion rot)
     {
@@ -83,6 +101,18 @@ public class BottleItem : MonoBehaviour, IDamageable
         _rb.linearVelocity = Vector3.zero;
         _rb.angularVelocity = Vector3.zero;
         _rb.AddForce(velocityChange, ForceMode.VelocityChange);
+        
+        float mainSpin = UnityEngine.Random.Range(minSpin, maxSpin);
+        float sideSign = UnityEngine.Random.value > 0.5f ? 1f : -1f;
+        float forwardSign = UnityEngine.Random.value > 0.5f ? 1f : -1f;
+        float twistSign = UnityEngine.Random.value > 0.5f ? 1f : -1f;
+
+        Vector3 angularVelocity =
+            transform.right * (mainSpin * sideSign) +
+            transform.forward * (mainSpin * forwardSpinFactor * forwardSign) +
+            transform.up * (mainSpin * twistSpinFactor * twistSign);
+
+        _rb.angularVelocity = angularVelocity;
 
         _armed = true;
     }
@@ -124,6 +154,7 @@ public class BottleItem : MonoBehaviour, IDamageable
     
     public void BreakInternal(Vector3 hitPoint, Vector3 hitDir)
     {
+        SetHighlight(false);
         if (_broken) return;
         _broken = true;
 
@@ -131,29 +162,9 @@ public class BottleItem : MonoBehaviour, IDamageable
         
         AudioManager.I.Play(crackSound, transform.position);
         
-        /*if (breakClip != null && breakClip.Length > 0)
-        {
-            int index = Random.Range(0, breakClip.Length);
-            AudioSource.PlayClipAtPoint(breakClip[index], transform.position, breakVolume);
-        }*/
-        
         if (breakNoiseRadius > 0f)
             NoiseEmmiter.EmitNoiseAt(transform.position, breakNoiseRadius);
         
-        /*if (fracturedPrefab != null)
-        {
-            Quaternion spawnRot = transform.rotation;
-            var go = Instantiate(fracturedPrefab, hitPoint, spawnRot);
-
-            var rbs = go.GetComponentsInChildren<Rigidbody>();
-            Vector3 dir = (hitDir.sqrMagnitude > 0.0001f) ? hitDir.normalized : Vector3.up;
-
-            for (int i = 0; i < rbs.Length; i++)
-                rbs[i].AddForce((dir + Vector3.up * fracturedUp) * fracturedExplosion, ForceMode.VelocityChange);
-
-            if (fracturedLifetime > 0f)
-                Destroy(go, fracturedLifetime);
-        }*/
         
         if (breakVfxPrefab != null)
         {
@@ -175,31 +186,23 @@ public class BottleItem : MonoBehaviour, IDamageable
         Destroy(gameObject);
     }
     
-    /*private void OnTriggerEnter(Collider other)
-    {
-        Debug.Log($"[HEAD HITBOX] Trigger enter by {other.name} (layer {other.gameObject})");
-        if (_isHeld) return;
-        if (!_armed) return;
-        if (_broken) return;
-        if (_hitEnemy) return;
-        
-        var hitbox = other.GetComponent<EnemyHitbox>();
-        if (hitbox == null || hitbox.enemy == null) return;
-
-        _hitEnemy = true;
-
-        Vector3 hitPoint = other.ClosestPoint(transform.position);
-        Vector3 hitDir = (_rb.linearVelocity.sqrMagnitude > 0.0001f) ? _rb.linearVelocity.normalized : transform.forward;
-
-        hitbox.enemy.OnBottleHit(hitbox.zone, hitPoint, hitDir);
-
-        // обычно бутылка разбивается при попадании
-        BreakInternal(hitPoint, hitDir);
-    }*/
-    
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, breakNoiseRadius);
+    }
+    
+    public void SetHighlight(bool enabled)
+    {
+        if (outlineBehaviour != null)
+            outlineBehaviour.enabled = enabled;
+    }
+    
+    public string GetInteractText()
+    {
+        if (_broken || _isHeld)
+            return string.Empty;
+
+        return "E — Pick up bottle";
     }
 }

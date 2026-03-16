@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0efb76b35928a6e468c0966eb5ad09e5, type: 3}
+  m_Name: MaterialsHauler
+  m_EditorClassIdentifier: 
+  weather: 1
+  WindDir: {x: 0, y: 0}
+  WindSpeed: 0
+  cloudsAmmount: 0
+  rainAmmount: 0
+  worldWetness: 0
+  wetmultiplier: 0
+  dryMultiplyer: 0
+  cloudsColor: {r: 0, g: 0, b: 0, a: 0}
+  intensitytransitionTime: 0
+  sunIntensity: 0
+  moonIntensity: 0
+  daynightValue: 0
+  WeathertransitionTime: 0
+  cloudsTransitiontime: 0
+  cloudsColorTransitionTime: 0
+  rainVFX: {fileID: 0}
+  cloudsShadowCookie: {fileID: 0}
+  materialHauler: {fileID: 0}
