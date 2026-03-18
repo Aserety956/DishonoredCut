@@ -532,6 +532,15 @@ MonoBehaviour:
     type: 3}
   slotCount: 8
   radius: 150
+  canvasGroup: {fileID: 109236222}
+  openDuration: 0.22
+  closeDuration: 0.16
+  startScale: 0.75
+  slotStartRadiusMultiplier: 0.35
+  slotStagger: 0.025
+  openEase: 27
+  closeEase: 26
+  slotEase: 9
   slowTimeScale: 0.2
 --- !u!225 &109236222
 CanvasGroup:
@@ -541,7 +550,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 109236219}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0

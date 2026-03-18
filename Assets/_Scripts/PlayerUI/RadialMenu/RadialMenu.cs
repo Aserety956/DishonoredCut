@@ -1,85 +1,105 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.EventSystems;
 using DG.Tweening;
 
 public class RadialMenu : MonoBehaviour
 {
     [Header("UI refs")]
-    [SerializeField] private GameObject root; 
-    [SerializeField] private RectTransform radialContainer; // центр (например 600x600)
+    [SerializeField] private GameObject root;
+    [SerializeField] private RectTransform radialContainer; // центр меню
     [SerializeField] private GameObject slotPrefab;
-    [SerializeField] private int slotCount = 8; //todo: динамическое кол во зависящее от открытых умений/предметов
-    [SerializeField] private float radius = 200f; // радиус расположения слотов внутри container
+    [SerializeField] private int slotCount = 8;
+    [SerializeField] private float radius = 200f;
+
+    [Header("Animation")]
+    [SerializeField] private CanvasGroup canvasGroup;
+    [SerializeField] private float openDuration = 0.22f;
+    [SerializeField] private float closeDuration = 0.16f;
+    [SerializeField] private float startScale = 0.75f;
+    [SerializeField] private float slotStartRadiusMultiplier = 0.35f;
+    [SerializeField] private float slotStagger = 0.025f;
+    [SerializeField] private Ease openEase = Ease.OutBack;
+    [SerializeField] private Ease closeEase = Ease.InBack;
+    [SerializeField] private Ease slotEase = Ease.OutCubic;
 
     [Header("Behavior")]
-    //[SerializeField] private bool chooseOnRelease = true;
     [SerializeField] private float slowTimeScale = 0.2f;
     private float _previousTimeScale = 1f;
 
-    // internal
-    private readonly List<RadialSlotView> _slots = new List<RadialSlotView>();
+    private readonly List<RadialSlotView> _slots = new();
+    private readonly List<Vector2> _slotTargetPositions = new();
+
     private bool _isOpen;
+    private bool _isAnimating;
     private int _highlighted = -1;
+
+    private Sequence _currentSequence;
 
     private void Awake()
     {
-        if (root != null) root.SetActive(false);
-        
+        if (root != null)
+            root.SetActive(false);
+
+        if (canvasGroup == null)
+            canvasGroup = root.GetComponent<CanvasGroup>();
+
         _highlighted = -1;
         for (int i = 0; i < _slots.Count; i++)
             _slots[i].SetHighlighted(false);
 
-        // Создадим слоты заранее, чтобы не лагать при открытии
+        // Создаем слоты заранее
         for (int i = 0; i < slotCount; i++)
         {
             var go = Instantiate(slotPrefab, radialContainer);
             var view = go.GetComponent<RadialSlotView>();
-            view.Setup(i, null, (i+1).ToString()); // иконку назначим позже
+            view.Setup(i, null, (i + 1).ToString());
             _slots.Add(view);
         }
 
         LayoutSlots();
-        
     }
 
     private void LayoutSlots()
     {
-        // Располагаем по кругу в local coordinates radialContainer
+        _slotTargetPositions.Clear();
+
         float angleStep = 360f / slotCount;
         for (int i = 0; i < _slots.Count; i++)
         {
-            float angle = Mathf.Deg2Rad * (90f - i * angleStep); // 90deg = вверх; поменяй если нужно стартовый угол
+            float angle = Mathf.Deg2Rad * (90f - i * angleStep);
             Vector2 pos = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius;
+
             var rt = _slots[i].GetComponent<RectTransform>();
             rt.anchoredPosition = pos;
+
+            _slotTargetPositions.Add(pos);
         }
     }
 
     private void Update()
     {
-        if (!_isOpen) return;
-        
+        if (!_isOpen || _isAnimating)
+            return;
+
         UpdateHighlight();
-        
+
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
             if (_highlighted >= 0)
                 OnSelectSlot(_highlighted);
+
             Close();
         }
     }
 
     private void UpdateHighlight()
     {
-        // Получаем позицию курсора в локальных координатах radialContainer
         Vector2 localPos;
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            radialContainer, 
-            Mouse.current.position.ReadValue(), 
-            null, // camera null for Screen Space - Overlay
+            radialContainer,
+            Mouse.current.position.ReadValue(),
+            null,
             out localPos);
 
         int bestIndex = -1;
@@ -96,49 +116,170 @@ public class RadialMenu : MonoBehaviour
             }
         }
 
-        // Обновим визуал
         if (bestIndex != _highlighted)
         {
-            if (_highlighted >= 0) _slots[_highlighted].SetHighlighted(false);
+            if (_highlighted >= 0)
+                _slots[_highlighted].SetHighlighted(false);
+
             _highlighted = bestIndex;
-            if (_highlighted >= 0) _slots[_highlighted].SetHighlighted(true);
+
+            if (_highlighted >= 0)
+                _slots[_highlighted].SetHighlighted(true);
         }
     }
 
     private void OnSelectSlot(int index)
     {
         Debug.Log($"Radial selected slot {index}");
-        // TODO: вызови логику equip/use: Quickbar.Instance.UseSlot(index) или через событие
     }
 
     public void Open()
     {
-        if (_isOpen) return;
+        if (_isOpen && !_isAnimating)
+            return;
+
+        _currentSequence?.Kill();
+
         _isOpen = true;
-        ClearHighlight();
+        _isAnimating = true;
+
         root.SetActive(true);
-        _highlighted = -1;
-        
-        _previousTimeScale = Time.timeScale; // юзать для UI unscaled delta time из за анимаций
-        
+
+        _previousTimeScale = Time.timeScale;
         Time.timeScale = slowTimeScale;
-        
+
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+
+        canvasGroup.interactable = false;
+        canvasGroup.blocksRaycasts = false;
+
+        PlayOpenAnimation();
     }
 
     public void Close()
     {
-        if (!_isOpen) return;
-        _isOpen = false;
+        if (!_isOpen && !_isAnimating)
+            return;
+
+        _currentSequence?.Kill();
+        Time.timeScale = _previousTimeScale;
+
+        _isAnimating = true;
+        canvasGroup.interactable = false;
+        canvasGroup.blocksRaycasts = false;
+
         ClearHighlight();
-        root.SetActive(false);
-        
-        Time.timeScale = _previousTimeScale; 
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+
+        PlayCloseAnimation();
     }
-    
+
+    private void PlayOpenAnimation()
+    {
+        _currentSequence?.Kill();
+
+        // Начальное состояние меню
+        /*canvasGroup.alpha = 0f;
+        canvasGroup.interactable = false;
+        canvasGroup.blocksRaycasts = false;*/
+
+        if (canvasGroup.alpha <= 0.001f)
+        {
+            radialContainer.localScale = Vector3.one * startScale;
+
+            for (int i = 0; i < _slots.Count; i++)
+            {
+                var rt = _slots[i].GetComponent<RectTransform>();
+                rt.anchoredPosition = _slotTargetPositions[i] * slotStartRadiusMultiplier;
+                rt.localScale = Vector3.one * 0.85f;
+            }
+        }
+
+        _currentSequence = DOTween.Sequence()
+            .SetUpdate(true);
+
+        // Общая анимация контейнера
+        _currentSequence.Join(
+            canvasGroup.DOFade(1f, openDuration)
+                .SetEase(Ease.OutQuad)
+        );
+
+        _currentSequence.Join(
+            radialContainer.DOScale(1f, openDuration)
+                .SetEase(openEase)
+        );
+
+        // Анимация слотов
+        for (int i = 0; i < _slots.Count; i++)
+        {
+            int index = i;
+            var rt = _slots[index].GetComponent<RectTransform>();
+
+            _currentSequence.Insert(
+                index * slotStagger,
+                rt.DOAnchorPos(_slotTargetPositions[index], openDuration)
+                    .SetEase(slotEase)
+            );
+
+            _currentSequence.Insert(
+                index * slotStagger,
+                rt.DOScale(1f, openDuration)
+                    .SetEase(Ease.OutBack)
+            );
+        }
+
+        _currentSequence.OnComplete(() =>
+        {
+            _isAnimating = false;
+            _isOpen = true;
+            canvasGroup.interactable = true;
+            canvasGroup.blocksRaycasts = true;
+        });
+    }
+
+    private void PlayCloseAnimation()
+    {
+        _currentSequence?.Kill();
+
+        _currentSequence = DOTween.Sequence()
+            .SetUpdate(true);
+
+        _currentSequence.Join(
+            canvasGroup.DOFade(0f, closeDuration).SetEase(Ease.OutQuad)
+        );
+
+        _currentSequence.Join(
+            radialContainer.DOScale(startScale, closeDuration).SetEase(closeEase)
+        );
+
+        for (int i = 0; i < _slots.Count; i++)
+        {
+            int index = i;
+            var rt = _slots[index].GetComponent<RectTransform>();
+
+            _currentSequence.Join(
+                rt.DOAnchorPos(_slotTargetPositions[index] * slotStartRadiusMultiplier, closeDuration)
+                    .SetEase(Ease.InCubic)
+            );
+
+            _currentSequence.Join(
+                rt.DOScale(0.85f, closeDuration).SetEase(Ease.InCubic)
+            );
+        }
+
+        _currentSequence.OnComplete(() =>
+        {
+            _isAnimating = false;
+            _isOpen = false;
+
+            root.SetActive(false);
+
+            Time.timeScale = _previousTimeScale;
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        });
+    }
+
     private void ClearHighlight()
     {
         if (_highlighted >= 0 && _highlighted < _slots.Count)
@@ -146,20 +287,16 @@ public class RadialMenu : MonoBehaviour
 
         _highlighted = -1;
     }
-    // ==== Input system hook (Send Messages style) ====
-    // В PlayerInput в карте Player создайте Action "Radial" (Button, <Mouse>/rightButton)
-    // Behavior = Press (включить send messages)
-    public void OnRadial(InputValue val)
+
+    /*public void OnRadial(InputValue val)
     {
         if (val.isPressed)
             Open();
         else
             Close();
-    }
+    }*/
 
-    // Если хочешь, можно отдельным action повесить выбор по клавишам 1..8 (и вызывать OnSelectSlot)
     public void OnSlot1(InputValue v) { if (v.isPressed) OnSelectSlot(0); }
     public void OnSlot2(InputValue v) { if (v.isPressed) OnSelectSlot(1); }
-    // ... до OnSlot8
 }
 

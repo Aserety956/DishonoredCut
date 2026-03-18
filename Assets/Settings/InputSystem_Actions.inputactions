@@ -201,7 +201,7 @@
                     "id": "e8569ea0-e234-4b85-bbdd-6b574af6efc6",
                     "expectedControlType": "",
                     "processors": "",
-                    "interactions": "",
+                    "interactions": "Press(behavior=2)",
                     "initialStateCheck": false
                 }
             ],
@@ -727,7 +727,7 @@
                     "name": "",
                     "id": "48e7e4d8-127a-4076-84f1-63255b2949d0",
                     "path": "<Mouse>/middleButton",
-                    "interactions": "Press(behavior=2)",
+                    "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
                     "action": "RadialMenu",

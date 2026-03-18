@@ -153,6 +153,8 @@ public class PlayerController : MonoBehaviour
 
         UpdateInteractHover();
 
+        RadialMenuUpdate();
+
     }
 
     
@@ -267,8 +269,14 @@ public class PlayerController : MonoBehaviour
     {
         if (val.Get<float>() <= 0.5f)
             return;
-
+        
+        RainManager();
+    }
+    
+    public void RainManager()
+    {
         _rainEnabled = !_rainEnabled;
+        
 
         if (_rainEnabled)
         {
@@ -281,8 +289,8 @@ public class PlayerController : MonoBehaviour
             AudioManager.I.StopAmbience(rainSound);
         }
     }
-
-    public void OnRadialMenu(InputValue val)
+    
+    /*public void OnRadialMenu(InputValue val)
     {
         if (val.isPressed)
         {
@@ -294,6 +302,21 @@ public class PlayerController : MonoBehaviour
             characterController.enabled = true;
             radialMenu.Close();
             
+        }
+    }*/
+
+    public void RadialMenuUpdate()
+    {
+        if (Mouse.current.middleButton.wasPressedThisFrame)
+        {
+            //characterController.enabled = false;
+            radialMenu.Open();
+        }
+
+        if (Mouse.current.middleButton.wasReleasedThisFrame)
+        {
+            //characterController.enabled = true;
+            radialMenu.Close();
         }
     }
 
