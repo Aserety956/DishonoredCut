@@ -107,10 +107,11 @@ public class PlayerController : MonoBehaviour
     [Header("Debug")]
     [SerializeField] private GameObject itemPrefab;
     private Vector3 offsetToSpawn;
-    [SerializeField] private ParticleSystem rain;
     [SerializeField] private VisualEffect rainVFX;
+    [SerializeField] private ParticleSystem rain;
     [SerializeField] private SoundData rainSound;
     private bool _rainEnabled;
+    private Coroutine _rainRoutine;
     
     
     private Vector3 _headInitialLocalPos;
@@ -276,18 +277,30 @@ public class PlayerController : MonoBehaviour
     public void RainManager()
     {
         _rainEnabled = !_rainEnabled;
-        
+
+
+        _rainRoutine = StartCoroutine(RainVFXCoroutine(_rainEnabled ? 100f : 0f, 3f));
 
         if (_rainEnabled)
-        {
-            rainVFX.SetFloat("RainAmount", 100f);
             AudioManager.I.PlayAmbience(rainSound);
-        }
         else
-        {
-            rainVFX.SetFloat("RainAmount", 0f);
             AudioManager.I.StopAmbience(rainSound);
+    }
+
+    public IEnumerator RainVFXCoroutine(float amount, float duration)
+    {
+        
+        float startAmount = rainVFX.GetFloat("RainAmount");
+        float time = 0f;
+
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+            float value = Mathf.Lerp(startAmount, amount, time / duration);
+            rainVFX.SetFloat("RainAmount", value);
+            yield return null;
         }
+        rainVFX.SetFloat("RainAmount", amount);
     }
     
     /*public void OnRadialMenu(InputValue val)
@@ -512,45 +525,6 @@ public class PlayerController : MonoBehaviour
         Debug.DrawRay(ray.origin, ray.direction * interactDistance, Color.yellow, 0.2f);
     }
     
-    /*private void TryInteract()
-    {
-        
-        if (_heldItem != null)
-        {
-            _heldItem.ReleaseDrop(itemPos.position, itemPos.rotation);
-            _heldItem = null;
-            UpdateHandsPose();
-            return;
-        }
-        
-        
-        Ray ray = new Ray(cinCam.transform.position, cinCam.transform.forward);
-
-        
-        if (Physics.Raycast(ray, out RaycastHit hit, interactDistance, interactMask, QueryTriggerInteraction.Ignore))
-        {
-            BreakableDoor door = hit.collider.GetComponentInParent<BreakableDoor>();
-            if (door != null)
-            {
-                door.Toggle();
-                return;
-            }
-            
-            
-            BottleItem item = hit.collider.GetComponentInParent<BottleItem>(); 
-            if (item != null)
-            {
-                UpdateHandsPose();
-                //handsPos.localPosition -= Vector3.up;
-                _heldItem = item;
-                _heldItem.PickupTo(itemPos, Vector3.zero, Vector3.zero);
-                return;
-            }
-        }
-        Debug.DrawRay(ray.origin, ray.direction * interactDistance, Color.yellow, 0.2f);
-            
-        
-    }*/
     
     private void TickFootstepsTwoTimers()
     {

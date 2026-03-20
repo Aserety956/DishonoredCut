@@ -61,7 +61,7 @@ Material:
     - _QueueOffset: 0
     m_Colors:
     - _MainTiling: {r: 13.25, g: 13, b: 0, a: 0}
-    - _RippleSpeed: {r: 0.4, g: 0, b: 0, a: 0}
+    - _RippleSpeed: {r: 0.1, g: 0, b: 0, a: 0}
     - _RippleTiling: {r: 200, g: 200, b: 0, a: 0}
     - _SmoothTiling: {r: 0.03, g: 0.06, b: 0, a: 0}
   m_BuildTextureStacks: []

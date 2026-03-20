@@ -74,6 +74,22 @@ MonoBehaviour:
     max: Infinity
     enumValues: []
     descendantCount: 0
+  - name: RainDrop Texture
+    path: RainDrop Texture
+    tooltip: The raindrop Texture
+    space: -1
+    spaceable: 0
+    sheetType: m_NamedObject
+    realType: Texture2D
+    defaultValue:
+      m_Type:
+        m_SerializableType: UnityEngine.Texture2D, UnityEngine.CoreModule, Version=0.0.0.0,
+          Culture=neutral, PublicKeyToken=null
+      m_SerializableObject: '{"obj":{"fileID":10300,"guid":"0000000000000000f000000000000000","type":0}}'
+    min: -Infinity
+    max: Infinity
+    enumValues: []
+    descendantCount: 0
   - name: RainAmount
     path: RainAmount
     tooltip: The ammount of Rain Falling
@@ -278,7 +294,7 @@ MonoBehaviour:
   m_UICollapsed: 0
   m_UISuperCollapsed: 0
   m_InputSlots:
-  - {fileID: 8926484042661615661}
+  - {fileID: 8926484042661615687}
   m_OutputSlots: []
   m_Label: 
   m_Data: {fileID: 8926484042661614568}
@@ -858,7 +874,7 @@ MonoBehaviour:
   m_OutputSlots:
   - {fileID: 8926484042661614869}
   m_ExposedName: RainDrop Texture
-  m_Exposed: 0
+  m_Exposed: 1
   m_Order: 1
   m_Category: 
   m_Min:
@@ -2347,7 +2363,7 @@ MonoBehaviour:
         m_SerializableType: UnityEditor.VFX.Vector, Unity.VisualEffectGraph.Editor,
           Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
       m_SerializableObject: '{"vector":{"x":1.0,"y":0.0,"z":0.0}}'
-    m_Space: 1
+    m_Space: 0
   m_Property:
     name: Force
     m_serializedType:
@@ -4856,7 +4872,7 @@ MonoBehaviour:
         PublicKeyToken=b77a5c561934e089
   m_Direction: 0
   m_LinkedSlots: []
---- !u!114 &8926484042661615661
+--- !u!114 &8926484042661615687
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4871,13 +4887,13 @@ MonoBehaviour:
   m_UIIgnoredErrors: []
   m_Parent: {fileID: 0}
   m_Children:
-  - {fileID: 8926484042661615662}
-  - {fileID: 8926484042661615663}
-  - {fileID: 8926484042661615664}
+  - {fileID: 8926484042661615688}
+  - {fileID: 8926484042661615689}
+  - {fileID: 8926484042661615690}
   m_UIPosition: {x: 0, y: 0}
   m_UICollapsed: 1
   m_UISuperCollapsed: 0
-  m_MasterSlot: {fileID: 8926484042661615661}
+  m_MasterSlot: {fileID: 8926484042661615687}
   m_MasterData:
     m_Owner: {fileID: 8926484042661614558}
     m_Value:
@@ -4893,7 +4909,7 @@ MonoBehaviour:
         Culture=neutral, PublicKeyToken=null
   m_Direction: 0
   m_LinkedSlots: []
---- !u!114 &8926484042661615662
+--- !u!114 &8926484042661615688
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4906,12 +4922,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.VisualEffectGraph.Editor::UnityEditor.VFX.VFXSlotFloat
   m_UIIgnoredErrors: []
-  m_Parent: {fileID: 8926484042661615661}
+  m_Parent: {fileID: 8926484042661615687}
   m_Children: []
   m_UIPosition: {x: 0, y: 0}
   m_UICollapsed: 1
   m_UISuperCollapsed: 0
-  m_MasterSlot: {fileID: 8926484042661615661}
+  m_MasterSlot: {fileID: 8926484042661615687}
   m_MasterData:
     m_Owner: {fileID: 0}
     m_Value:
@@ -4926,7 +4942,7 @@ MonoBehaviour:
         PublicKeyToken=b77a5c561934e089
   m_Direction: 0
   m_LinkedSlots: []
---- !u!114 &8926484042661615663
+--- !u!114 &8926484042661615689
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4939,12 +4955,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.VisualEffectGraph.Editor::UnityEditor.VFX.VFXSlotFloat
   m_UIIgnoredErrors: []
-  m_Parent: {fileID: 8926484042661615661}
+  m_Parent: {fileID: 8926484042661615687}
   m_Children: []
   m_UIPosition: {x: 0, y: 0}
   m_UICollapsed: 1
   m_UISuperCollapsed: 0
-  m_MasterSlot: {fileID: 8926484042661615661}
+  m_MasterSlot: {fileID: 8926484042661615687}
   m_MasterData:
     m_Owner: {fileID: 0}
     m_Value:
@@ -4959,7 +4975,7 @@ MonoBehaviour:
         PublicKeyToken=b77a5c561934e089
   m_Direction: 0
   m_LinkedSlots: []
---- !u!114 &8926484042661615664
+--- !u!114 &8926484042661615690
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4972,12 +4988,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.VisualEffectGraph.Editor::UnityEditor.VFX.VFXSlotFloat
   m_UIIgnoredErrors: []
-  m_Parent: {fileID: 8926484042661615661}
+  m_Parent: {fileID: 8926484042661615687}
   m_Children: []
   m_UIPosition: {x: 0, y: 0}
   m_UICollapsed: 1
   m_UISuperCollapsed: 0
-  m_MasterSlot: {fileID: 8926484042661615661}
+  m_MasterSlot: {fileID: 8926484042661615687}
   m_MasterData:
     m_Owner: {fileID: 0}
     m_Value:
