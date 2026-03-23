@@ -2084,6 +2084,7 @@ MonoBehaviour:
   handsHoldOffset: {x: 0, y: -1, z: 0}
   itemPos: {fileID: 1219534269}
   footstepSound: {fileID: 11400000, guid: 94de3e34c0745a44fb161b85a5cb17db, type: 2}
+  crouchSound: {fileID: 11400000, guid: 3b886ad295ddd9949a06661104976860, type: 2}
   feetPosition: {fileID: 1510090747}
   stepInterval1: 0.63
   stepInterval2: 0.715
@@ -14464,13 +14465,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1567542735}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.41824472, y: -0.13004856, z: 0.060642626, w: 0.8969288}
+  m_LocalRotation: {x: 0.59042263, y: -0.11515882, z: 0.085607246, w: 0.7942361}
   m_LocalPosition: {x: 6.65, y: 10.93, z: 3.91}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 59383918}
-  m_LocalEulerAnglesHint: {x: 50, y: -16.5, z: 0}
+  m_LocalEulerAnglesHint: {x: 73.253, y: -16.5, z: 0}
 --- !u!114 &1567542737
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14510,7 +14511,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 12
   m_Type: 1
-  m_Color: {r: 0.745283, g: 0.745283, b: 0.745283, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
@@ -15475,6 +15476,37 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1812416977}
   m_Mesh: {fileID: 4300000, guid: 26f6d3fda0d35ab4eb431037dd66da7d, type: 2}
+--- !u!1 &1826782975
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1826782976}
+  m_Layer: 6
+  m_Name: ViewSource
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1826782976
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1826782975}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.113, z: 0.033}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1970340727261574608}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1833939726
 GameObject:
   m_ObjectHideFlags: 0
@@ -29642,6 +29674,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8675535771764822961}
+  - {fileID: 1826782976}
   m_Father: {fileID: 5717499648887143836}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!144 &1970340727261574609
@@ -50021,11 +50054,11 @@ MonoBehaviour:
   suspicionNearDist: 10
   suspicionFarDist: 20
   investigateDuration: 20
-  lookAroundSpeed: 120
+  lookAroundLength: 6.333
   investigateTimer: 0
   isInvestigating: 0
   investigateRadius: 8
-  investigatePointWaitTime: 5
+  investigatePointWaitTime: 6.333
   navSampleMaxDistance: 2
   _knocked: 0
   ragdoll: {fileID: 6520914793522767423}
@@ -50039,6 +50072,7 @@ MonoBehaviour:
   obstacleMask:
     serializedVersion: 2
     m_Bits: 9
+  viewSource: {fileID: 1826782976}
   lightMin: 0.15
   lightMax: 0.8
   player: {fileID: 870277575}

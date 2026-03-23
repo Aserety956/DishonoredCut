@@ -86,6 +86,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Sound")]
     [SerializeField] private SoundData footstepSound;
+    [SerializeField] private SoundData crouchSound;
     [SerializeField] private Transform feetPosition;
     
     [SerializeField] private float stepInterval1 = 0.28f; // 1-й шаг (A)
@@ -221,7 +222,7 @@ public class PlayerController : MonoBehaviour
     
     public void OnSprint(InputValue val)
     {
-        if (val.Get<float>() > 0.5f)
+        if (val.Get<float>() > 0.5f && !isCrouching)
         {
             isSprinting = true;
             currentSpeed = sprintSpeed;
@@ -558,18 +559,28 @@ public class PlayerController : MonoBehaviour
         
         if (_moveTimer < startMoveDelay)
             return;
-
-        bool run = isSprinting; // замени на свой флаг бега
+        
+        
+        bool run = isSprinting; 
+        bool crouch = isCrouching;
         float step1 = run ? runStep1 : stepInterval1;
         float step2 = run ? runStep2 : stepInterval2;
 
-        //float interval = _secondStep ? stepInterval2 : stepInterval1; // / speedMul;
+        if (crouch)
+        {
+            step1 *= 1.5f;
+            step2 *= 1.5f;
+        }
+        
         float interval = _secondStep ? step2 : step1;
+        
+        SoundData step = crouch ? crouchSound : footstepSound; 
 
         _stepTimer -= Time.deltaTime;
+        
         if (_stepTimer <= 0f)
         {
-            AudioManager.I.Play(footstepSound, transform.position);
+            AudioManager.I.Play(step, transform.position);
 
             // Следующий шаг: переключаем 1<->2
             _secondStep = !_secondStep;
