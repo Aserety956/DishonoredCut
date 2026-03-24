@@ -13,7 +13,7 @@ public class PlayerAnimController : MonoBehaviour
     [SerializeField] private float dampTime = 0.12f;
 
     private static readonly int Speed01 = Animator.StringToHash("Speed01");
-    private static readonly int IsGrounded = Animator.StringToHash("IsGrounded");
+    //private static readonly int IsGrounded = Animator.StringToHash("IsGrounded");
     
     private void Update()
     {

@@ -12,11 +12,11 @@ public class EnemyController : MonoBehaviour, IDamageable
     public float suspicionToInvestigate = 0.5f;
     public float suspicionToChase = 1f;
     public float suspicion;
-    [SerializeField] private float suspicionGainNear; // в сек при близкой дистанции
-    [SerializeField] private float suspicionGainFar; // в сек при дальней
-    [SerializeField] private float suspicionNearDist; // ближняя дистанция (м)
-
-    [SerializeField] private float suspicionFarDist; // дальняя дистанция (м)
+    [SerializeField] private float suspicionGainNear; //в сек
+    [SerializeField] private float suspicionGainFar; 
+    
+    [SerializeField] private float suspicionNearDist; 
+    [SerializeField] private float suspicionFarDist; 
 
     //[SerializeField] private AnimationCurve distanceToGain;
     private bool heardNoise;
@@ -25,7 +25,7 @@ public class EnemyController : MonoBehaviour, IDamageable
     [Header("Investigation")] [SerializeField]
     private float investigateDuration = 10f;
 
-    [SerializeField] private float lookAroundLength = 6.333f;
+    //[SerializeField] private float lookAroundLength = 6.333f;
     public float investigateTimer;
     public bool isInvestigating;
     private Vector3 _lastHeardPosition;
@@ -38,6 +38,10 @@ public class EnemyController : MonoBehaviour, IDamageable
     [SerializeField] private float navSampleMaxDistance = 2f; // насколько далеко искать NavMesh точку от кандидата
 
 
+    [Header("Sounds")]
+    [SerializeField] private SoundData investigateSounds;
+    
+    
     [Header("Ragdoll")] public bool _knocked;
     [SerializeField] private EnemyRagdoll ragdoll;
 
@@ -46,7 +50,6 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     [Header("Animations")] [SerializeField]
     private NavMeshAgent agent;
-
     [SerializeField] private Animator animator;
 
     [Tooltip("Сколько секунд сглаживать изменение Speed параметра.")] [SerializeField]
@@ -209,6 +212,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                 _isWaitingAtInvestigatePoint = false;
                 _investigatePointTimer = 0f;
 
+                AudioManager.I.Play(investigateSounds, transform.position);
                 SetLookingAround(false);
 
                 // Сначала попробуем пойти к центру, чтобы выглядело естественно
@@ -424,6 +428,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                 agent.SetDestination(hit.position);
                 return;
             }
+            
         }
 
         agent.SetDestination(_investigateCenter);

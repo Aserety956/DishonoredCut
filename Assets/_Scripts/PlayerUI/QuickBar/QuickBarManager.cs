@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using DG.Tweening;
 
 public class QuickbarManager : MonoBehaviour
 {
@@ -12,7 +13,19 @@ public class QuickbarManager : MonoBehaviour
     [SerializeField] private QuickItem[] startingItems = new QuickItem[8];
 
     [Header("Use")]
-    [SerializeField] private GameObject user; // игрок (или оставь пустым и подставь сам)
+    [SerializeField] private GameObject user; // игрок
+    
+    [Header("Animation")]
+    [SerializeField] private RectTransform quickbarRoot;
+    [SerializeField] private float showY = 50f;
+    [SerializeField] private float hideY = -200f;
+    [SerializeField] private float duration = 0.25f;
+    [SerializeField] private float visibleTime = 2f;
+    
+    [SerializeField] private CanvasGroup canvasGroup;
+
+    private Tween _tween;
+    private Tween _hideDelay;
 
     private QuickItem[] _items;
     private QuickbarSlotView[] _views;
@@ -38,17 +51,58 @@ public class QuickbarManager : MonoBehaviour
         }
 
         RefreshSelection();
+        
+        if (quickbarRoot != null)
+        {
+            quickbarRoot.anchoredPosition = new Vector2(0, hideY);
+        }
+        
+        if (canvasGroup != null)
+        {
+            canvasGroup.alpha = 0f;
+        }
     }
     
     public void Select(int index)
     {
         if (index < 0 || index >= slotCount) return;
-        if (SelectedIndex == index) return;
 
+        // даже если тот же слот — всё равно показываем UI
         SelectedIndex = index;
         RefreshSelection();
+
+        ShowQuickbar();
+    }
+    
+    private void ShowQuickbar()
+    {
+        if (quickbarRoot == null) return;
+
+        _tween?.Kill();
+        _hideDelay?.Kill();
+        
+        _tween = quickbarRoot
+            .DOAnchorPosY(showY, duration)
+            .SetEase(Ease.OutBack);
+        
+        canvasGroup?.DOFade(1f, duration);
+
+        _hideDelay = DOVirtual.DelayedCall(visibleTime, HideQuickbar);
     }
 
+    private void HideQuickbar()
+    {
+        if (quickbarRoot == null) return;
+
+        _tween?.Kill();
+        
+        _tween = quickbarRoot
+            .DOAnchorPosY(hideY, duration)
+            .SetEase(Ease.InBack);
+        
+        canvasGroup?.DOFade(0f, duration);
+    }
+    
     public void UseSelected()
     {
         var item = _items[SelectedIndex];

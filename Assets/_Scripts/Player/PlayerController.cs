@@ -65,7 +65,7 @@ public class PlayerController : MonoBehaviour
     [Header("UI")]
     [SerializeField] private Image fillImageMana;
     [SerializeField] private Image fillImageHealth;
-    [SerializeField] private Image backgroundImage;
+    //[SerializeField] private Image backgroundImage;
     [SerializeField] private RadialMenu radialMenu;
     [SerializeField] private QuickbarManager quickbar;
 
