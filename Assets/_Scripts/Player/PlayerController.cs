@@ -188,6 +188,10 @@ public class PlayerController : MonoBehaviour
         
         TickFootstepsTwoTimers();
         
+        Vector3 forwardLook = new Vector3(cinCam.transform.forward.x, 0, cinCam.transform.forward.z).normalized;
+        
+        transform.rotation = Quaternion.LookRotation(forwardLook);
+        
     }
 
     public void UpdateCam()
@@ -196,6 +200,7 @@ public class PlayerController : MonoBehaviour
         float targetOffset = isCrouching ? crouchHeadOffset : 0f;
 
         Vector3 localPos = headTarget.localPosition;
+        
         localPos.y = Mathf.SmoothDamp(
             localPos.y,
             _headInitialLocalPos.y + targetOffset,
