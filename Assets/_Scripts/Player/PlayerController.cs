@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Unity.Cinemachine;
 using Unity.Mathematics;
@@ -156,6 +157,17 @@ public class PlayerController : MonoBehaviour
         UpdateInteractHover();
 
         RadialMenuUpdate();
+        
+        if (Keyboard.current.f5Key.wasPressedThisFrame)
+        {
+            SaveSystem.SavePlayer(this);
+        }
+
+        if (Keyboard.current.f9Key.wasPressedThisFrame)
+        {
+            PlayerSaveData data = SaveSystem.LoadPlayer();
+            LoadFromSaveData(data);
+        }
 
     }
 
@@ -660,5 +672,41 @@ public class PlayerController : MonoBehaviour
             interactPromptUI.Hide();
         else
             interactPromptUI.Show(text);
+    }
+    
+    public PlayerSaveData GetSaveData()
+    {
+        PlayerSaveData data = new PlayerSaveData();
+
+        data.hp = currentHP;
+        data.mp = currentMP;
+
+        data.posX = transform.position.x;
+        data.posY = transform.position.y;
+        data.posZ = transform.position.z;
+
+        data.isCrouching = isCrouching;
+
+        return data;
+    }
+    
+    public void LoadFromSaveData(PlayerSaveData data)
+    {
+        if (data == null)
+            return;
+
+        currentHP = data.hp;
+        currentMP = data.mp;
+
+        transform.position = new Vector3(data.posX, data.posY, data.posZ);
+        isCrouching = data.isCrouching;
+
+        if (isCrouching)
+            currentSpeed = crouchSpeed;
+        else
+            currentSpeed = walkSpeed;
+
+        HealthUpdate();
+        ManaUpdate();
     }
 }
