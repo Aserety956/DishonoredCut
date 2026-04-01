@@ -39,11 +39,35 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _BUILTIN_QueueControl: -1
+    - _BUILTIN_QueueOffset: 0
+    - _HorizonBlend: 4.1
+    - _NadirBlend: 0.3
     - _QueueControl: 0
     - _QueueOffset: 0
-    m_Colors: []
+    - _StarBrightness: 70
+    - _StarHeight: 160
+    - _StarIntensity: 220
+    - _ZenithBlend: 0.4
+    m_Colors:
+    - _GroundColor: {r: 0.25490198, g: 0.25490198, b: 0.25490198, a: 0}
+    - _HorizonColor: {r: 0.16981131, g: 0.16981131, b: 0.16981131, a: 1}
+    - _SkyColor: {r: 0.17266127, g: 0.13536845, b: 0.24528301, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
+--- !u!114 &4561261409421476692
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 639247ca83abc874e893eb93af2b5e44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.ShaderGraph.Editor::UnityEditor.Rendering.BuiltIn.AssetVersion
+  version: 0
 --- !u!114 &4574434986699977875
 MonoBehaviour:
   m_ObjectHideFlags: 11
