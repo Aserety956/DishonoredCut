@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Shader Graphs_Skybox
-  m_Shader: {fileID: -6465566751694194690, guid: 7174d6e11b8b3eb44bf7fc8512dd1f5c,
+  m_Name: FogCatch
+  m_Shader: {fileID: -6465566751694194690, guid: ef49d9989cadc8441b4e3418452adb2b,
     type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -39,41 +39,13 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _BUILTIN_QueueControl: -1
-    - _BUILTIN_QueueOffset: 0
-    - _DayNightSlider: 1
-    - _HorizonBlend: 4.1
-    - _NadirBlend: 0.3
+    - _Height: 0.6
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _StarBrightness: 70
-    - _StarHeight: 160
-    - _StarIntensity: 300
-    - _SunSize: 0.03
-    - _ZenithBlend: 0.4
-    m_Colors:
-    - _GroundColor: {r: 0.25490198, g: 0.25490198, b: 0.25490198, a: 0}
-    - _HorizonColor: {r: 0.16981131, g: 0.16981131, b: 0.16981131, a: 1}
-    - _MoonColor: {r: 766.99756, g: 763.37964, b: 763.37964, a: 1}
-    - _NightSkyColor: {r: 0.17254902, g: 0.13725491, b: 0.24705884, a: 1}
-    - _SkyColor: {r: 0.58717513, g: 0.81119174, b: 0.8584906, a: 0}
-    - _SunColor: {r: 956.3774, g: 555.0894, b: 0, a: 1}
+    m_Colors: []
   m_BuildTextureStacks: []
   m_AllowLocking: 1
---- !u!114 &4561261409421476692
-MonoBehaviour:
-  m_ObjectHideFlags: 11
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 639247ca83abc874e893eb93af2b5e44, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.ShaderGraph.Editor::UnityEditor.Rendering.BuiltIn.AssetVersion
-  version: 0
---- !u!114 &4574434986699977875
+--- !u!114 &8839450739326834361
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}

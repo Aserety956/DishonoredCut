@@ -52,7 +52,7 @@ MonoBehaviour:
     m_Value: 4
   densityMultiplier:
     m_OverrideState: 1
-    m_Value: 0.292
+    m_Value: 0.09
   densityCurve:
     m_OverrideState: 1
     m_Value:
@@ -315,10 +315,10 @@ MonoBehaviour:
     m_Value: 1
   intensity:
     m_OverrideState: 1
-    m_Value: 0.1
+    m_Value: 0.005
   scatter:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0.55
   clamp:
     m_OverrideState: 0
     m_Value: 65472
