@@ -238,13 +238,13 @@ public class VolumetricCloudsURP : ScriptableRendererFeature
         // Store the current enable state of volumetric clouds in a global shader keyword
         bool isDebugger = DebugManager.instance.isAnyDebugUIActive;
         var stack = VolumeManager.instance.stack;
-        VolumetricClouds cloudsVolume = stack.GetComponent<VolumetricClouds>();
-        bool isVolumeActive = cloudsVolume != null && cloudsVolume.IsActive() && (!isDebugger || renderingDebugger);
+        //VolumetricClouds cloudsVolume = stack.GetComponent<VolumetricClouds>();
+        //bool isVolumeActive = cloudsVolume != null && cloudsVolume.IsActive() && (!isDebugger || renderingDebugger);
 
-        if (!isActive || !isVolumeActive)
+        /*if (!isActive || !isVolumeActive)
             Shader.DisableKeyword(VOLUMETRIC_CLOUDS);
         else
-            Shader.EnableKeyword(VOLUMETRIC_CLOUDS);
+            Shader.EnableKeyword(VOLUMETRIC_CLOUDS);*/
 
         if (volumetricCloudsPass == null)
         {

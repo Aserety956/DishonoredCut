@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
@@ -36,8 +37,7 @@ public class EnemyController : MonoBehaviour, IDamageable
     [SerializeField] private float investigateRadius = 4f; // радиус поиска вокруг центра расследования
     [SerializeField] private float investigatePointWaitTime = 0.8f; // сколько стоять/оглядываться на точке
     [SerializeField] private float navSampleMaxDistance = 2f; // насколько далеко искать NavMesh точку от кандидата
-
-
+    
     [Header("Sounds")]
     [SerializeField] private SoundData investigateSounds;
     
@@ -48,8 +48,8 @@ public class EnemyController : MonoBehaviour, IDamageable
     public event Action OnEnemyDead;
     public event Action OnEnemyKnocked;
 
-    [Header("Animations")] [SerializeField]
-    private NavMeshAgent agent;
+    [Header("Animations")] 
+    [SerializeField] private NavMeshAgent agent;
     [SerializeField] private Animator animator;
 
     [Tooltip("Сколько секунд сглаживать изменение Speed параметра.")] [SerializeField]
@@ -78,8 +78,7 @@ public class EnemyController : MonoBehaviour, IDamageable
     [Header("Health")] public float maxHp = 500f;
     public float hp;
     public bool isDead;
-
-
+    
 
     [Header("Check")] [SerializeField] private float suspicionToСheck = 0.25f;
     private bool _isGoingToCheck;
@@ -126,6 +125,7 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     void Update()
     {
+
         if (isDead) return;
         bool canSeePlayer = CanSeePlayer();
 
