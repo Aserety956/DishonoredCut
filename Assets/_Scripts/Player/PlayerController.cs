@@ -88,7 +88,7 @@ public class PlayerController : MonoBehaviour
     [Header("Sound")]
     [SerializeField] private SoundData footstepSound;
     [SerializeField] private SoundData crouchSound;
-    [SerializeField] private Transform feetPosition;
+    [SerializeField] private Transform feetTarget;
     
     [SerializeField] private float stepInterval1 = 0.28f; // 1-й шаг (A)
     [SerializeField] private float stepInterval2 = 0.30f; // 2-й шаг (B) - чуть больше/меньше для синхры
@@ -114,6 +114,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private SoundData rainSound;
     private bool _rainEnabled;
     private Coroutine _rainRoutine;
+
+    [Header("Ladder")] 
+    [SerializeField] private float ladderGrabDistance = 1f;
+    public bool isOnLadder;
+    [SerializeField] private float ladderSpeed = 2f;
     
     
     private Vector3 _headInitialLocalPos;
@@ -121,6 +126,10 @@ public class PlayerController : MonoBehaviour
     
     private Vector2 _move;
     private Vector3 _velocity;
+
+
+    private float FireRate = 15f;
+    private float nextTimeToFire = 0f;
     
     
     public void Awake()
@@ -146,10 +155,24 @@ public class PlayerController : MonoBehaviour
         HealthUpdate();
         ManaUpdate();
     }
+
+    public void Shooting()
+    {
+        //Instantiate(bullet);
+    }
     
     public void Update()
     {
 
+        // гимбалок
+        // на подумать
+        if (Keyboard.current.f6Key.isPressed && Time.time >= nextTimeToFire)
+        {
+            nextTimeToFire = Time.time + 1f/FireRate;
+            Shooting();
+            
+        }
+        
         UpdateMove();
 
         UpdateAttack();
@@ -189,14 +212,73 @@ public class PlayerController : MonoBehaviour
     
     public void UpdateMove()
     {
+        
+        Vector3 move = ((GetForward() * _move.y + GetRight() * _move.x) * currentSpeed);
+        
+        Vector3 feetPoint = new Vector3(feetTarget.position.x, feetTarget.position.y, feetTarget.position.z);
+        
+        Debug.DrawRay(feetPoint + Vector3.up * 0.1f, transform.forward * 1f);
+
+        if (!isOnLadder)
+        {
+            if (Physics.Raycast(feetPoint + Vector3.up * 0.1f, transform.forward * 1f, out RaycastHit hit, ladderGrabDistance))
+            {
+                if (hit.transform.TryGetComponent(out Ladder ladder))
+                {
+                    isOnLadder = true;
+                    gravity = 0f;
+                    _velocity = Vector3.zero;
+
+                }
+
+            }
+        }
+        else
+        {
+            if (Physics.Raycast(feetPoint + Vector3.up * 0.1f, transform.forward * 1f, out RaycastHit hit, ladderGrabDistance))
+            {
+                if (!hit.transform.TryGetComponent(out Ladder ladder))
+                {
+                    isOnLadder = false;
+                    gravity = -10f;
+                }
+            }
+            else
+            {
+                isOnLadder = false;
+                gravity = -10f;
+            }
+        }
+
+
         if (characterController.isGrounded && _velocity.y < 0f)
             _velocity.y = -2f;
         
         _velocity.y += gravity * Time.deltaTime;
-        
-        Vector3 move = ((GetForward() * _move.y + GetRight() * _move.x) * currentSpeed);
-        
-        characterController.Move((move + _velocity) * Time.deltaTime);
+        if (isOnLadder) // todo: movement state machine
+        {
+            if (Keyboard.current.wKey.isPressed)
+            {
+                characterController.Move(Vector3.up * (ladderSpeed * Time.deltaTime));
+            }
+            
+            if (Keyboard.current.aKey.isPressed)
+            {
+                characterController.Move(Vector3.left * (ladderSpeed * Time.deltaTime));
+            }
+            
+            if (Keyboard.current.dKey.isPressed)
+            {
+                characterController.Move(Vector3.right * (ladderSpeed * Time.deltaTime));
+            }
+            
+            if (Keyboard.current.sKey.isPressed)
+            {
+                characterController.Move(Vector3.down * (ladderSpeed * Time.deltaTime));
+            }
+        }
+        else
+            characterController.Move((move + _velocity) * Time.deltaTime);
         
         TickFootstepsTwoTimers();
         
@@ -321,20 +403,6 @@ public class PlayerController : MonoBehaviour
         rainVFX.SetFloat("RainAmount", amount);
     }
     
-    /*public void OnRadialMenu(InputValue val)
-    {
-        if (val.isPressed)
-        {
-            characterController.enabled = false;
-            radialMenu.Open();
-        }
-        else
-        {
-            characterController.enabled = true;
-            radialMenu.Close();
-            
-        }
-    }*/
 
     public void RadialMenuUpdate()
     {
@@ -555,6 +623,9 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
+        Vector3 feetWorldPos = new Vector3
+            (feetTarget.position.x, feetTarget.position.y, feetTarget.position.z);
+
         // Реальная скорость (XZ) из CharacterController
         Vector3 v = characterController.velocity;
         v.y = 0f;
@@ -597,7 +668,7 @@ public class PlayerController : MonoBehaviour
         
         if (_stepTimer <= 0f)
         {
-            AudioManager.I.Play(step, transform.position);
+            AudioManager.I.Play(step, feetWorldPos);
 
             // Следующий шаг: переключаем 1<->2
             _secondStep = !_secondStep;
@@ -709,4 +780,5 @@ public class PlayerController : MonoBehaviour
         HealthUpdate();
         ManaUpdate();
     }
+    
 }
