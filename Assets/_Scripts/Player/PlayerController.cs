@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Unity.Cinemachine;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
@@ -45,10 +46,10 @@ public class PlayerController : MonoBehaviour
     private bool _attackHitDone;
     [SerializeField] private float attackHitDelay;
     [SerializeField] private float attackTotalTime;
-    public bool _isAttacking;
+    public bool isAttacking;
     
     [Header("Animation")] 
-    [SerializeField] private Animator animator;
+    [SerializeField] public Animator animator;
     private static readonly int AttackTrig = Animator.StringToHash("Attack");
     
     
@@ -70,17 +71,18 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private RadialMenu radialMenu;
     [SerializeField] private QuickbarManager quickbar;
 
-    [Header("Stats")] 
-    public float currentHP;
-    public float currentMP;
-    public float baseHP;
-    public float baseMP;
+    [Header("Stats")]
+    [SerializeField] private float currentHP;
+    [SerializeField] private float currentMP;
+    [SerializeField] private float baseHP;
+    [SerializeField] private float baseMP;
     
     [Header("Cinemachine")]
     [SerializeField] private CharacterController characterController;
-    [SerializeField] private CinemachineCamera cinCam;
+    [SerializeField] public FreeCamera mainCam;
+    [SerializeField] public CinemachineCamera cinCam;
     private BottleItem _heldItem;
-    [SerializeField] private Transform handsPos;
+    [SerializeField] public Transform handsPos;
     private Vector3 _handsInitialLocalPos;
     [SerializeField] private Vector3 handsHoldOffset = new Vector3(0f, -1f, 0f); 
     [SerializeField] private Transform itemPos;
@@ -120,6 +122,9 @@ public class PlayerController : MonoBehaviour
     public bool isOnLadder;
     [SerializeField] private float ladderSpeed = 2f;
     
+    [Header("Inventory")]
+    [SerializeField] private InventoryManager inventoryManager;
+    
     
     private Vector3 _headInitialLocalPos;
     private float _headYVelocity;
@@ -139,8 +144,6 @@ public class PlayerController : MonoBehaviour
     
     public void Start()
     {
-        baseHP = 100f;
-        baseMP = 100f;
         currentHP = baseHP;
         currentMP = baseMP;
         
@@ -488,10 +491,10 @@ public class PlayerController : MonoBehaviour
     
     private void TryAttack()
     {
-        if (_isAttacking) 
+        if (isAttacking || !mainCam.enabled) 
             return;
 
-        _isAttacking = true;
+        isAttacking = true;
         _attackHitDone = false;
 
         float now = Time.time;
@@ -504,7 +507,7 @@ public class PlayerController : MonoBehaviour
     
     private void UpdateAttack()
     {
-        if (!_isAttacking) return;
+        if (!isAttacking) return;
 
         float now = Time.time;
 
@@ -519,7 +522,7 @@ public class PlayerController : MonoBehaviour
         {
             //float now = Time.time;
 
-            _isAttacking = false;
+            isAttacking = false;
         }
     }
     
@@ -604,8 +607,20 @@ public class PlayerController : MonoBehaviour
             {
                 interactable.Interact(this);
                 UpdateInteractPrompt(interactable);
+                //return;
+            }
+            
+            PickableItem pickableItem = hit.collider.GetComponentInParent<PickableItem>();
+            if (pickableItem != null)
+            {
+                pickableItem.Interact(this);
+                UpdateInteractPrompt(pickableItem);
+                inventoryManager.AddItem(pickableItem.pickedItem, pickableItem.amount);
+                Destroy(pickableItem.gameObject);
                 return;
             }
+            
+            
         }
 
         Debug.DrawRay(ray.origin, ray.direction * interactDistance, Color.yellow, 0.2f);

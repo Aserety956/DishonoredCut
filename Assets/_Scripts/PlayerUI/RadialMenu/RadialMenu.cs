@@ -287,14 +287,7 @@ public class RadialMenu : MonoBehaviour
 
         _highlighted = -1;
     }
-
-    /*public void OnRadial(InputValue val)
-    {
-        if (val.isPressed)
-            Open();
-        else
-            Close();
-    }*/
+    
 
     public void OnSlot1(InputValue v) { if (v.isPressed) OnSelectSlot(0); }
     public void OnSlot2(InputValue v) { if (v.isPressed) OnSelectSlot(1); }

@@ -760,11 +760,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 565908478}
     m_Modifications:
-    - target: {fileID: 106720782503331876, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
-        type: 3}
-      propertyPath: isEmpty
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 873542269662400622, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
         type: 3}
       propertyPath: m_Pivot.x
@@ -967,11 +962,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 565908478}
     m_Modifications:
-    - target: {fileID: 106720782503331876, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
-        type: 3}
-      propertyPath: isEmpty
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 873542269662400622, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
         type: 3}
       propertyPath: m_Pivot.x
@@ -1264,11 +1254,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 565908478}
     m_Modifications:
-    - target: {fileID: 106720782503331876, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
-        type: 3}
-      propertyPath: isEmpty
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 873542269662400622, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
         type: 3}
       propertyPath: m_Pivot.x
@@ -2804,7 +2789,7 @@ Transform:
   m_GameObject: {fileID: 450753637}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.245, y: 1.66, z: 15.47}
+  m_LocalPosition: {x: 4.245, y: 2.49, z: 40.530003}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3958,11 +3943,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 565908478}
     m_Modifications:
-    - target: {fileID: 106720782503331876, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
-        type: 3}
-      propertyPath: isEmpty
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 873542269662400622, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
         type: 3}
       propertyPath: m_Pivot.x
@@ -4156,11 +4136,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 565908478}
     m_Modifications:
-    - target: {fileID: 106720782503331876, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
-        type: 3}
-      propertyPath: isEmpty
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 873542269662400622, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
         type: 3}
       propertyPath: m_Pivot.x
@@ -4767,7 +4742,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InventoryManager
   uiPanel: {fileID: 818026070}
-  playerController: {fileID: 870277578}
+  PlayerController: {fileID: 870277578}
   inventoryPanel: {fileID: 565908478}
   slots: []
   isOpened: 0
@@ -4779,11 +4754,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 565908478}
     m_Modifications:
-    - target: {fileID: 106720782503331876, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
-        type: 3}
-      propertyPath: isEmpty
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 873542269662400622, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
         type: 3}
       propertyPath: m_Pivot.x
@@ -5083,11 +5053,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 565908478}
     m_Modifications:
-    - target: {fileID: 106720782503331876, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
-        type: 3}
-      propertyPath: isEmpty
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 873542269662400622, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
         type: 3}
       propertyPath: m_Pivot.x
@@ -5225,18 +5190,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 30.000002, y: 15.000003, z: 2.0000002}
   m_Center: {x: 30.999992, y: 0.4999883, z: 8.999997}
---- !u!114 &779149509 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4176002291228197773, guid: e0aa662e59a21b04e9ad42636fcef8fc,
-    type: 3}
-  m_PrefabInstance: {fileID: 1157574667}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d31168a3f49d35041a1c50db12d7ed3b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PickableItem
 --- !u!65 &780732793
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6051,7 +6004,7 @@ Transform:
   m_GameObject: {fileID: 870277571}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.22, y: 0.96, z: 15.25}
+  m_LocalPosition: {x: 4.22, y: 1.79, z: 40.31}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -6152,7 +6105,7 @@ MonoBehaviour:
     m_Bits: 704
   attackHitDelay: 0.3
   attackTotalTime: 0.8
-  isAttacking: 0
+  _isAttacking: 0
   animator: {fileID: 5593568711066801566}
   volumeProfile: {fileID: 11400000, guid: 0997bccd4c907eb459285ee7c801eae5, type: 2}
   vignetteSmoothTime: 0.12
@@ -6168,7 +6121,6 @@ MonoBehaviour:
   baseHP: 100
   baseMP: 100
   characterController: {fileID: 870277576}
-  mainCam: {fileID: 450753642}
   cinCam: {fileID: 1344014597}
   handsPos: {fileID: 3104824589055686458}
   handsHoldOffset: {x: 0, y: -1, z: 0}
@@ -6190,7 +6142,7 @@ MonoBehaviour:
   ladderGrabDistance: 1
   isOnLadder: 0
   ladderSpeed: 5
-  inventoryManager: {fileID: 700160122}
+  inventoryManager: {fileID: 0}
 --- !u!114 &870277579
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7239,11 +7191,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 565908478}
     m_Modifications:
-    - target: {fileID: 106720782503331876, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
-        type: 3}
-      propertyPath: isEmpty
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 873542269662400622, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
         type: 3}
       propertyPath: m_Pivot.x
@@ -7443,11 +7390,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 565908478}
     m_Modifications:
-    - target: {fileID: 106720782503331876, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
-        type: 3}
-      propertyPath: isEmpty
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 873542269662400622, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
         type: 3}
       propertyPath: m_Pivot.x
@@ -12890,32 +12832,6 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4176002291228197773, guid: e0aa662e59a21b04e9ad42636fcef8fc,
-        type: 3}
-      propertyPath: amount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4176002291228197773, guid: e0aa662e59a21b04e9ad42636fcef8fc,
-        type: 3}
-      propertyPath: pickedItem
-      value: 
-      objectReference: {fileID: 11400000, guid: 0868895e1df8eb54fadc8ec83976454f,
-        type: 2}
-    - target: {fileID: 4176002291228197773, guid: e0aa662e59a21b04e9ad42636fcef8fc,
-        type: 3}
-      propertyPath: pickableItem
-      value: 
-      objectReference: {fileID: 779149509}
-    - target: {fileID: 4176002291228197773, guid: e0aa662e59a21b04e9ad42636fcef8fc,
-        type: 3}
-      propertyPath: inventoryManager
-      value: 
-      objectReference: {fileID: 700160122}
-    - target: {fileID: 4176002291228197773, guid: e0aa662e59a21b04e9ad42636fcef8fc,
-        type: 3}
-      propertyPath: playerController
-      value: 
-      objectReference: {fileID: 870277576}
     - target: {fileID: 6038822435357072451, guid: e0aa662e59a21b04e9ad42636fcef8fc,
         type: 3}
       propertyPath: m_Name
@@ -13601,7 +13517,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   serializedBakingSet: {fileID: 0}
-  sceneGUID: 5cf73cc1a042f50418aad1e6565eb596
+  sceneGUID: 9cbe8fb84a1d32649bdf1235fff98897
   obsoleteAsset: {fileID: 0}
   obsoleteCellSharedDataAsset: {fileID: 0}
   obsoleteCellSupportDataAsset: {fileID: 0}
@@ -14555,7 +14471,7 @@ Transform:
   m_GameObject: {fileID: 1344014593}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.245, y: 1.66, z: 15.47}
+  m_LocalPosition: {x: 4.245, y: 2.49, z: 40.530003}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -15373,11 +15289,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 565908478}
     m_Modifications:
-    - target: {fileID: 106720782503331876, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
-        type: 3}
-      propertyPath: isEmpty
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 873542269662400622, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
         type: 3}
       propertyPath: m_Pivot.x
@@ -20569,11 +20480,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 565908478}
     m_Modifications:
-    - target: {fileID: 106720782503331876, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
-        type: 3}
-      propertyPath: isEmpty
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 873542269662400622, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
         type: 3}
       propertyPath: m_Pivot.x
@@ -20830,11 +20736,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 565908478}
     m_Modifications:
-    - target: {fileID: 106720782503331876, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
-        type: 3}
-      propertyPath: isEmpty
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 873542269662400622, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
         type: 3}
       propertyPath: m_Pivot.x
@@ -21284,7 +21185,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: cc3855e66f730994f9ef42a0503909a6,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 5.6
+      value: 2.3
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: cc3855e66f730994f9ef42a0503909a6,
         type: 3}
@@ -21294,7 +21195,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: cc3855e66f730994f9ef42a0503909a6,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 46.75
+      value: 57.9
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: cc3855e66f730994f9ef42a0503909a6,
         type: 3}
@@ -27719,11 +27620,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 565908478}
     m_Modifications:
-    - target: {fileID: 106720782503331876, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
-        type: 3}
-      propertyPath: isEmpty
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 873542269662400622, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
         type: 3}
       propertyPath: m_Pivot.x
@@ -28862,11 +28758,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 565908478}
     m_Modifications:
-    - target: {fileID: 106720782503331876, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
-        type: 3}
-      propertyPath: isEmpty
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 873542269662400622, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
         type: 3}
       propertyPath: m_Pivot.x
@@ -36258,11 +36149,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 565908478}
     m_Modifications:
-    - target: {fileID: 106720782503331876, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
-        type: 3}
-      propertyPath: isEmpty
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 873542269662400622, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
         type: 3}
       propertyPath: m_Pivot.x
