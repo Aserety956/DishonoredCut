@@ -9,7 +9,6 @@ public class EnemyController : MonoBehaviour, IDamageable
     [Header("Suspicion")]
     //public float suspicionIncreaseSpeed = 0.5f;
     public float suspicionDecreaseSpeed = 0.03f;
-
     public float suspicionToInvestigate = 0.5f;
     public float suspicionToChase = 1f;
     public float suspicion;
@@ -19,7 +18,7 @@ public class EnemyController : MonoBehaviour, IDamageable
     [SerializeField] private float suspicionNearDist; 
     [SerializeField] private float suspicionFarDist; 
 
-    //[SerializeField] private AnimationCurve distanceToGain;
+    
     private bool heardNoise;
 
 
@@ -59,6 +58,8 @@ public class EnemyController : MonoBehaviour, IDamageable
     private static readonly int Lookbool = Animator.StringToHash("LookingAround");
     private static readonly int HitTrig = Animator.StringToHash("Hit");
     private static readonly int DieTrig = Animator.StringToHash("Die");
+    private static readonly int AttackTrig = Animator.StringToHash("Attack");
+    private static readonly int RunTrig = Animator.StringToHash("Run");
 
 
     [Header("FOV")] public float viewRadiusDark = 8f;
@@ -89,8 +90,9 @@ public class EnemyController : MonoBehaviour, IDamageable
     public float waitTimeAtPoint = 2f;
 
 
-    [Header("Chase")] public float chaseSpeed = 4f;
-    public bool isChasing;
+    [Header("Chase")] 
+    [SerializeField] private float chaseSpeed;
+    [SerializeField] public bool isChasing;
     [SerializeField] private float chaseDuration;
     [SerializeField] private float chaseTimer;
 
@@ -239,8 +241,11 @@ public class EnemyController : MonoBehaviour, IDamageable
     void AnimUpdate()
     {
         float speed01 = 0f;
-        if (agent.speed > 0.001f)
-            speed01 = agent.velocity.magnitude / agent.speed;
+
+        float enemyAnimSpeed = agent.velocity.magnitude / agent.speed;
+
+        speed01 = agent.speed > 0.001f && currentState != EnemyState.Chase ? enemyAnimSpeed / 2f : enemyAnimSpeed;
+        
 
         animator.SetFloat(Speed, speed01, dampTime, Time.deltaTime);
     }
@@ -473,6 +478,7 @@ public class EnemyController : MonoBehaviour, IDamageable
         if (CanSeePlayer())
         {
             SetLookingAround(false);
+            agent.isStopped = false;
             chaseTimer = 0f;
             agent.speed = chaseSpeed;
             _lastSeenPosition = player.position;
@@ -480,7 +486,17 @@ public class EnemyController : MonoBehaviour, IDamageable
 
         }
 
-        else if (chaseTimer >= chaseDuration) //todo: зафиксировать?
+        /*if (heardNoise)
+        {
+            SetLookingAround(false);
+            agent.isStopped = false;
+            chaseTimer = 0f;
+            agent.speed = chaseSpeed;
+            _lastSeenPosition = player.position;
+            agent.SetDestination(_lastHeardPosition);
+        }*/
+
+        if (chaseTimer >= chaseDuration) //todo: зафиксировать? или после паники сброс состояния?
         {
 
             currentState = EnemyState.Investigate;
@@ -552,8 +568,8 @@ public class EnemyController : MonoBehaviour, IDamageable
     {
         if (isDead) return;
 
-        if (currentState == EnemyState.Chase)
-            return;
+        /*if (currentState == EnemyState.Chase)
+            return;*/
 
         _lastHeardPosition = noisePosition;
         _investigateCenter = noisePosition;
@@ -568,14 +584,24 @@ public class EnemyController : MonoBehaviour, IDamageable
             PickNewInvestigateDestination();
             return;
         }
+        
+        if (currentState == EnemyState.Chase)
+        {
+            SetLookingAround(false);
+            agent.isStopped = false;
+            chaseTimer = 0f;
+            agent.speed = chaseSpeed;
+            _lastSeenPosition = player.position;
+            agent.SetDestination(_lastHeardPosition);
+        }
 
-        // Иначе переходим в Investigate — OnEnterState задаст новую точку
+        /*// Иначе переходим в Investigate — OnEnterState задаст новую точку
         investigateTimer = 0f;
         _isWaitingAtInvestigatePoint = false;
         _investigatePointTimer = 0f;
         agent.isStopped = false;
 
-        currentState = EnemyState.Investigate;
+        currentState = EnemyState.Investigate;*/
     }
 
     public void OnBottleHit(HitZone zone, Vector3 hitPoint, Vector3 hitDir)
@@ -589,7 +615,7 @@ public class EnemyController : MonoBehaviour, IDamageable
             return;
         }
 
-        // Body/Legs — позже решишь (урон/стан/агр)
+        // Body/Legs — позже (урон/стан/агр)
     }
 
 //todo: переместить логику нокдауна в другой скрипт
@@ -705,11 +731,11 @@ public class EnemyController : MonoBehaviour, IDamageable
         Gizmos.DrawLine(origin, origin + leftBoundary * viewRadius);
         Gizmos.DrawLine(origin, origin + rightBoundary * viewRadius);
 
-        if (player != null)
+        /*if (player != null)
         {
             Gizmos.color = CanSeePlayer() ? Color.green : Color.red;
             Gizmos.DrawLine(origin, player.position);
-        }
+        }*/
 
         if (currentState == EnemyState.Investigate && CanSeePlayer())
         {
