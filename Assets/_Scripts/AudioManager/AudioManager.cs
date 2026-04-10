@@ -1,12 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Audio;
 
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager I { get; private set; }
+    
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStatics()
+    {
+        I = null;
+    }
 
     [Header("Mixer (optional)")]
     [SerializeField] private AudioMixerGroup ambienceGroup;

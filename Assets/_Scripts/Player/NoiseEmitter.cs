@@ -65,7 +65,7 @@ public class NoiseEmmiter : MonoBehaviour
 
     /// <summary>
     /// Универсальный шум: игрок, бутылка, любой предмет.
-    /// radius = "сила" шума (у тебя враги уже принимают radius).
+    /// radius = "сила" шума (враги уже принимают radius).
     /// </summary>
     public static void EmitNoiseAt(Vector3 position, float radius)
     {
