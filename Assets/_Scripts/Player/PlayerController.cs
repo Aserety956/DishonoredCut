@@ -133,8 +133,8 @@ public class PlayerController : MonoBehaviour
     private Vector3 _velocity;
 
 
-    private float FireRate = 15f;
-    private float nextTimeToFire = 0f;
+    [SerializeField] private float FireRate = 15f;
+    [SerializeField] private float nextTimeToFire;
     
     
     public void Awake()
@@ -161,7 +161,7 @@ public class PlayerController : MonoBehaviour
 
     public void Shooting()
     {
-        //Instantiate(bullet);
+        Debug.Log("блин я стрелаю");
     }
     
     public void Update()
@@ -169,11 +169,10 @@ public class PlayerController : MonoBehaviour
 
         // гимбалок
         // на подумать
-        if (Keyboard.current.f6Key.isPressed && Time.time >= nextTimeToFire)
+        if (Keyboard.current.bKey.isPressed && Time.time >= nextTimeToFire)
         {
             nextTimeToFire = Time.time + 1f/FireRate;
             Shooting();
-            
         }
         
         UpdateMove();
