@@ -612,7 +612,7 @@ public class PlayerController : MonoBehaviour
             PickableItem pickableItem = hit.collider.GetComponentInParent<PickableItem>();
             if (pickableItem != null)
             {
-                pickableItem.Interact(this);
+                //pickableItem.Interact(this);
                 UpdateInteractPrompt(pickableItem);
                 inventoryManager.AddItem(pickableItem.pickedItem, pickableItem.amount);
                 Destroy(pickableItem.gameObject);
@@ -629,8 +629,7 @@ public class PlayerController : MonoBehaviour
     private void TickFootstepsTwoTimers()
     {
         if (AudioManager.I == null || footstepSound == null) return;
-
-        // Только на земле
+        
         if (!characterController.isGrounded)
         {
             ResetFootstepsCycle();

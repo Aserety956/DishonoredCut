@@ -44,6 +44,9 @@
         },
         {
             "m_Id": "3d7cfc0ca6aa4e19974bc8ffc6ba8760"
+        },
+        {
+            "m_Id": "9ed1c00eb14146109fe583f3434d8d59"
         }
     ],
     "m_Keywords": [],
@@ -4093,10 +4096,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -690.0000610351563,
-            "y": -1160.0001220703125,
-            "width": 208.00003051757813,
-            "height": 302.00006103515627
+            "x": -781.9999389648438,
+            "y": -1230.9998779296875,
+            "width": 208.00006103515626,
+            "height": 301.99993896484377
         }
     },
     "m_Slots": [
@@ -4324,6 +4327,42 @@
         "w": 0.0
     },
     "m_Labels": []
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Internal.Texture2DShaderProperty",
+    "m_ObjectId": "9ed1c00eb14146109fe583f3434d8d59",
+    "m_Guid": {
+        "m_GuidSerialized": "bec522f9-b5b7-4379-a1ab-a4a7b9c4d71b"
+    },
+    "promotedFromAssetID": "",
+    "promotedFromCategoryName": "",
+    "promotedOrdering": -1,
+    "m_Name": "Moon",
+    "m_DefaultRefNameVersion": 1,
+    "m_RefNameGeneratedByDisplayName": "Moon",
+    "m_DefaultReferenceName": "_Moon",
+    "m_OverrideReferenceName": "",
+    "m_GeneratePropertyBlock": true,
+    "m_UseCustomSlotLabel": false,
+    "m_CustomSlotLabel": "",
+    "m_DismissedVersion": 0,
+    "m_Precision": 0,
+    "overrideHLSLDeclaration": false,
+    "hlslDeclarationOverride": 0,
+    "m_Hidden": false,
+    "m_PerRendererData": false,
+    "m_customAttributes": [],
+    "m_Value": {
+        "m_SerializedTexture": "",
+        "m_Guid": ""
+    },
+    "isMainTexture": false,
+    "useTilingAndOffset": false,
+    "useTexelSize": true,
+    "m_Modifiable": true,
+    "m_DefaultType": 0
 }
 
 {
@@ -5207,6 +5246,9 @@
         },
         {
             "m_Id": "3d7cfc0ca6aa4e19974bc8ffc6ba8760"
+        },
+        {
+            "m_Id": "9ed1c00eb14146109fe583f3434d8d59"
         }
     ]
 }

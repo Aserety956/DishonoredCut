@@ -58,14 +58,14 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    public void AddItem(ItemSO _item, int _amount)
+    public void AddItem(ItemSO item, int amount)
     {
         foreach (Slot slot in slots)
         {
-            if (slot.item == _item && (slot.amount + _amount) <= _item.maxAmount)
+            if (slot.item == item && (slot.amount + amount) <= item.maxAmount)
             {
-                slot.amount += _amount;
-                slot.itemAmountText.text = _amount.ToString();
+                slot.amount += amount;
+                slot.itemAmountText.text = slot.amount.ToString();
                 return;
             }
             
@@ -75,11 +75,11 @@ public class InventoryManager : MonoBehaviour
         {
             if (slot.isEmpty)
             {
-                slot.item = _item;
-                slot.amount = _amount;
+                slot.item = item;
+                slot.amount = amount;
                 slot.isEmpty = false;
-                slot.SetIcon(_item.icon);
-                slot.itemAmountText.text = _amount.ToString();
+                slot.SetIcon(item.icon);
+                slot.itemAmountText.text = amount.ToString();
                 return;
             }
         }
