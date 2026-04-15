@@ -68,7 +68,21 @@ MonoBehaviour:
       - rid: 4168220277745385472
       - rid: 4168220277745385473
     m_RuntimeSettings:
-      m_List: []
+      m_List:
+      - rid: 4503010947355639809
+      - rid: 4503010947355639812
+      - rid: 4503010947355639813
+      - rid: 4503010947355639815
+      - rid: 4503010947355639818
+      - rid: 4503010947355639819
+      - rid: 4503010947355639824
+      - rid: 4503010947355639825
+      - rid: 4503010947355639828
+      - rid: 4503010947355639829
+      - rid: 4503010947355639830
+      - rid: 4503010947355639833
+      - rid: 4503010947355639834
+      - rid: 4168220277745385472
   m_AssetVersion: 10
   m_ObsoleteDefaultVolumeProfile: {fileID: 0}
   m_RenderingLayerNames:
@@ -442,7 +456,7 @@ MonoBehaviour:
       data:
         m_Version: 0
         m_ExportShaderVariants: 1
-        m_ShaderVariantLogLevel: 0
+        m_ShaderVariantLogLevel: 1
         m_StripRuntimeDebugShaders: 1
     - rid: 4503010947355639834
       type: {class: LightmapSamplingSettings, ns: UnityEngine.Rendering, asm: Unity.RenderPipelines.Core.Runtime}

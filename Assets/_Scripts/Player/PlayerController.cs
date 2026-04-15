@@ -606,19 +606,22 @@ public class PlayerController : MonoBehaviour
             {
                 interactable.Interact(this);
                 UpdateInteractPrompt(interactable);
-                //return;
             }
             
             PickableItem pickableItem = hit.collider.GetComponentInParent<PickableItem>();
             if (pickableItem != null)
             {
-                //pickableItem.Interact(this);
                 UpdateInteractPrompt(pickableItem);
-                inventoryManager.AddItem(pickableItem.pickedItem, pickableItem.amount);
-                Destroy(pickableItem.gameObject);
+                
+                bool added = inventoryManager.AddItem(pickableItem.pickedItem, pickableItem.amount);
+                if (added)
+                {
+                    Destroy(pickableItem.gameObject);
+                }
+                /*inventoryManager.AddItem(pickableItem.pickedItem, pickableItem.amount);
+                Destroy(pickableItem.gameObject);*/
                 return;
             }
-            
             
         }
 

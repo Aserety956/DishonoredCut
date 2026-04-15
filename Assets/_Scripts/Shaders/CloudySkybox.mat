@@ -78,6 +78,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SimpleSky_c2cbc6441fa64bac91e10747e48be97e_Moon_1104148566_Texture2D:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -111,6 +115,7 @@ Material:
     - _CloudScatter: 12
     - _Cull: 2
     - _Cutoff: 0.5
+    - _DayNightSlider: 0
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
@@ -144,8 +149,10 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _GroundColor: {r: 0.21960786, g: 0.21960786, b: 0.21960786, a: 0}
     - _HorizonColor: {r: 0.5722232, g: 0.6299632, b: 0.7264151, a: 0}
+    - _MoonColor: {r: 927.3962, g: 923.0217, b: 923.0217, a: 1}
     - _PanSpeed: {r: 0.02, g: 0.01, b: 0, a: 0}
     - _SkyColor: {r: 0.47036314, g: 0.56571084, b: 0.6603774, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+    - _SunColor: {r: 956.3774, g: 555.0894, b: 0, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

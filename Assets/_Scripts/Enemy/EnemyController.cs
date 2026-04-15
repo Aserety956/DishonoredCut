@@ -739,11 +739,13 @@ public class EnemyController : MonoBehaviour, IDamageable
         Quaternion minorLeftRot = Quaternion.AngleAxis(-minorViewAngle * 0.5f, Vector3.up);
         Quaternion minorRightRot = Quaternion.AngleAxis(minorViewAngle * 0.5f, Vector3.up);
         
-        Vector3 minorLeftBoundary = minorLeftRot * forward;
-        Vector3 minorRightBoundary = minorRightRot * forward;
+        
         
         Vector3 leftBoundary = leftRot * forward;
         Vector3 rightBoundary = rightRot * forward;
+        
+        Vector3 minorLeftBoundary = minorLeftRot * forward;
+            Vector3 minorRightBoundary = minorRightRot * forward;
         
         Gizmos.color = Color.cyan;
         Gizmos.DrawLine(origin, origin + leftBoundary * viewRadius);
