@@ -19,7 +19,7 @@ public class QuickbarSlotView : MonoBehaviour
             indexText.text = oneBasedIndex.ToString();
     }
 
-    public void SetItem(QuickItem item)
+    public void SetItem(ItemSO item)
     {
         //if (iconImage == null) return;
 

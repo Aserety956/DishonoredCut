@@ -10,7 +10,10 @@ public class InventoryManager : MonoBehaviour
     public PlayerController playerController;
     public Transform inventoryPanel;
     public List<Slot> slots = new List<Slot>(15);
+    public List<Slot> filledSlots = new List<Slot>(15);
     public bool isOpened;
+    
+    public event Action<Slot> OnSlotUpdated;
 
     private void Awake()
     {
@@ -67,6 +70,8 @@ public class InventoryManager : MonoBehaviour
                 slot.amount += amount;
                 slot.itemAmountText.text = slot.amount.ToString();
                 
+                OnSlotUpdated?.Invoke(slot);
+                
                 return true;
             }
 
@@ -86,6 +91,11 @@ public class InventoryManager : MonoBehaviour
                 slot.isEmpty = false;
                 slot.SetIcon(item.icon);
                 slot.itemAmountText.text = amount.ToString();
+                
+                filledSlots.Add(slot);
+                
+                OnSlotUpdated?.Invoke(slot);
+                
                 return true;
             }
         }

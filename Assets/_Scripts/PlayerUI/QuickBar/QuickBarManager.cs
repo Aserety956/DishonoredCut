@@ -7,13 +7,14 @@ public class QuickbarManager : MonoBehaviour
     [Header("Setup")]
     [SerializeField] private QuickbarSlotView slotPrefab;
     [SerializeField] private Transform slotParent;
-    [SerializeField] private int slotCount = 8;
+    [SerializeField] private int slotCount;
+    [SerializeField] private InventoryManager inventoryManager;
 
     [Header("Items (debug)")]
-    [SerializeField] private QuickItem[] startingItems = new QuickItem[8];
+    [SerializeField] private ItemSO[] startingItems = new ItemSO[8];
 
     [Header("Use")]
-    [SerializeField] private GameObject user; // игрок
+    [SerializeField] private GameObject user;
     
     [Header("Animation")]
     [SerializeField] private RectTransform quickbarRoot;
@@ -27,7 +28,7 @@ public class QuickbarManager : MonoBehaviour
     private Tween _tween;
     private Tween _hideDelay;
 
-    private QuickItem[] _items;
+    private ItemSO[] _items;
     private QuickbarSlotView[] _views;
 
     public int SelectedIndex { get; private set; } = 0; // 0..7
@@ -35,14 +36,13 @@ public class QuickbarManager : MonoBehaviour
     private void Awake()
     {
         if (slotParent == null) slotParent = transform;
-        //if (user == null) user = GameObject.FindWithTag("Player");
 
-        _items = new QuickItem[slotCount];
+        _items = new ItemSO[slotCount];
         _views = new QuickbarSlotView[slotCount];
 
         for (int i = 0; i < slotCount; i++)
         {
-            _items[i] = (startingItems != null && i < startingItems.Length) ? startingItems[i] : null;
+            _items[i] = (inventoryManager.filledSlots != null && i < inventoryManager.filledSlots.Count) ? startingItems[i] : null;
 
             var view = Instantiate(slotPrefab, slotParent);
             view.SetIndex(i + 1);
@@ -74,7 +74,7 @@ public class QuickbarManager : MonoBehaviour
         ShowQuickbar();
     }
     
-    private void ShowQuickbar()
+    public void ShowQuickbar()
     {
         if (quickbarRoot == null) return;
 
@@ -90,7 +90,7 @@ public class QuickbarManager : MonoBehaviour
         _hideDelay = DOVirtual.DelayedCall(visibleTime, HideQuickbar);
     }
 
-    private void HideQuickbar()
+    public void HideQuickbar()
     {
         if (quickbarRoot == null) return;
 
@@ -108,10 +108,10 @@ public class QuickbarManager : MonoBehaviour
         var item = _items[SelectedIndex];
         if (item == null) return;
 
-        item.Use(user != null ? user : gameObject);
+        //item.Use(user != null ? user : gameObject);
     }
 
-    public void SetItem(int index, QuickItem item)
+    public void SetItem(int index, ItemSO item)
     {
         if (index < 0 || index >= slotCount) return;
 

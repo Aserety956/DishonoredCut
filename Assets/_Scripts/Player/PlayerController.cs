@@ -412,12 +412,14 @@ public class PlayerController : MonoBehaviour
         {
             //characterController.enabled = false;
             radialMenu.Open();
+            quickbar.ShowQuickbar();
         }
 
         if (Mouse.current.middleButton.wasReleasedThisFrame)
         {
             //characterController.enabled = true;
             radialMenu.Close();
+            quickbar.HideQuickbar();
         }
     }
 
