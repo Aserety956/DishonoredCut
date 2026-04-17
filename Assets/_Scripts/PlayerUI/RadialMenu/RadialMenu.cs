@@ -12,6 +12,7 @@ public class RadialMenu : MonoBehaviour
     //[SerializeField] private int slotCount = 8;
     [SerializeField] private float radius = 200f;
     [SerializeField] private InventoryManager inventoryManager;
+    [SerializeField] private QuickbarManager quickbarManager;
 
     [Header("Animation")]
     [SerializeField] private CanvasGroup canvasGroup;
@@ -41,7 +42,7 @@ public class RadialMenu : MonoBehaviour
         public Slot inventorySlot;
         public RadialSlotView view;
     }
-    private readonly List<RadialEntry> _entries = new();
+    private readonly List<RadialEntry> _entriesRadialMenu = new();
 
     private void Awake()
     {
@@ -61,7 +62,7 @@ public class RadialMenu : MonoBehaviour
             var go = Instantiate(slotPrefab, radialContainer);
             var view = go.GetComponent<RadialSlotView>();
             view.Setup(i, slot, (i + 1).ToString());
-            _entries.Add(new RadialEntry { inventorySlot = slot, view = view });
+            _entriesRadialMenu.Add(new RadialEntry { inventorySlot = slot, view = view });
         }
 
         LayoutSlots();
@@ -71,17 +72,17 @@ public class RadialMenu : MonoBehaviour
     {
         _slotTargetPositions.Clear();
 
-        if (_entries.Count == 0)
+        if (_entriesRadialMenu.Count == 0)
             return;
 
-        float angleStep = 360f / _entries.Count;
+        float angleStep = 360f / _entriesRadialMenu.Count;
 
-        for (int i = 0; i < _entries.Count; i++)
+        for (int i = 0; i < _entriesRadialMenu.Count; i++)
         {
             float angle = Mathf.Deg2Rad * (90f - i * angleStep);
             Vector2 pos = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius;
 
-            var rt = _entries[i].view.GetComponent<RectTransform>();
+            var rt = _entriesRadialMenu[i].view.GetComponent<RectTransform>();
             rt.anchoredPosition = pos;
 
             _slotTargetPositions.Add(pos);
@@ -95,6 +96,8 @@ public class RadialMenu : MonoBehaviour
 
         UpdateHighlight();
 
+        HandleQuickbarAssignmentInput();
+        
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
             if (_highlighted >= 0)
@@ -102,8 +105,41 @@ public class RadialMenu : MonoBehaviour
 
             Close();
         }
+        
     }
 
+    private void HandleQuickbarAssignmentInput()
+    {
+        if (_highlighted < 0)
+            return;
+        if (Keyboard.current.digit1Key.wasPressedThisFrame)
+        {
+            AssignHighlightedToQuickbar(0);
+        }
+        
+    }
+    
+    
+    private void AssignHighlightedToQuickbar(int quickbarIndex)
+    {
+        // взять _entries[_highlighted].inventorySlot
+        // передать в quickbarManager.AssignSlot(quickbarIndex, slot)
+        GetHighlightedInventorySlot();
+        quickbarManager.AssignSlot(quickbarIndex,_entriesRadialMenu[_highlighted].inventorySlot);
+        
+    }
+    
+    private Slot GetHighlightedInventorySlot()
+    {
+
+        if (_highlighted < 0) 
+            return null;
+
+        return _entriesRadialMenu[_highlighted].inventorySlot;
+        // если _highlighted некорректен -> return null
+        // иначе вернуть _entries[_highlighted].inventorySlot
+    }
+    
     private void UpdateHighlight()
     {
         Vector2 localPos;
@@ -116,9 +152,9 @@ public class RadialMenu : MonoBehaviour
         int bestIndex = -1;
         float bestDist = float.MaxValue;
 
-        for (int i = 0; i < _entries.Count; i++)
+        for (int i = 0; i < _entriesRadialMenu.Count; i++)
         {
-            var rt = _entries[i].view.GetComponent<RectTransform>();
+            var rt = _entriesRadialMenu[i].view.GetComponent<RectTransform>();
             float d = Vector2.SqrMagnitude(localPos - rt.anchoredPosition);
             if (d < bestDist)
             {
@@ -130,18 +166,18 @@ public class RadialMenu : MonoBehaviour
         if (bestIndex != _highlighted)
         {
             if (_highlighted >= 0)
-                _entries[_highlighted].view.SetHighlighted(false);
+                _entriesRadialMenu[_highlighted].view.SetHighlighted(false);
 
             _highlighted = bestIndex;
 
             if (_highlighted >= 0)
-                _entries[_highlighted].view.SetHighlighted(true);
+                _entriesRadialMenu[_highlighted].view.SetHighlighted(true);
         }
     }
 
     private void OnSelectSlot(int index)
     {
-        Debug.Log($"Radial selected slot {index}");
+        Debug.Log($"Radial selected slot {index}"); // todo: put item in player hands
     }
 
     public void Open()
@@ -193,9 +229,9 @@ public class RadialMenu : MonoBehaviour
         {
             radialContainer.localScale = Vector3.one * startScale;
 
-            for (int i = 0; i < _entries.Count; i++)
+            for (int i = 0; i < _entriesRadialMenu.Count; i++)
             {
-                var rt = _entries[i].view.GetComponent<RectTransform>();
+                var rt = _entriesRadialMenu[i].view.GetComponent<RectTransform>();
                 rt.anchoredPosition = _slotTargetPositions[i] * slotStartRadiusMultiplier;
                 rt.localScale = Vector3.one * 0.85f;
             }
@@ -216,10 +252,10 @@ public class RadialMenu : MonoBehaviour
         );
 
         // Анимация слотов
-        for (int i = 0; i < _entries.Count; i++)
+        for (int i = 0; i < _entriesRadialMenu.Count; i++)
         {
             int index = i;
-            var rt = _entries[index].view.GetComponent<RectTransform>();
+            var rt = _entriesRadialMenu[index].view.GetComponent<RectTransform>();
 
             _currentSequence.Insert(
                 index * slotStagger,
@@ -258,10 +294,10 @@ public class RadialMenu : MonoBehaviour
             radialContainer.DOScale(startScale, closeDuration).SetEase(closeEase)
         );
 
-        for (int i = 0; i < _entries.Count; i++)
+        for (int i = 0; i < _entriesRadialMenu.Count; i++)
         {
             int index = i;
-            var rt = _entries[index].view.GetComponent<RectTransform>();
+            var rt = _entriesRadialMenu[index].view.GetComponent<RectTransform>();
 
             _currentSequence.Join(
                 rt.DOAnchorPos(_slotTargetPositions[index] * slotStartRadiusMultiplier, closeDuration)
@@ -288,8 +324,8 @@ public class RadialMenu : MonoBehaviour
 
     private void ClearHighlight()
     {
-        if (_highlighted >= 0 && _highlighted < _entries.Count)
-            _entries[_highlighted].view.SetHighlighted(false);
+        if (_highlighted >= 0 && _highlighted < _entriesRadialMenu.Count)
+            _entriesRadialMenu[_highlighted].view.SetHighlighted(false);
 
         _highlighted = -1;
     }
@@ -312,7 +348,7 @@ public class RadialMenu : MonoBehaviour
     
     public void AddOrRefreshSlot(Slot slot)
     {
-        foreach (var entry in _entries)
+        foreach (var entry in _entriesRadialMenu)
         {
             if (entry.inventorySlot == slot)
             {
@@ -324,10 +360,10 @@ public class RadialMenu : MonoBehaviour
         var go = Instantiate(slotPrefab, radialContainer);
         var view = go.GetComponent<RadialSlotView>();
 
-        int index = _entries.Count;
+        int index = _entriesRadialMenu.Count;
         view.Setup(index, slot, (index + 1).ToString());
 
-        _entries.Add(new RadialEntry { inventorySlot = slot, view = view });
+        _entriesRadialMenu.Add(new RadialEntry { inventorySlot = slot, view = view });
 
         LayoutSlots();
     }

@@ -1438,6 +1438,7 @@ MonoBehaviour:
     type: 3}
   radius: 150
   inventoryManager: {fileID: 700160122}
+  quickbarManager: {fileID: 1304850147}
   canvasGroup: {fileID: 109236222}
   openDuration: 0.22
   closeDuration: 0.16
@@ -19529,8 +19530,6 @@ MonoBehaviour:
   slotParent: {fileID: 1304850145}
   slotCount: 8
   inventoryManager: {fileID: 700160122}
-  startingItems:
-  - {fileID: 0}
   user: {fileID: 0}
   quickbarRoot: {fileID: 1625349671}
   showY: 50

@@ -7,6 +7,7 @@ public class QuickbarSlotView : MonoBehaviour
     [SerializeField] private Image background;
     [SerializeField] private Image iconImage;
     [SerializeField] private TMP_Text indexText;
+    [SerializeField] private TMP_Text amountText;
 
     [Header("Visuals")]
     [SerializeField] private Color normalColor;
@@ -19,11 +20,11 @@ public class QuickbarSlotView : MonoBehaviour
             indexText.text = oneBasedIndex.ToString();
     }
 
-    public void SetItem(ItemSO item)
+    public void SetItem(Slot slot)
     {
         //if (iconImage == null) return;
 
-        if (item == null)
+        if (slot == null)
         {
             iconImage.enabled = false;
             if (background != null) background.color = emptyColor;
@@ -31,7 +32,8 @@ public class QuickbarSlotView : MonoBehaviour
         else
         {
             iconImage.enabled = true;
-            iconImage.sprite = item.icon;
+            iconImage.sprite = slot.item.icon;
+            amountText.text = slot.amount.ToString();
             if (background != null) background.color = normalColor;
         }
     }

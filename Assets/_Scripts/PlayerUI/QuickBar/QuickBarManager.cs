@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using DG.Tweening;
@@ -9,9 +10,6 @@ public class QuickbarManager : MonoBehaviour
     [SerializeField] private Transform slotParent;
     [SerializeField] private int slotCount;
     [SerializeField] private InventoryManager inventoryManager;
-
-    [Header("Items (debug)")]
-    [SerializeField] private ItemSO[] startingItems = new ItemSO[8];
 
     [Header("Use")]
     [SerializeField] private GameObject user;
@@ -28,25 +26,40 @@ public class QuickbarManager : MonoBehaviour
     private Tween _tween;
     private Tween _hideDelay;
 
-    private ItemSO[] _items;
+    private Slot[] _assignedSlots;
     private QuickbarSlotView[] _views;
+    
+    private class QuickbarEntry
+    {
+        public Slot inventorySlot;
+        public QuickbarSlotView view;
+    }
+
+    private readonly List<QuickbarEntry> _entriesQuickBar = new();
 
     public int SelectedIndex { get; private set; } = 0; // 0..7
 
     private void Awake()
     {
         if (slotParent == null) slotParent = transform;
-
-        _items = new ItemSO[slotCount];
+        
+        _assignedSlots = new Slot[slotCount];
         _views = new QuickbarSlotView[slotCount];
 
+        BuildUI();
+    }
+
+    public void BuildUI()
+    {
         for (int i = 0; i < slotCount; i++)
         {
-            _items[i] = (inventoryManager.filledSlots != null && i < inventoryManager.filledSlots.Count) ? startingItems[i] : null;
+            Slot slot = _assignedSlots[i];
+            
+            _assignedSlots[i] = (inventoryManager.filledSlots != null && i < inventoryManager.filledSlots.Count) ? inventoryManager.filledSlots[i] : null;
 
             var view = Instantiate(slotPrefab, slotParent);
             view.SetIndex(i + 1);
-            view.SetItem(_items[i]);
+            view.SetItem(slot);
             _views[i] = view;
         }
 
@@ -62,7 +75,6 @@ public class QuickbarManager : MonoBehaviour
             canvasGroup.alpha = 0f;
         }
     }
-    
     public void Select(int index)
     {
         if (index < 0 || index >= slotCount) return;
@@ -105,23 +117,46 @@ public class QuickbarManager : MonoBehaviour
     
     public void UseSelected()
     {
-        var item = _items[SelectedIndex];
+        var item = _assignedSlots[SelectedIndex];
         if (item == null) return;
 
         //item.Use(user != null ? user : gameObject);
     }
 
-    public void SetItem(int index, ItemSO item)
+    public void SetItem(int index, Slot slot)
     {
         if (index < 0 || index >= slotCount) return;
 
-        _items[index] = item;
-        _views[index].SetItem(item);
+        _assignedSlots[index] = slot;
+        _views[index].SetItem(slot);
     }
 
     private void RefreshSelection()
     {
         for (int i = 0; i < slotCount; i++)
             _views[i].SetSelected(i == SelectedIndex);
+    }
+
+    public void AssignSlot(int quickbarIndex, Slot inventorySlot)
+    {
+        //inventorySlot = _assignedSlots[quickbarIndex];
+        SetItem(quickbarIndex,inventorySlot); 
+    }
+    
+    public void RefreshSlot(int quickbarIndex)
+    {
+        var currentSlot = _assignedSlots[quickbarIndex];
+        _views[quickbarIndex].SetItem(currentSlot);
+        // и передать его в _views[quickbarIndex]
+    }
+    
+    public Slot GetAssignedSlot(int quickbarIndex)
+    {
+        if (quickbarIndex >= 0)
+        {
+            return _assignedSlots[quickbarIndex];
+        }
+        // вернуть ссылку на назначенный inventory slot
+        return null;
     }
 }
