@@ -112,13 +112,41 @@ public class RadialMenu : MonoBehaviour
     {
         if (_highlighted < 0)
             return;
+        
         if (Keyboard.current.digit1Key.wasPressedThisFrame)
         {
             AssignHighlightedToQuickbar(0);
         }
         
+        if (Keyboard.current.digit2Key.wasPressedThisFrame)
+        {
+            AssignHighlightedToQuickbar(1);
+        }
+        if (Keyboard.current.digit3Key.wasPressedThisFrame)
+        {
+            AssignHighlightedToQuickbar(2);
+        }
+        if (Keyboard.current.digit4Key.wasPressedThisFrame)
+        {
+            AssignHighlightedToQuickbar(3);
+        }
+        if (Keyboard.current.digit5Key.wasPressedThisFrame)
+        {
+            AssignHighlightedToQuickbar(4);
+        }
+        if (Keyboard.current.digit6Key.wasPressedThisFrame)
+        {
+            AssignHighlightedToQuickbar(5);
+        }
+        if (Keyboard.current.digit7Key.wasPressedThisFrame)
+        {
+            AssignHighlightedToQuickbar(6);
+        }
+        if (Keyboard.current.digit8Key.wasPressedThisFrame)
+        {
+            AssignHighlightedToQuickbar(7);
+        }
     }
-    
     
     private void AssignHighlightedToQuickbar(int quickbarIndex)
     {
