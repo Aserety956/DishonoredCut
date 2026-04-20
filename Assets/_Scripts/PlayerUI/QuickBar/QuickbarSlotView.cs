@@ -27,6 +27,8 @@ public class QuickbarSlotView : MonoBehaviour
         if (slot == null)
         {
             iconImage.enabled = false;
+            iconImage.sprite = null;
+            amountText.text = null;
             if (background != null) background.color = emptyColor;
         }
         else

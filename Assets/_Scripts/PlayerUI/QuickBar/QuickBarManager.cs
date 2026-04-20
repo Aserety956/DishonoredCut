@@ -123,7 +123,7 @@ public class QuickbarManager : MonoBehaviour
         //item.Use(user != null ? user : gameObject);
     }
 
-    public void SetItem(int index, Slot slot)
+    public void SetItemQuickBar(int index, Slot slot)
     {
         if (index < 0 || index >= slotCount) return;
 
@@ -140,7 +140,13 @@ public class QuickbarManager : MonoBehaviour
     public void AssignSlot(int quickbarIndex, Slot inventorySlot)
     {
         //inventorySlot = _assignedSlots[quickbarIndex];
-        SetItem(quickbarIndex,inventorySlot); 
+        SetItemQuickBar(quickbarIndex,inventorySlot); 
+    }
+    
+    public void UnassignSlot(int quickbarIndex, Slot inventorySlot)
+    {
+        //inventorySlot = _assignedSlots[quickbarIndex];
+        SetItemQuickBar(quickbarIndex,inventorySlot); 
     }
     
     public void RefreshSlot(int quickbarIndex)

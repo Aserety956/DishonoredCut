@@ -1387,6 +1387,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 107976603}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &107976605 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 106720782503331876, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
+    type: 3}
+  m_PrefabInstance: {fileID: 107976603}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46dcc0898fb7b4345b206b21081cc563, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Slot
 --- !u!1 &108672573
 GameObject:
   m_ObjectHideFlags: 0
@@ -1658,6 +1670,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 109985163}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &109985165 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 106720782503331876, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
+    type: 3}
+  m_PrefabInstance: {fileID: 109985163}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46dcc0898fb7b4345b206b21081cc563, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Slot
 --- !u!65 &110899753
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2077,6 +2101,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 163120092}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &163120094 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 106720782503331876, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
+    type: 3}
+  m_PrefabInstance: {fileID: 163120092}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46dcc0898fb7b4345b206b21081cc563, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Slot
 --- !u!1 &167682396
 GameObject:
   m_ObjectHideFlags: 0
@@ -6544,6 +6580,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 609621850}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &609621852 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 106720782503331876, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
+    type: 3}
+  m_PrefabInstance: {fileID: 609621850}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46dcc0898fb7b4345b206b21081cc563, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Slot
 --- !u!65 &611010018
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6767,6 +6815,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 640702571}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &640702573 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 106720782503331876, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
+    type: 3}
+  m_PrefabInstance: {fileID: 640702571}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46dcc0898fb7b4345b206b21081cc563, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Slot
 --- !u!65 &652447028
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -7379,6 +7439,22 @@ MonoBehaviour:
   uiPanel: {fileID: 818026070}
   playerController: {fileID: 870277578}
   inventoryPanel: {fileID: 565908478}
+  _slotsArray:
+  - {fileID: 1558479438}
+  - {fileID: 728862926}
+  - {fileID: 1065987234}
+  - {fileID: 1486892594}
+  - {fileID: 109985165}
+  - {fileID: 609621852}
+  - {fileID: 1697669061}
+  - {fileID: 1059863451}
+  - {fileID: 1394490529}
+  - {fileID: 163120094}
+  - {fileID: 770630924}
+  - {fileID: 1472688936}
+  - {fileID: 2107964217}
+  - {fileID: 640702573}
+  - {fileID: 107976605}
   slots: []
   filledSlots: []
   isOpened: 0
@@ -7721,6 +7797,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 728862924}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &728862926 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 106720782503331876, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
+    type: 3}
+  m_PrefabInstance: {fileID: 728862924}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46dcc0898fb7b4345b206b21081cc563, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Slot
 --- !u!1 &730913135
 GameObject:
   m_ObjectHideFlags: 0
@@ -8151,6 +8239,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 770630922}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &770630924 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 106720782503331876, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
+    type: 3}
+  m_PrefabInstance: {fileID: 770630922}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46dcc0898fb7b4345b206b21081cc563, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Slot
 --- !u!65 &774676657
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -11891,6 +11991,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 1059863449}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1059863451 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 106720782503331876, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
+    type: 3}
+  m_PrefabInstance: {fileID: 1059863449}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46dcc0898fb7b4345b206b21081cc563, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Slot
 --- !u!1 &1061980190
 GameObject:
   m_ObjectHideFlags: 0
@@ -12126,6 +12238,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 1065987232}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1065987234 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 106720782503331876, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
+    type: 3}
+  m_PrefabInstance: {fileID: 1065987232}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46dcc0898fb7b4345b206b21081cc563, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Slot
 --- !u!65 &1072994128
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -21421,6 +21545,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 1394490527}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1394490529 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 106720782503331876, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
+    type: 3}
+  m_PrefabInstance: {fileID: 1394490527}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46dcc0898fb7b4345b206b21081cc563, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Slot
 --- !u!65 &1400798407
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -26911,6 +27047,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 1472688934}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1472688936 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 106720782503331876, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
+    type: 3}
+  m_PrefabInstance: {fileID: 1472688934}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46dcc0898fb7b4345b206b21081cc563, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Slot
 --- !u!65 &1476139752
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -27208,6 +27356,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 1486892592}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1486892594 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 106720782503331876, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
+    type: 3}
+  m_PrefabInstance: {fileID: 1486892592}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46dcc0898fb7b4345b206b21081cc563, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Slot
 --- !u!1 &1492400412
 GameObject:
   m_ObjectHideFlags: 0
@@ -28122,6 +28282,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 1558479436}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1558479438 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 106720782503331876, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
+    type: 3}
+  m_PrefabInstance: {fileID: 1558479436}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46dcc0898fb7b4345b206b21081cc563, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Slot
 --- !u!1 &1560529377
 GameObject:
   m_ObjectHideFlags: 0
@@ -30580,6 +30752,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 1697669059}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1697669061 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 106720782503331876, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
+    type: 3}
+  m_PrefabInstance: {fileID: 1697669059}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46dcc0898fb7b4345b206b21081cc563, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Slot
 --- !u!1 &1697841762
 GameObject:
   m_ObjectHideFlags: 0
@@ -39494,6 +39678,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 2107964215}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2107964217 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 106720782503331876, guid: d6703b89bd4073e4bad4d09ea6cf07dc,
+    type: 3}
+  m_PrefabInstance: {fileID: 2107964215}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46dcc0898fb7b4345b206b21081cc563, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Slot
 --- !u!65 &2109845840
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -41907,7 +42103,7 @@ Light:
   serializedVersion: 13
   m_Type: 2
   m_Color: {r: 1, g: 0.8728639, b: 0.6477832, a: 1}
-  m_Intensity: 100
+  m_Intensity: 20
   m_Range: 10
   m_SpotAngle: 45
   m_InnerSpotAngle: 21.80208
@@ -44012,7 +44208,7 @@ Light:
   serializedVersion: 13
   m_Type: 2
   m_Color: {r: 1, g: 0.79982394, b: 0.46486834, a: 1}
-  m_Intensity: 100
+  m_Intensity: 20
   m_Range: 10
   m_SpotAngle: 45
   m_InnerSpotAngle: 21.80208
@@ -44670,7 +44866,7 @@ Light:
   serializedVersion: 13
   m_Type: 2
   m_Color: {r: 1, g: 0.8728639, b: 0.6477832, a: 1}
-  m_Intensity: 100
+  m_Intensity: 20
   m_Range: 10
   m_SpotAngle: 45
   m_InnerSpotAngle: 21.80208
@@ -47446,7 +47642,7 @@ Light:
   serializedVersion: 13
   m_Type: 2
   m_Color: {r: 1, g: 0.93798596, b: 0.6073366, a: 1}
-  m_Intensity: 100
+  m_Intensity: 20
   m_Range: 10
   m_SpotAngle: 45
   m_InnerSpotAngle: 21.80208
@@ -50759,7 +50955,7 @@ Light:
   serializedVersion: 13
   m_Type: 2
   m_Color: {r: 1, g: 0.8728639, b: 0.6477832, a: 1}
-  m_Intensity: 100
+  m_Intensity: 20
   m_Range: 10
   m_SpotAngle: 45
   m_InnerSpotAngle: 21.80208
@@ -57258,7 +57454,7 @@ Light:
   serializedVersion: 13
   m_Type: 2
   m_Color: {r: 1, g: 0.8728639, b: 0.6477832, a: 1}
-  m_Intensity: 100
+  m_Intensity: 20
   m_Range: 10
   m_SpotAngle: 45
   m_InnerSpotAngle: 21.80208
@@ -66959,7 +67155,7 @@ Light:
   serializedVersion: 13
   m_Type: 2
   m_Color: {r: 1, g: 0.8728639, b: 0.6477832, a: 1}
-  m_Intensity: 100
+  m_Intensity: 20
   m_Range: 10
   m_SpotAngle: 45
   m_InnerSpotAngle: 21.80208
@@ -72431,7 +72627,7 @@ Light:
   serializedVersion: 13
   m_Type: 2
   m_Color: {r: 1, g: 0.8728639, b: 0.6477832, a: 1}
-  m_Intensity: 100
+  m_Intensity: 20
   m_Range: 10
   m_SpotAngle: 45
   m_InnerSpotAngle: 21.80208
@@ -72496,7 +72692,7 @@ Light:
   serializedVersion: 13
   m_Type: 2
   m_Color: {r: 1, g: 0.8728639, b: 0.6477832, a: 1}
-  m_Intensity: 100
+  m_Intensity: 20
   m_Range: 10
   m_SpotAngle: 45
   m_InnerSpotAngle: 21.80208
@@ -76093,7 +76289,7 @@ Light:
   serializedVersion: 13
   m_Type: 2
   m_Color: {r: 0.5733211, g: 0.57910335, b: 1, a: 1}
-  m_Intensity: 100
+  m_Intensity: 20
   m_Range: 10
   m_SpotAngle: 45
   m_InnerSpotAngle: 21.80208
@@ -80739,7 +80935,7 @@ Light:
   serializedVersion: 13
   m_Type: 2
   m_Color: {r: 0.5733211, g: 0.57910335, b: 1, a: 1}
-  m_Intensity: 100
+  m_Intensity: 20
   m_Range: 10
   m_SpotAngle: 45
   m_InnerSpotAngle: 21.80208
@@ -81699,7 +81895,7 @@ Light:
   serializedVersion: 13
   m_Type: 2
   m_Color: {r: 1, g: 0.79982394, b: 0.46486834, a: 1}
-  m_Intensity: 100
+  m_Intensity: 20
   m_Range: 10
   m_SpotAngle: 45
   m_InnerSpotAngle: 21.80208
@@ -85363,7 +85559,7 @@ Light:
   serializedVersion: 13
   m_Type: 2
   m_Color: {r: 1, g: 0.79982394, b: 0.46486834, a: 1}
-  m_Intensity: 100
+  m_Intensity: 20
   m_Range: 10
   m_SpotAngle: 45
   m_InnerSpotAngle: 21.80208
@@ -97414,7 +97610,7 @@ Light:
   serializedVersion: 13
   m_Type: 2
   m_Color: {r: 1, g: 0.93798596, b: 0.6073366, a: 1}
-  m_Intensity: 100
+  m_Intensity: 20
   m_Range: 10
   m_SpotAngle: 45
   m_InnerSpotAngle: 21.80208
@@ -97495,7 +97691,7 @@ Light:
   serializedVersion: 13
   m_Type: 2
   m_Color: {r: 1, g: 0.8728639, b: 0.6477832, a: 1}
-  m_Intensity: 100
+  m_Intensity: 20
   m_Range: 10
   m_SpotAngle: 45
   m_InnerSpotAngle: 21.80208

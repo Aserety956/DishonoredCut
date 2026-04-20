@@ -146,16 +146,30 @@ public class RadialMenu : MonoBehaviour
         {
             AssignHighlightedToQuickbar(7);
         }
+        if (Keyboard.current.digit9Key.wasPressedThisFrame)
+        {
+            UnassignHighlightedToQuickbar(0);
+        }
     }
     
     private void AssignHighlightedToQuickbar(int quickbarIndex)
     {
         // взять _entries[_highlighted].inventorySlot
         // передать в quickbarManager.AssignSlot(quickbarIndex, slot)
-        GetHighlightedInventorySlot();
-        quickbarManager.AssignSlot(quickbarIndex,_entriesRadialMenu[_highlighted].inventorySlot);
-        
+        //GetHighlightedInventorySlot();
+        Slot slot = _entriesRadialMenu[_highlighted].inventorySlot;
+        quickbarManager.AssignSlot(quickbarIndex,slot);
     }
+    
+    private void UnassignHighlightedToQuickbar(int quickbarIndex)
+    {
+        // взять _entries[_highlighted].inventorySlot
+        // передать в quickbarManager.AssignSlot(quickbarIndex, slot)
+        //GetHighlightedInventorySlot();
+        Slot slot = _entriesRadialMenu[_highlighted].inventorySlot;
+        quickbarManager.UnassignSlot(quickbarIndex, null);
+    }
+    
     
     private Slot GetHighlightedInventorySlot()
     {

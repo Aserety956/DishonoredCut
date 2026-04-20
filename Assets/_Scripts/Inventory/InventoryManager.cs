@@ -9,6 +9,7 @@ public class InventoryManager : MonoBehaviour
     public GameObject uiPanel;
     public PlayerController playerController;
     public Transform inventoryPanel;
+    [SerializeField] private Slot[] _slotsArray = new Slot[15]; 
     public List<Slot> slots = new List<Slot>(15);
     public List<Slot> filledSlots = new List<Slot>(15);
     public bool isOpened;
@@ -24,7 +25,7 @@ public class InventoryManager : MonoBehaviour
     {
         for (int i = 0; i < inventoryPanel.childCount; i++)
         {
-            slots.Add(inventoryPanel.GetChild(i).GetComponent<Slot>());
+            slots.Add(_slotsArray[i]);
         }
         uiPanel.SetActive(false);
     }
