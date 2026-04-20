@@ -412,12 +412,14 @@ public class PlayerController : MonoBehaviour
         {
             //characterController.enabled = false;
             radialMenu.Open();
+            quickbar.ShowQuickbar();
         }
 
         if (Mouse.current.middleButton.wasReleasedThisFrame)
         {
             //characterController.enabled = true;
             radialMenu.Close();
+            quickbar.HideQuickbar();
         }
     }
 
@@ -606,19 +608,22 @@ public class PlayerController : MonoBehaviour
             {
                 interactable.Interact(this);
                 UpdateInteractPrompt(interactable);
-                //return;
             }
             
             PickableItem pickableItem = hit.collider.GetComponentInParent<PickableItem>();
             if (pickableItem != null)
             {
-                pickableItem.Interact(this);
                 UpdateInteractPrompt(pickableItem);
-                inventoryManager.AddItem(pickableItem.pickedItem, pickableItem.amount);
-                Destroy(pickableItem.gameObject);
+                
+                bool added = inventoryManager.AddItem(pickableItem.pickedItem, pickableItem.amount);
+                if (added)
+                {
+                    Destroy(pickableItem.gameObject);
+                }
+                /*inventoryManager.AddItem(pickableItem.pickedItem, pickableItem.amount);
+                Destroy(pickableItem.gameObject);*/
                 return;
             }
-            
             
         }
 
@@ -629,8 +634,7 @@ public class PlayerController : MonoBehaviour
     private void TickFootstepsTwoTimers()
     {
         if (AudioManager.I == null || footstepSound == null) return;
-
-        // Только на земле
+        
         if (!characterController.isGrounded)
         {
             ResetFootstepsCycle();

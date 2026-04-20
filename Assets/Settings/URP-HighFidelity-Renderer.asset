@@ -24,6 +24,8 @@ MonoBehaviour:
   resetOnStart: 1
   outputDepth: 1
   depthTexture: 0
+  isLogPrinted: 0
+  isCookiePrinted: 0
 --- !u!114 &-1878332245247344467
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -78,8 +80,7 @@ MonoBehaviour:
     probeVolumeBlendStatesCS: {fileID: 0}
   m_RendererFeatures:
   - {fileID: -1878332245247344467}
-  - {fileID: -8031785149195524697}
-  m_RendererFeatureMap: adc0de57c6d2eee5a765f105f65d8990
+  m_RendererFeatureMap: adc0de57c6d2eee5
   m_UseNativeRenderPass: 0
   xrSystemData: {fileID: 11400000, guid: 60e1133243b97e347b653163a8c01b64, type: 2}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}

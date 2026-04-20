@@ -450,6 +450,24 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Texture2DInputMaterialSlot",
+    "m_ObjectId": "1371d66d02a9465986437f88311bd3a6",
+    "m_Id": 1104148566,
+    "m_DisplayName": "Moon",
+    "m_SlotType": 0,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "_Moon",
+    "m_StageCapability": 3,
+    "m_BareResource": false,
+    "m_Texture": {
+        "m_SerializedTexture": "",
+        "m_Guid": ""
+    },
+    "m_DefaultType": 0
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.PositionMaterialSlot",
     "m_ObjectId": "20f79803f8f5435d9883e5f7ebb7f0bf",
     "m_Id": 0,
@@ -833,11 +851,11 @@
     "m_AllowMaterialOverride": false,
     "m_SurfaceType": 0,
     "m_ZTestMode": 4,
-    "m_ZWriteControl": 0,
+    "m_ZWriteControl": 2,
     "m_AlphaMode": 0,
     "m_RenderFace": 2,
     "m_AlphaClip": false,
-    "m_CastShadows": true,
+    "m_CastShadows": false,
     "m_ReceiveShadows": true,
     "m_DisableTint": false,
     "m_Sort3DAs2DCompatible": false,
@@ -1591,6 +1609,9 @@
             "m_Id": "7d068d1b90914e7daff91d8f2cab6eab"
         },
         {
+            "m_Id": "1371d66d02a9465986437f88311bd3a6"
+        },
+        {
             "m_Id": "71b3d93bb3b745a092762b49d801f8df"
         },
         {
@@ -1617,7 +1638,8 @@
         "7e0c805a-0949-4388-88c2-480e2b404892",
         "a68d0db5-4f12-4d94-b399-9f1dfea69233",
         "bc94ab7c-9fb0-4499-be83-cbd8b61f79d1",
-        "548a4729-07f9-4a5e-b73a-6ab8453918fe"
+        "548a4729-07f9-4a5e-b73a-6ab8453918fe",
+        "bec522f9-b5b7-4379-a1ab-a4a7b9c4d71b"
     ],
     "m_PropertyIds": [
         1678565256,
@@ -1630,7 +1652,8 @@
         -1585181776,
         -988512790,
         -239097660,
-        1487291170
+        1487291170,
+        1104148566
     ],
     "m_Dropdowns": [],
     "m_DropdownSelectedEntries": []

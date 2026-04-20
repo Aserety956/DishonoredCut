@@ -62,12 +62,16 @@ public class EnemyController : MonoBehaviour, IDamageable
     private static readonly int RunTrig = Animator.StringToHash("Run");
 
 
-    [Header("FOV")] public float viewRadiusDark = 8f;
-    public float viewRadiusLight = 12f;
-    public float viewAngleDark = 90f;
-    public float viewAngleLight = 120f;
+    [Header("FOV")] 
     public LayerMask obstacleMask;
     public Transform viewSource;
+    [SerializeField] private float viewRadiusDark = 8f;
+    [SerializeField] private float viewRadiusLight = 12f;
+    [SerializeField] private float minorViewRadius = 2f;
+    [SerializeField] private float viewAngleDark = 90f;
+    [SerializeField] private float viewAngleLight = 120f;
+    [SerializeField] private float minorViewAngle = 140f;
+    
 
     [Header("LightMapping")] public float lightMin = 0.15f;
     public float lightMax = 0.8f;
@@ -508,12 +512,10 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     bool CanSeePlayer()
     {
-        float viewRadius, viewAngle;
-        GetVisionFromLight(out viewRadius, out viewAngle);
+        GetVisionFromLight(out var mainViewRadius, out var mainViewAngle);
 
         Transform source = viewSource;
-
-        //Transform source = viewSource != null ? viewSource : transform;
+        
 
         Vector3 eyePosition = source.position;
         Vector3 forward = source.forward;
@@ -523,7 +525,7 @@ public class EnemyController : MonoBehaviour, IDamageable
         Vector3 toPlayer = player.position - eyePosition;
         float distanceToPlayer = toPlayer.magnitude;
 
-        if (distanceToPlayer > viewRadius)
+        if (distanceToPlayer > mainViewRadius)
             return false;
 
         Vector3 flatDirectionToPlayer = toPlayer;
@@ -531,7 +533,18 @@ public class EnemyController : MonoBehaviour, IDamageable
         flatDirectionToPlayer.Normalize();
 
         float angleToPlayer = Vector3.Angle(forward, flatDirectionToPlayer);
-        if (angleToPlayer > viewAngle * 0.5f)
+        
+        float effectiveAngle;
+        if (distanceToPlayer <= minorViewRadius)
+        {
+            effectiveAngle = minorViewAngle;
+        }
+        else
+        {
+            effectiveAngle = mainViewAngle;
+        }
+        
+        if (angleToPlayer > effectiveAngle * 0.5f)
             return false;
 
         Debug.DrawRay(eyePosition, flatDirectionToPlayer * distanceToPlayer, Color.red);
@@ -711,8 +724,7 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     void OnDrawGizmosSelected()
     {
-        float viewRadius, viewAngle;
-        GetVisionFromLight(out viewRadius, out viewAngle);
+        GetVisionFromLight(out var viewRadius, out var viewAngle);
 
         Transform source = viewSource;
 
@@ -723,20 +735,25 @@ public class EnemyController : MonoBehaviour, IDamageable
 
         Quaternion leftRot = Quaternion.AngleAxis(-viewAngle * 0.5f, Vector3.up);
         Quaternion rightRot = Quaternion.AngleAxis(viewAngle * 0.5f, Vector3.up);
-
+        
+        Quaternion minorLeftRot = Quaternion.AngleAxis(-minorViewAngle * 0.5f, Vector3.up);
+        Quaternion minorRightRot = Quaternion.AngleAxis(minorViewAngle * 0.5f, Vector3.up);
+        
+        
+        
         Vector3 leftBoundary = leftRot * forward;
         Vector3 rightBoundary = rightRot * forward;
-
+        
+        Vector3 minorLeftBoundary = minorLeftRot * forward;
+            Vector3 minorRightBoundary = minorRightRot * forward;
+        
         Gizmos.color = Color.cyan;
         Gizmos.DrawLine(origin, origin + leftBoundary * viewRadius);
         Gizmos.DrawLine(origin, origin + rightBoundary * viewRadius);
-
-        /*if (player != null)
-        {
-            Gizmos.color = CanSeePlayer() ? Color.green : Color.red;
-            Gizmos.DrawLine(origin, player.position);
-        }*/
-
+        
+        Gizmos.DrawLine(origin, origin + minorLeftBoundary * minorViewRadius);
+        Gizmos.DrawLine(origin, origin + minorRightBoundary * minorViewRadius);
+        
         if (currentState == EnemyState.Investigate && CanSeePlayer())
         {
             Gizmos.color = Color.orange;

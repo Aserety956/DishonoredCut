@@ -10,7 +10,10 @@ public class InventoryManager : MonoBehaviour
     public PlayerController playerController;
     public Transform inventoryPanel;
     public List<Slot> slots = new List<Slot>(15);
+    public List<Slot> filledSlots = new List<Slot>(15);
     public bool isOpened;
+    
+    public event Action<Slot> OnSlotUpdated;
 
     private void Awake()
     {
@@ -58,30 +61,44 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    public void AddItem(ItemSO _item, int _amount)
+    public bool AddItem(ItemSO item, int amount)
     {
         foreach (Slot slot in slots)
         {
-            if (slot.item == _item && (slot.amount + _amount) <= _item.maxAmount)
+            if (slot.item == item && (slot.amount + amount) <= item.maxAmount)
             {
-                slot.amount += _amount;
-                slot.itemAmountText.text = _amount.ToString();
-                return;
+                slot.amount += amount;
+                slot.itemAmountText.text = slot.amount.ToString();
+                
+                OnSlotUpdated?.Invoke(slot);
+                
+                return true;
             }
-            
+
+            if (slot.item == item && (slot.amount + amount) > item.maxAmount)
+            {
+                Debug.Log("You can't have more items of this type");
+                return false;
+            }
         }
         
         foreach(Slot slot in slots)
         {
             if (slot.isEmpty)
             {
-                slot.item = _item;
-                slot.amount = _amount;
+                slot.item = item;
+                slot.amount = amount;
                 slot.isEmpty = false;
-                slot.SetIcon(_item.icon);
-                slot.itemAmountText.text = _amount.ToString();
-                return;
+                slot.SetIcon(item.icon);
+                slot.itemAmountText.text = amount.ToString();
+                
+                filledSlots.Add(slot);
+                
+                OnSlotUpdated?.Invoke(slot);
+                
+                return true;
             }
         }
+        return false;
     }
 }
