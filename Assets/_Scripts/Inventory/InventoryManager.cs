@@ -13,9 +13,9 @@ public class InventoryManager : MonoBehaviour
     public List<Slot> slots = new List<Slot>(15);
     public List<Slot> filledSlots = new List<Slot>(15);
     public bool isOpened;
+    [SerializeField] private QuickbarManager quickbarManager;
     
     public event Action<Slot> OnSlotUpdated;
-
     private void Awake()
     {
         uiPanel.SetActive(true);
@@ -73,6 +73,8 @@ public class InventoryManager : MonoBehaviour
                 
                 OnSlotUpdated?.Invoke(slot);
                 
+                quickbarManager.RefreshAllSlots();
+                
                 return true;
             }
 
@@ -97,9 +99,12 @@ public class InventoryManager : MonoBehaviour
                 
                 OnSlotUpdated?.Invoke(slot);
                 
+                quickbarManager.RefreshAllSlots();
+                
                 return true;
             }
         }
         return false;
     }
+    
 }

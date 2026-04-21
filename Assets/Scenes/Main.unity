@@ -7458,6 +7458,7 @@ MonoBehaviour:
   slots: []
   filledSlots: []
   isOpened: 0
+  quickbarManager: {fileID: 1304850147}
 --- !u!1001 &710006442
 PrefabInstance:
   m_ObjectHideFlags: 0

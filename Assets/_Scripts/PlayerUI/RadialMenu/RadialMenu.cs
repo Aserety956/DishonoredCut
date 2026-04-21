@@ -9,7 +9,6 @@ public class RadialMenu : MonoBehaviour
     [SerializeField] private GameObject root;
     [SerializeField] private RectTransform radialContainer; // центр меню
     [SerializeField] private GameObject slotPrefab;
-    //[SerializeField] private int slotCount = 8;
     [SerializeField] private float radius = 200f;
     [SerializeField] private InventoryManager inventoryManager;
     [SerializeField] private QuickbarManager quickbarManager;
@@ -154,18 +153,28 @@ public class RadialMenu : MonoBehaviour
     
     private void AssignHighlightedToQuickbar(int quickbarIndex)
     {
-        // взять _entries[_highlighted].inventorySlot
-        // передать в quickbarManager.AssignSlot(quickbarIndex, slot)
-        //GetHighlightedInventorySlot();
         Slot slot = _entriesRadialMenu[_highlighted].inventorySlot;
-        quickbarManager.AssignSlot(quickbarIndex,slot);
+
+        // Проверяем, не находится ли этот же слот уже в другом слоте быстрой панели
+        for (int i = 0; i < quickbarManager.slotCount; i++)
+        {
+            if (i == quickbarIndex)
+                continue;
+
+            Slot existingSlot = quickbarManager.GetAssignedSlot(i);
+            
+            if (existingSlot != null && existingSlot.Equals(slot))
+            {
+                quickbarManager.AssignSlot(i, null); 
+                break; // предмет может быть только в одном слоте, выходим из цикла
+            }
+        }
+        // Назначаем в новый слот
+        quickbarManager.AssignSlot(quickbarIndex, slot);
     }
     
     private void UnassignHighlightedToQuickbar(int quickbarIndex)
     {
-        // взять _entries[_highlighted].inventorySlot
-        // передать в quickbarManager.AssignSlot(quickbarIndex, slot)
-        //GetHighlightedInventorySlot();
         Slot slot = _entriesRadialMenu[_highlighted].inventorySlot;
         quickbarManager.UnassignSlot(quickbarIndex, null);
     }
@@ -380,6 +389,7 @@ public class RadialMenu : MonoBehaviour
     {
         if (inventoryManager != null)
             inventoryManager.OnSlotUpdated += AddOrRefreshSlot;
+        
     }
 
     private void OnDisable()

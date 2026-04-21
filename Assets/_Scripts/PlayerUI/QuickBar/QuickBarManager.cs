@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -8,7 +9,7 @@ public class QuickbarManager : MonoBehaviour
     [Header("Setup")]
     [SerializeField] private QuickbarSlotView slotPrefab;
     [SerializeField] private Transform slotParent;
-    [SerializeField] private int slotCount;
+    [SerializeField] public int slotCount;
     [SerializeField] private InventoryManager inventoryManager;
 
     [Header("Use")]
@@ -27,7 +28,7 @@ public class QuickbarManager : MonoBehaviour
     private Tween _hideDelay;
 
     private Slot[] _assignedSlots;
-    private QuickbarSlotView[] _views;
+    public QuickbarSlotView[] _views;
     
     private class QuickbarEntry
     {
@@ -154,6 +155,15 @@ public class QuickbarManager : MonoBehaviour
         var currentSlot = _assignedSlots[quickbarIndex];
         _views[quickbarIndex].SetItem(currentSlot);
         // и передать его в _views[quickbarIndex]
+    }
+
+    public void RefreshAllSlots()
+    {
+        for (int i = 0; i < slotCount; i++)
+        {
+            var slots = _assignedSlots[i];
+            _views[i].SetItem(slots);
+        }
     }
     
     public Slot GetAssignedSlot(int quickbarIndex)
