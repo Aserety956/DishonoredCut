@@ -12,7 +12,22 @@ public class RadialMenu : MonoBehaviour
     [SerializeField] private float radius = 200f;
     [SerializeField] private InventoryManager inventoryManager;
     [SerializeField] private QuickbarManager quickbarManager;
+    [SerializeField] private ItemType[] excludedItemTypes;
+    [SerializeField] private Transform healthPotionPos;
+    [SerializeField] private Transform manaPotionPos;
+    [SerializeField] private CanvasGroup potionsGroup;
+    [SerializeField] private GameObject potionsRoot;
+    
+    private Slot healthSlotData;
+    private Slot manaSlotData;
+    
+    private RadialSlotView healthPotionView;
+    private RadialSlotView manaPotionView;
+    /*[SerializeField] private ItemType healthPotionType;
+    [SerializeField] private ItemType manaPotionType;*/
 
+    
+    
     [Header("Animation")]
     [SerializeField] private CanvasGroup canvasGroup;
     [SerializeField] private float openDuration = 0.22f;
@@ -53,10 +68,24 @@ public class RadialMenu : MonoBehaviour
 
         _highlighted = -1;
 
+        GameObject healthObj = Instantiate(slotPrefab, healthPotionPos);
+        GameObject manaObj = Instantiate(slotPrefab, manaPotionPos);
+
+        healthPotionView = healthObj.GetComponent<RadialSlotView>();
+        manaPotionView = manaObj.GetComponent<RadialSlotView>();
+
+        healthPotionView.Setup(-1, null, "");
+        manaPotionView.Setup(-2, null, "");
+        
+        UpdatePotionSlots();
+        
         // Создаем слоты заранее
         for (int i = 0; i < inventoryManager.filledSlots.Count; i++)
         {
             Slot slot = inventoryManager.filledSlots[i];
+            
+            if (ShouldExcludeSlot(slot))
+                continue;
 
             var go = Instantiate(slotPrefab, radialContainer);
             var view = go.GetComponent<RadialSlotView>();
@@ -86,6 +115,40 @@ public class RadialMenu : MonoBehaviour
 
             _slotTargetPositions.Add(pos);
         }
+    }
+    private bool ShouldExcludeSlot(Slot slot)
+    {
+        if (slot == null || slot.isEmpty) return true;
+        foreach (var type in excludedItemTypes)
+        {
+            if (slot.item.itemType == type)
+                return true;
+        }
+        return false;
+    }
+    
+    private Slot FindFirstPotionSlot(ItemType type)
+    {
+        foreach (var slot in inventoryManager.filledSlots)
+        {
+            if (slot != null && !slot.isEmpty && slot.item.itemType == type)
+                return slot;
+        }
+        return null;
+    }
+    
+    private void UpdatePotionSlots()
+    {
+        healthSlotData = FindFirstPotionSlot(ItemType.HealPotion);
+        manaSlotData = FindFirstPotionSlot(ItemType.ManaPotion);
+
+        healthPotionView?.Refresh(healthSlotData);
+        manaPotionView?.Refresh(manaSlotData);
+    }
+
+    private bool IsPotionSlot(Slot slot)
+    {
+        return ShouldExcludeSlot(slot);
     }
 
     private void Update()
@@ -242,6 +305,7 @@ public class RadialMenu : MonoBehaviour
         _isAnimating = true;
 
         root.SetActive(true);
+        potionsRoot.SetActive(true);
 
         _previousTimeScale = Time.timeScale;
         Time.timeScale = slowTimeScale;
@@ -300,7 +364,12 @@ public class RadialMenu : MonoBehaviour
         _currentSequence.Join(
             radialContainer.DOScale(1f, openDuration)
                 .SetEase(openEase)
-        );
+            );
+
+        _currentSequence.Join(
+            potionsGroup.DOFade(1f, openDuration)
+            .SetEase(openEase)
+            );
 
         // Анимация слотов
         for (int i = 0; i < _entriesRadialMenu.Count; i++)
@@ -344,6 +413,11 @@ public class RadialMenu : MonoBehaviour
         _currentSequence.Join(
             radialContainer.DOScale(startScale, closeDuration).SetEase(closeEase)
         );
+        
+        _currentSequence.Join(
+            potionsGroup.DOFade(0f, openDuration)
+                .SetEase(Ease.OutQuad)
+        );
 
         for (int i = 0; i < _entriesRadialMenu.Count; i++)
         {
@@ -366,6 +440,7 @@ public class RadialMenu : MonoBehaviour
             _isOpen = false;
 
             root.SetActive(false);
+            potionsRoot.SetActive(false);
 
             Time.timeScale = _previousTimeScale;
             Cursor.lockState = CursorLockMode.Locked;
@@ -397,9 +472,16 @@ public class RadialMenu : MonoBehaviour
         if (inventoryManager != null)
             inventoryManager.OnSlotUpdated -= AddOrRefreshSlot;
     }
-    
+
     public void AddOrRefreshSlot(Slot slot)
     {
+
+        if (IsPotionSlot(slot))
+        {
+            UpdatePotionSlots();
+            return;
+        }
+        
         foreach (var entry in _entriesRadialMenu)
         {
             if (entry.inventorySlot == slot)

@@ -172,7 +172,6 @@ public class QuickbarManager : MonoBehaviour
         {
             return _assignedSlots[quickbarIndex];
         }
-        // вернуть ссылку на назначенный inventory slot
         return null;
     }
 }
