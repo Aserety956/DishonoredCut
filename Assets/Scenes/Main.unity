@@ -9287,6 +9287,9 @@ MonoBehaviour:
   ragdoll: {fileID: 840285895}
   agent: {fileID: 840285897}
   animator: {fileID: 840285898}
+  isAttacking: 0
+  attackAnimTimer: 0
+  attackAnimDuration: 2.267
   dampTime: 0.1
   obstacleMask:
     serializedVersion: 2
@@ -9315,6 +9318,8 @@ MonoBehaviour:
   isChasing: 0
   chaseDuration: 13
   chaseTimer: 0
+  attackDistance: 0
+  speedWhileAttacking: 0
 --- !u!195 &840285897
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -32240,6 +32245,9 @@ MonoBehaviour:
   ragdoll: {fileID: 1803517927}
   agent: {fileID: 1803517929}
   animator: {fileID: 1803517930}
+  isAttacking: 0
+  attackAnimTimer: 0
+  attackAnimDuration: 2.267
   dampTime: 0.1
   obstacleMask:
     serializedVersion: 2
@@ -32271,6 +32279,8 @@ MonoBehaviour:
   isChasing: 0
   chaseDuration: 13
   chaseTimer: 0
+  attackDistance: 0
+  speedWhileAttacking: 0
 --- !u!195 &1803517929
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -88237,6 +88247,9 @@ MonoBehaviour:
   ragdoll: {fileID: 6520914793522767423}
   agent: {fileID: 6520914793522767422}
   animator: {fileID: 2270387093510422973}
+  isAttacking: 0
+  attackAnimTimer: 0
+  attackAnimDuration: 1.7
   dampTime: 0.1
   obstacleMask:
     serializedVersion: 2
@@ -88268,6 +88281,8 @@ MonoBehaviour:
   isChasing: 0
   chaseDuration: 13
   chaseTimer: 0
+  attackDistance: 3
+  speedWhileAttacking: 0.1
 --- !u!195 &6520914793522767422
 NavMeshAgent:
   m_ObjectHideFlags: 0
