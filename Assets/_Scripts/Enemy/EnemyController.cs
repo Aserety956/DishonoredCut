@@ -119,6 +119,7 @@ public class EnemyController : MonoBehaviour, IDamageable
         Check,
         Investigate,
         Chase,
+        Attack
     }
 
     private EnemyState currentState = EnemyState.Patrol;
@@ -147,7 +148,7 @@ public class EnemyController : MonoBehaviour, IDamageable
 
         UpdateSuspicion(canSeePlayer, heardNoise);
         EvaluateSuspicion();
-        AnimUpdate();
+        WalkAnimUpdate();
 
         // Если состояние поменялось — делаем действия входа (например, задать destination)
         if (currentState != previousState)
@@ -174,6 +175,10 @@ public class EnemyController : MonoBehaviour, IDamageable
 
             case EnemyState.Chase:
                 UpdateChase();
+                break;
+            
+            case EnemyState.Attack:
+                UpdateAttack();
                 break;
         }
     }
@@ -230,8 +235,7 @@ public class EnemyController : MonoBehaviour, IDamageable
 
                 AudioManager.I.Play(investigateSounds, transform.position);
                 SetLookingAround(false);
-
-                // Сначала попробуем пойти к центру, чтобы выглядело естественно
+                
                 agent.SetDestination(_investigateCenter);
                 break;
 
@@ -249,10 +253,17 @@ public class EnemyController : MonoBehaviour, IDamageable
                 agent.speed = chaseSpeed;
                 agent.isStopped = false;
                 break;
+            
+            case EnemyState.Attack:
+                agent.isStopped = true;
+                //agent.speed = 0f;
+                animator.SetTrigger(AttackTrig);
+                attackAnimTimer = 0f;
+                break;
         }
     }
 
-    void AnimUpdate()
+    void WalkAnimUpdate()
     {
         float speed01 = 0f;
 
@@ -502,11 +513,11 @@ public class EnemyController : MonoBehaviour, IDamageable
             _lastSeenPosition = player.position;
             agent.SetDestination(player.position);
 
-            if (CanSeePlayer() && CloseToPlayer() && !isAttacking)
+            if (CloseToPlayer())
             {
-                EnemyAttacking();
+                currentState = EnemyState.Attack;
+                return;
             }
-
         }
 
         if (chaseTimer >= chaseDuration) //todo: зафиксировать? или после паники сброс состояния?
@@ -518,13 +529,14 @@ public class EnemyController : MonoBehaviour, IDamageable
         }
     }
 
-    private void EnemyAttacking()
+    private void UpdateAttack()
     {
-        if (isAttacking) return; 
-
-        animator.SetTrigger(AttackTrig);
-        isAttacking = true;
-        attackAnimTimer = 0f;
+        attackAnimTimer += Time.deltaTime;
+        
+        if (attackAnimTimer >= attackAnimDuration)
+        {
+                currentState = EnemyState.Chase;
+        }
     }
 
     bool CloseToPlayer()
@@ -602,8 +614,8 @@ public class EnemyController : MonoBehaviour, IDamageable
         float lightLevel = playerLight.currentLightLevel;
         ;
 
-        // делаем 0..1 внутри диапазона [lightMin..lightMax]
-        float t = Mathf.InverseLerp(lightMin, lightMax, lightLevel); // часть пройденного пути
+        
+        float t = Mathf.InverseLerp(lightMin, lightMax, lightLevel);
         t = Mathf.Clamp01(t);
         
 
@@ -667,8 +679,8 @@ public class EnemyController : MonoBehaviour, IDamageable
         _knocked = true;
         OnEnemyKnocked?.Invoke();
 
-        // опционально: через N секунд “поднять” (если нужно)
-        // StartCoroutine(RecoverAfter(5f));
+        //через N секунд “поднять”
+        //StartCoroutine(RecoverAfter(5f));
     }
 
     public void TakeDamage(float amount, Vector3 hitPoint, Vector3 hitDir)
@@ -678,7 +690,7 @@ public class EnemyController : MonoBehaviour, IDamageable
         hp -= amount;
 
         // if (animator != null)
-        //animator.SetTrigger(HitTrig);
+        //animator.SetTrigger(HitTrig); TODO
 
         if (hp <= 0f)
             Die();
@@ -708,7 +720,6 @@ public class EnemyController : MonoBehaviour, IDamageable
 
     private float GetVisionSuspicionGainPerSecond(float distance)
     {
-        // 0 у far, 1 у near
         float t = Mathf.InverseLerp(suspicionFarDist, suspicionNearDist, distance);
         t = Mathf.Clamp01(t);
         
