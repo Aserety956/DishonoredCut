@@ -8,7 +8,8 @@ public enum ItemType
     Crossbow,
     Grenade,
     HealPotion,
-    ManaPotion
+    ManaPotion,
+    Gun
 }
 
 public class ItemSO : ScriptableObject

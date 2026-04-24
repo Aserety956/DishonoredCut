@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -8,7 +9,7 @@ public class QuickbarManager : MonoBehaviour
     [Header("Setup")]
     [SerializeField] private QuickbarSlotView slotPrefab;
     [SerializeField] private Transform slotParent;
-    [SerializeField] private int slotCount;
+    [SerializeField] public int slotCount;
     [SerializeField] private InventoryManager inventoryManager;
 
     [Header("Use")]
@@ -27,7 +28,7 @@ public class QuickbarManager : MonoBehaviour
     private Tween _hideDelay;
 
     private Slot[] _assignedSlots;
-    private QuickbarSlotView[] _views;
+    public QuickbarSlotView[] _views;
     
     private class QuickbarEntry
     {
@@ -123,7 +124,7 @@ public class QuickbarManager : MonoBehaviour
         //item.Use(user != null ? user : gameObject);
     }
 
-    public void SetItem(int index, Slot slot)
+    public void SetItemQuickBar(int index, Slot slot)
     {
         if (index < 0 || index >= slotCount) return;
 
@@ -140,7 +141,13 @@ public class QuickbarManager : MonoBehaviour
     public void AssignSlot(int quickbarIndex, Slot inventorySlot)
     {
         //inventorySlot = _assignedSlots[quickbarIndex];
-        SetItem(quickbarIndex,inventorySlot); 
+        SetItemQuickBar(quickbarIndex,inventorySlot); 
+    }
+    
+    public void UnassignSlot(int quickbarIndex, Slot inventorySlot)
+    {
+        //inventorySlot = _assignedSlots[quickbarIndex];
+        SetItemQuickBar(quickbarIndex,inventorySlot); 
     }
     
     public void RefreshSlot(int quickbarIndex)
@@ -149,6 +156,15 @@ public class QuickbarManager : MonoBehaviour
         _views[quickbarIndex].SetItem(currentSlot);
         // и передать его в _views[quickbarIndex]
     }
+
+    public void RefreshAllSlots()
+    {
+        for (int i = 0; i < slotCount; i++)
+        {
+            var slots = _assignedSlots[i];
+            _views[i].SetItem(slots);
+        }
+    }
     
     public Slot GetAssignedSlot(int quickbarIndex)
     {
@@ -156,7 +172,6 @@ public class QuickbarManager : MonoBehaviour
         {
             return _assignedSlots[quickbarIndex];
         }
-        // вернуть ссылку на назначенный inventory slot
         return null;
     }
 }

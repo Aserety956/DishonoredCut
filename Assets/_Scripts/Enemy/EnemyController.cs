@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
@@ -50,9 +51,12 @@ public class EnemyController : MonoBehaviour, IDamageable
     [Header("Animations")] 
     [SerializeField] private NavMeshAgent agent;
     [SerializeField] private Animator animator;
+    [SerializeField] private bool isAttacking;
+    [SerializeField] private float attackAnimTimer;
+    [SerializeField] private float attackAnimDuration = 2.267f;
 
-    [Tooltip("Сколько секунд сглаживать изменение Speed параметра.")] [SerializeField]
-    private float dampTime = 0.1f;
+    [Tooltip("Сколько секунд сглаживать изменение Speed параметра.")] 
+    [SerializeField] private float dampTime = 0.1f;
 
     private static readonly int Speed = Animator.StringToHash("Speed");
     private static readonly int Lookbool = Animator.StringToHash("LookingAround");
@@ -73,11 +77,13 @@ public class EnemyController : MonoBehaviour, IDamageable
     [SerializeField] private float minorViewAngle = 140f;
     
 
-    [Header("LightMapping")] public float lightMin = 0.15f;
+    [Header("LightMapping")] 
+    public float lightMin = 0.15f;
     public float lightMax = 0.8f;
     //public float lightGamma = 0.7f;
 
-    [Header("PlayerLinks")] public Transform player;
+    [Header("PlayerLinks")] 
+    public Transform player;
     public LightDetector playerLight;
 
     [Header("Health")] public float maxHp = 500f;
@@ -85,11 +91,13 @@ public class EnemyController : MonoBehaviour, IDamageable
     public bool isDead;
     
 
-    [Header("Check")] [SerializeField] private float suspicionToСheck = 0.25f;
+    [Header("Check")] 
+    [SerializeField] private float suspicionToСheck = 0.25f;
     private bool _isGoingToCheck;
     public bool IsChecking;
 
-    [Header("Patrol")] public Transform[] patrolPoints;
+    [Header("Patrol")] 
+    public Transform[] patrolPoints;
     public float patrolSpeed = 3f;
     public float waitTimeAtPoint = 2f;
 
@@ -99,6 +107,8 @@ public class EnemyController : MonoBehaviour, IDamageable
     [SerializeField] public bool isChasing;
     [SerializeField] private float chaseDuration;
     [SerializeField] private float chaseTimer;
+    [SerializeField] private float attackDistance;
+    [SerializeField] private float speedWhileAttacking;
 
     private int currentPointIndex = 0;
     private float waitTimer;
@@ -449,14 +459,6 @@ public class EnemyController : MonoBehaviour, IDamageable
             animator.SetBool(Lookbool, value);
     }
 
-    /*void SetLookingAround() //todo: с анимацией
-    {
-
-        //transform.Rotate(Vector3.up, lookAroundSpeed * Time.deltaTime);
-        SetLookingAround(true);
-
-    }*/
-
     void UpdatePatrol()
     {
         if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
@@ -478,7 +480,19 @@ public class EnemyController : MonoBehaviour, IDamageable
         investigateTimer = 0f;
         IsChecking = false;
         chaseTimer += Time.deltaTime;
-
+        
+        if (isAttacking)
+        {
+            agent.speed = 0f;
+            agent.isStopped = true;
+            attackAnimTimer += Time.deltaTime;
+            if (attackAnimTimer >= attackAnimDuration)
+            {
+                isAttacking = false;
+                agent.isStopped = false;
+            }
+        }
+        
         if (CanSeePlayer())
         {
             SetLookingAround(false);
@@ -488,17 +502,12 @@ public class EnemyController : MonoBehaviour, IDamageable
             _lastSeenPosition = player.position;
             agent.SetDestination(player.position);
 
-        }
+            if (CanSeePlayer() && CloseToPlayer() && !isAttacking)
+            {
+                EnemyAttacking();
+            }
 
-        /*if (heardNoise)
-        {
-            SetLookingAround(false);
-            agent.isStopped = false;
-            chaseTimer = 0f;
-            agent.speed = chaseSpeed;
-            _lastSeenPosition = player.position;
-            agent.SetDestination(_lastHeardPosition);
-        }*/
+        }
 
         if (chaseTimer >= chaseDuration) //todo: зафиксировать? или после паники сброс состояния?
         {
@@ -509,6 +518,34 @@ public class EnemyController : MonoBehaviour, IDamageable
         }
     }
 
+    private void EnemyAttacking()
+    {
+        if (isAttacking) return; 
+
+        animator.SetTrigger(AttackTrig);
+        isAttacking = true;
+        attackAnimTimer = 0f;
+    }
+
+    bool CloseToPlayer()
+    {
+        Transform source = viewSource;
+
+        Vector3 eyePosition = source.position;
+        Vector3 forward = source.forward;
+        forward.y = 0f;
+        forward.Normalize();
+
+        Vector3 toPlayer = player.position - eyePosition;
+        float distanceToPlayer = toPlayer.magnitude;
+
+        if (distanceToPlayer <= attackDistance)
+        {
+            return true;
+        }
+
+        return false;
+    }
 
     bool CanSeePlayer()
     {
@@ -516,7 +553,6 @@ public class EnemyController : MonoBehaviour, IDamageable
 
         Transform source = viewSource;
         
-
         Vector3 eyePosition = source.position;
         Vector3 forward = source.forward;
         forward.y = 0f;
@@ -569,9 +605,7 @@ public class EnemyController : MonoBehaviour, IDamageable
         // делаем 0..1 внутри диапазона [lightMin..lightMax]
         float t = Mathf.InverseLerp(lightMin, lightMax, lightLevel); // часть пройденного пути
         t = Mathf.Clamp01(t);
-
-        // делаем "кривую" (опционально, но полезно)
-        //t = Mathf.Pow(t, lightGamma);
+        
 
         viewRadius = Mathf.Lerp(viewRadiusDark, viewRadiusLight, t);
         viewAngle = Mathf.Lerp(viewAngleDark, viewAngleLight, t);
@@ -580,9 +614,7 @@ public class EnemyController : MonoBehaviour, IDamageable
     public void HearNoise(Vector3 noisePosition, float noiseRadius)
     {
         if (isDead) return;
-
-        /*if (currentState == EnemyState.Chase)
-            return;*/
+        
 
         _lastHeardPosition = noisePosition;
         _investigateCenter = noisePosition;
@@ -594,7 +626,8 @@ public class EnemyController : MonoBehaviour, IDamageable
             _isWaitingAtInvestigatePoint = false;
             _investigatePointTimer = 0f;
             agent.isStopped = false;
-            PickNewInvestigateDestination();
+            agent.SetDestination(_investigateCenter);
+            //PickNewInvestigateDestination();
             return;
         }
         
@@ -607,14 +640,7 @@ public class EnemyController : MonoBehaviour, IDamageable
             _lastSeenPosition = player.position;
             agent.SetDestination(_lastHeardPosition);
         }
-
-        /*// Иначе переходим в Investigate — OnEnterState задаст новую точку
-        investigateTimer = 0f;
-        _isWaitingAtInvestigatePoint = false;
-        _investigatePointTimer = 0f;
-        agent.isStopped = false;
-
-        currentState = EnemyState.Investigate;*/
+        
     }
 
     public void OnBottleHit(HitZone zone, Vector3 hitPoint, Vector3 hitDir)
@@ -685,10 +711,7 @@ public class EnemyController : MonoBehaviour, IDamageable
         // 0 у far, 1 у near
         float t = Mathf.InverseLerp(suspicionFarDist, suspicionNearDist, distance);
         t = Mathf.Clamp01(t);
-
-        // можно сделать кривую (Dishonored любит не линейность)
-        //if (distanceToGain != null)
-        // t = Mathf.Clamp01(distanceToGain.Evaluate(t));
+        
 
         return Mathf.Lerp(suspicionGainFar, suspicionGainNear, t);
     }

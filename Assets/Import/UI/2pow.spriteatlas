@@ -1,0 +1,78 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 2pow
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings:
+    - serializedVersion: 4
+      m_BuildTarget: DefaultTexturePlatform
+      m_MaxTextureSize: 512
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: -1
+      m_TextureCompression: 1
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 0
+      m_IgnorePlatformSupport: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 0
+      enableTightPacking: 0
+      enableAlphaDilation: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 102900000, guid: 1d3c01a6c5881014883e6e0f04b6473f, type: 3}
+    - {fileID: 2800000, guid: 21b4d0a6372d3854bbd66b7af6a4ffd6, type: 3}
+    - {fileID: 2800000, guid: 0a5c3a74686966742a2708094594f02e, type: 3}
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+    packedSpriteRenderDataKeys:
+    - 0a5c3a74686966742a2708094594f02e: -912541543
+    - 21b4d0a6372d3854bbd66b7af6a4ffd6: -628893919
+    - 30a2a7b687d32ae4ab1c22eee2dca629: 976904408
+    - b6618277ba4165944a2f5d76221eaa6e: 1988128472
+    - d5247d28d047e9f4c93518464a28c33c: 931954946
+    - 699969bea8ffa78498fbb207bb2a31a4: -1823510398
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: -912541543, guid: 0a5c3a74686966742a2708094594f02e, type: 3}
+  - {fileID: -628893919, guid: 21b4d0a6372d3854bbd66b7af6a4ffd6, type: 3}
+  - {fileID: 976904408, guid: 30a2a7b687d32ae4ab1c22eee2dca629, type: 3}
+  - {fileID: 1988128472, guid: b6618277ba4165944a2f5d76221eaa6e, type: 3}
+  - {fileID: 931954946, guid: d5247d28d047e9f4c93518464a28c33c, type: 3}
+  - {fileID: -1823510398, guid: 699969bea8ffa78498fbb207bb2a31a4, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - 32308ca6-0bcd-4d37-beb1-09f4c3811c36_removalai_preview_0
+  - filled_0
+  - filledHealth_0
+  - filledMana_0
+  - FilledHealthFixed_0
+  - ManaFixed_0
+  m_RenderDataMap: {}
+  m_Tag: 2pow
+  m_IsVariant: 0
