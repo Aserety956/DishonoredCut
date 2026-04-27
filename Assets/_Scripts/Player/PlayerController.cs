@@ -14,8 +14,6 @@ using UnityEngine.VFX;
 
 public class PlayerController : MonoBehaviour
 {
-// private (_doSomething) // public (DoSomething) // static s(_Public, _private)
-// interface (IDoSomething)
     [Header("Movement")]
     public float currentSpeed;
     public float walkSpeed;
@@ -67,7 +65,6 @@ public class PlayerController : MonoBehaviour
     [Header("UI")]
     [SerializeField] private Image fillImageMana;
     [SerializeField] private Image fillImageHealth;
-    //[SerializeField] private Image backgroundImage;
     [SerializeField] private RadialMenu radialMenu;
     [SerializeField] private QuickbarManager quickbar;
 
@@ -620,8 +617,6 @@ public class PlayerController : MonoBehaviour
                 {
                     Destroy(pickableItem.gameObject);
                 }
-                /*inventoryManager.AddItem(pickableItem.pickedItem, pickableItem.amount);
-                Destroy(pickableItem.gameObject);*/
                 return;
             }
             
@@ -643,8 +638,7 @@ public class PlayerController : MonoBehaviour
 
         Vector3 feetWorldPos = new Vector3
             (feetTarget.position.x, feetTarget.position.y, feetTarget.position.z);
-
-        // Реальная скорость (XZ) из CharacterController
+        
         Vector3 v = characterController.velocity;
         v.y = 0f;
         float speed = v.magnitude;

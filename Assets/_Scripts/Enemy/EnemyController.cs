@@ -256,7 +256,6 @@ public class EnemyController : MonoBehaviour, IDamageable
             
             case EnemyState.Attack:
                 agent.isStopped = true;
-                //agent.speed = 0f;
                 animator.SetTrigger(AttackTrig);
                 attackAnimTimer = 0f;
                 break;
@@ -293,7 +292,7 @@ public class EnemyController : MonoBehaviour, IDamageable
         {
             SetLookingAround(false);
             suspicion = 0.5f;
-            _lastHeardPosition = player.position;
+            //_lastHeardPosition = player.position;
         }
 
         else
@@ -492,6 +491,8 @@ public class EnemyController : MonoBehaviour, IDamageable
         IsChecking = false;
         chaseTimer += Time.deltaTime;
         
+        _investigatePointTimer += Time.deltaTime;
+        
         if (isAttacking)
         {
             agent.speed = 0f;
@@ -503,7 +504,7 @@ public class EnemyController : MonoBehaviour, IDamageable
                 agent.isStopped = false;
             }
         }
-        
+
         if (CanSeePlayer())
         {
             SetLookingAround(false);
@@ -518,6 +519,33 @@ public class EnemyController : MonoBehaviour, IDamageable
                 currentState = EnemyState.Attack;
                 return;
             }
+        }
+
+        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 0.1f && !CanSeePlayer())
+        {
+            if (!_isWaitingAtInvestigatePoint)
+            {
+                _isWaitingAtInvestigatePoint = true;
+                _investigatePointTimer = 0f;
+
+                agent.isStopped = true;
+                SetLookingAround(true);
+            }
+
+            _investigatePointTimer += Time.deltaTime;
+
+            if (_investigatePointTimer >= investigatePointWaitTime)
+            {
+                agent.speed = patrolSpeed;
+                _isWaitingAtInvestigatePoint = false;
+                _investigatePointTimer = 0f;
+
+                agent.isStopped = false;
+                SetLookingAround(false);
+
+                PickNewInvestigateDestination();
+            }
+            
         }
 
         if (chaseTimer >= chaseDuration) //todo: зафиксировать? или после паники сброс состояния?
@@ -639,7 +667,7 @@ public class EnemyController : MonoBehaviour, IDamageable
             _investigatePointTimer = 0f;
             agent.isStopped = false;
             agent.SetDestination(_investigateCenter);
-            //PickNewInvestigateDestination();
+           //PickNewInvestigateDestination();
             return;
         }
         
@@ -650,6 +678,16 @@ public class EnemyController : MonoBehaviour, IDamageable
             chaseTimer = 0f;
             agent.speed = chaseSpeed;
             _lastSeenPosition = player.position;
+            agent.SetDestination(_lastHeardPosition);
+        }
+        
+        if (currentState == EnemyState.Attack)
+        {
+            if (attackAnimTimer >= attackAnimDuration)
+            {
+                chaseTimer = 0f;
+                _lastSeenPosition = player.position;
+            }
             agent.SetDestination(_lastHeardPosition);
         }
         

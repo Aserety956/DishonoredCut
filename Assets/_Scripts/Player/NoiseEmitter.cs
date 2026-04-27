@@ -65,7 +65,7 @@ public class NoiseEmmiter : MonoBehaviour
 
     /// <summary>
     /// Универсальный шум: игрок, бутылка, любой предмет.
-    /// radius = "сила" шума (враги уже принимают radius).
+    /// radius = "сила" шума.
     /// </summary>
     public static void EmitNoiseAt(Vector3 position, float radius)
     {
@@ -82,7 +82,7 @@ public class NoiseEmmiter : MonoBehaviour
             if (enemy != null)
                 enemy.HearNoise(position, radius);
 
-            overlapBuffer[i] = null; // очищаем, чтобы не держать ссылки
+            overlapBuffer[i] = null;
         }
     }
 
