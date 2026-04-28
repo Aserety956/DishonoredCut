@@ -358,8 +358,7 @@ public class EnemyController : MonoBehaviour, IDamageable
 
         agent.SetDestination(patrolPoints[currentPointIndex].position);
     }
-
-
+    
     void Investigate()
     {
         isInvestigating = true;
