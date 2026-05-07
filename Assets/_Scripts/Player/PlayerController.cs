@@ -48,7 +48,9 @@ public class PlayerController : MonoBehaviour
     
     [Header("Animation")] 
     [SerializeField] public Animator animator;
+    [SerializeField] public float dampTime = 0.12f;
     private static readonly int AttackTrig = Animator.StringToHash("Attack");
+    private static readonly int Speed01 = Animator.StringToHash("Speed01");
     
     
     [Header("Vignette")]
@@ -179,6 +181,8 @@ public class PlayerController : MonoBehaviour
         UpdateInteractHover();
 
         RadialMenuUpdate();
+
+        AnimUpdate();
         
         if (Keyboard.current.f5Key.wasPressedThisFrame)
         {
@@ -207,6 +211,29 @@ public class PlayerController : MonoBehaviour
         handsPos.localPosition = (_heldItem != null)
             ? _handsInitialLocalPos + handsHoldOffset
             : _handsInitialLocalPos;
+    }
+    
+    public void AnimUpdate()
+    {
+        Vector3 v = characterController.velocity;
+        v.y = 0f;
+        float speed = v.magnitude;
+
+        // 2) Нормализуем в 0..1:
+        // 0..walkSpeed -> 0..0.5
+        // walkSpeed..runSpeed -> 0.5..1
+        float speed01;
+        if (speed <= walkSpeed)
+            speed01 = Mathf.InverseLerp(0f, walkSpeed, speed) * 0.5f;
+        else
+            speed01 = 0.5f + Mathf.InverseLerp(walkSpeed, sprintSpeed, speed) * 0.5f;
+        
+        speed01 = (speed01 < 0.01f) ? 0f : speed01;
+        
+        animator.SetFloat(Speed01, speed01, dampTime, Time.deltaTime);
+
+        // 4) Grounded (полезно для прыжка/падения, даже если пока нет)
+        // animator.SetBool(IsGrounded, controller.isGrounded);
     }
     
     public void UpdateMove()
