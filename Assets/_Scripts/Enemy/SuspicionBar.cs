@@ -66,14 +66,20 @@ public class SuspicionBar : MonoBehaviour
                 backgroundImage.gameObject.SetActive(false);
                 barAnim.enabled = false;
                 break;
-            case > 0f:
+            
+            case < 0.99f:
                 fillImage.gameObject.SetActive(true);
                 backgroundImage.gameObject.SetActive(true);
                 barAnim.enabled = true;
                 break;
+            
+            case >= 1f:
+                fillImage.gameObject.SetActive(false);
+                backgroundImage.gameObject.SetActive(false);
+                barAnim.enabled = false;
+                break;
+                // Todo: доделать анимация ААА задетектили
         }
-        
-        // todo: анимация ААА задетектили
         
     }
     
@@ -81,19 +87,5 @@ public class SuspicionBar : MonoBehaviour
     {
         gameObject.SetActive(false);
     }
-
-    /*void Test(int wow, params string[] values)
-    {
-        Debug.Log(wow);
-        foreach (var val in values)
-        {
-            Debug.Log(val);
-        }
-    }
-    
-    void Start()
-    {
-        Test(1,"64,325,64,1,46,234,462,24");
-    }*/
 
 }
